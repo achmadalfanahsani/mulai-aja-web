@@ -1,78 +1,57 @@
-# Analisis & Solusi Bug: Reset Tema Otomatis Setelah Mengakses Halaman Error
+# 🎯 Feature Request: Manajemen Kumpulan Soal Pilihan Ganda (CBT)
 
-Halo! Jika kamu sedang mempelajari bagaimana sistem tema di proyek kita bekerja, dokumen ini akan menjelaskan secara detail mengapa tema yang sudah dipilih oleh pengguna tiba-tiba ter-reset ke default ketika mengakses halaman error (seperti `error/400`), serta bagaimana cara memperbaikinya dengan sangat mudah.
+## 📌 Deskripsi Fitur
+Proyek membutuhkan penambahan fitur **Manajemen Soal (Computer Based Test)** yang memungkinkan pembuatan paket soal pilihan ganda. Fitur ini dirancang khusus untuk soal pilihan ganda dengan 5 opsi jawaban (A, B, C, D, E) dan dilengkapi dengan sistem pengacakan, timer, serta evaluasi otomatis.
 
----
-
-## 🕵️‍♂️ Penjelasan Masalah (The Root Cause)
-
-Untuk memahami masalah ini, mari kita bedah bagaimana sistem tema di template **Codebase Bootstrap 5** kita bekerja:
-
-### 1. Bagaimana Tema Disimpan?
-Ketika seorang pengguna memilih salah satu tema warna di dashboard (misalkan tema *Elegance*, *Pulse*, *Flat*, dll.), sistem akan menyimpan pilihan tersebut di dalam penyimpanan lokal browser yang disebut **`localStorage`** dengan kunci (`key`) bernama **`codebaseColorTheme`**. 
-Isi dari penyimpanan ini adalah path file CSS tema yang aktif, contohnya: `assets/css/themes/flat.min.css`.
-
-### 2. Apa Peran Class `remember-theme`?
-Agar sistem tahu bahwa kita ingin mempertahankan tema di setiap perpindahan halaman, kita menggunakan class khusus bernama `remember-theme` pada tag paling luar HTML (`<html>`).
-* **`setTheme.js`** (berjalan saat halaman pertama kali dimuat): Memeriksa apakah `<html>` memiliki class `remember-theme`. Jika **ada**, ia akan mengambil path CSS dari `localStorage` dan menerapkannya sebelum halaman selesai dimuat agar tidak terjadi efek kedipan (*flash*).
-* **`codebase.app.min.js`** (script utama template): Memeriksa class `remember-theme`. Jika **ada**, ia akan mendengarkan klik pada tombol pemilih tema dan memperbarui `localStorage` setiap kali pengguna mengubah tema.
-
-### 3. Mengapa Reset Terjadi Saat Mengakses Halaman Error?
-Halaman error di proyek kita (seperti `error/400`, `error/404`, dll.) menggunakan layout terpisah yang terletak di:
-`resources/views/layouts/error.blade.php`
-
-Jika kita buka file tersebut, struktur tag HTML-nya didefinisikan seperti ini:
-```html
-<!doctype html>
-<html>
-```
-Perhatikan baik-baik: **Tag `<html>` di atas tidak memiliki class `remember-theme`!**
-
-Ketika pengguna mengakses halaman error:
-1. Browser memuat layout `error.blade.php`.
-2. Script pemilih tema `setTheme.js` berjalan, tetapi karena tag `<html>` tidak memiliki class `remember-theme`, ia **tidak memuat** tema yang disimpan di `localStorage`. Hasilnya, halaman error tampil dengan tema bawaan (default).
-3. Script utama `codebase.app.min.js` kemudian berjalan. Ketika script ini mendeteksi bahwa tag `<html>` **tidak memiliki** class `remember-theme`, ia menyimpulkan: *"Oh, halaman/aplikasi ini tidak ingin mengingat tema pilihan pengguna!"*.
-4. Akibat kesimpulan tersebut, `codebase.app.min.js` melakukan pembersihan (*cleanup*) dengan **menghapus** data tema yang tersimpan di `localStorage` menggunakan perintah:
-   `localStorage.removeItem("codebaseColorTheme")`
-5. Ketika pengguna menekan tombol kembali ke `/dashboard`, browser kembali memuat layout dashboard yang *sebenarnya* memiliki class `remember-theme`. Namun, karena data tema di `localStorage` telah dihapus secara permanen saat berada di halaman error tadi, dashboard terpaksa dimuat menggunakan tema default!
+## ⚙️ Mekanisme & Kebutuhan Sistem
+1. **Paket Soal (Question Packages):**
+   * Pengguna (Guru/Admin) dapat membuat paket soal baru.
+   * Parameter paket mencakup: Nama Paket, Deskripsi, Durasi Pengerjaan (menit), dan Nilai Kelulusan.
+   * Mekanisme otomatis mengacak urutan soal dan urutan opsi jawaban setiap kali paket dikerjakan.
+2. **Soal & Opsi (Questions & Options):**
+   * Setiap soal dapat berupa teks biasa dan dapat dilampirkan **gambar penjelas** (bersifat opsional/nullable).
+   * Terdapat 5 opsi jawaban pasti (A, B, C, D, E) dengan 1 kunci jawaban yang benar.
+3. **Ujian & Mengerjakan (Exam Attempts):**
+   * Siswa dapat melihat daftar paket soal di *dashboard* mereka.
+   * Saat mengerjakan, siswa dibatasi oleh durasi waktu pengerjaan.
+   * **Auto-Submit:** Jawaban akan ter-*submit* otomatis saat waktu habis tanpa harus menekan tombol simpan.
+4. **Hasil & Evaluasi (Results & Reporting):**
+   * Setelah ujian selesai, sistem menampilkan halaman hasil yang berisi:
+     - Skor akhir yang diperoleh.
+     - Total waktu yang dihabiskan.
+     - Rincian jumlah jawaban benar, salah, dan tidak dijawab.
+     - Review soal yang dijawab salah lengkap dengan indikasi kunci jawaban yang benar.
 
 ---
 
-## 🛠️ Solusi Penyelesaian (The Solution)
+## 🛠️ Rencana Implementasi (Tahapan Pengerjaan)
+Untuk menjaga struktur *best practices* Laravel, pengerjaan dibagi menjadi 4 tahap (*Phases*):
 
-Solusinya sangat sederhana! Kita hanya perlu memberi tahu halaman error agar ikut mendukung fitur penyimpanan tema. Caranya adalah dengan menambahkan atribut bahasa (`lang`) dan class `remember-theme` ke tag `<html>` di file layout error.
+### Phase 1: Database, Models & Seeders
+* Membuat *migrations* untuk tabel `users` (tambah *role*), `question_packages`, `questions`, `question_options`, `question_attempts`, dan `question_responses`.
+* Membuat Model Eloquent dengan relasi lengkap.
+* Menyiapkan *Factories* dan *Seeders* untuk men-generate data *dummy* sehingga mempercepat proses pengujian UI.
 
-### File yang Harus Diubah:
-[layouts/error.blade.php](file:///Users/achmadalfanahsani/Documents/Coding%20Skill/Personal/mulai-aja-website/resources/views/layouts/error.blade.php)
+### Phase 2: Back-end Logic & Routing
+* Membuat `QuestionPackageController` untuk manajemen (CRUD) paket soal oleh admin/guru.
+* Membuat `QuestionController` untuk mengatur rincian soal beserta kunci jawaban.
+* Membuat `ExamController` untuk memproses logika saat siswa mulai ujian, mencatat *timestamp*, dan melakukan perhitungan skor akhir (grading).
+* Mendaftarkan rute (routes) yang sesuai di `routes/web.php`.
 
-### 🔴 Sebelum Perbaikan (Baris 2):
-```html
-<!doctype html>
-<html>
-```
+### Phase 3: Antarmuka Pengguna (Views)
+Menggunakan referensi komponen dari template **Codebase Bootstrap** (`_codebase-source-html`):
+* Menambahkan menu **Manajemen Soal** di sidebar kiri (sidebar utama).
+* Membangun tampilan daftar paket (menggunakan desain *card/grid*).
+* Membangun form pembuatan soal dengan elemen input *radio button* untuk memilih kunci jawaban.
+* Membangun antarmuka pengerjaan ujian yang bersih, fokus, dan responsif.
+* Membangun halaman laporan skor.
 
-### 🟢 Setelah Perbaikan:
-```html
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="remember-theme">
-```
+### Phase 4: JavaScript Timer & Auto-Submit
+* Mengimplementasikan *countdown timer* menggunakan Vanilla JavaScript.
+* Menyinkronkan perhitungan waktu dengan data *timestamp* server untuk mencegah manipulasi.
+* Menjalankan *trigger* `form.submit()` secara otomatis ketika hitung mundur mencapai angka nol.
 
 ---
 
-## ✨ Manfaat Tambahan dari Solusi Ini
-
-Dengan melakukan perbaikan kecil di atas, kita mendapatkan dua keuntungan sekaligus:
-1. **Bug Teratasi:** Tema pilihan pengguna tidak akan pernah ter-reset lagi karena `codebase.app.min.js` tidak akan menghapus data tema dari `localStorage` saat berada di halaman error.
-2. **Desain Konsisten (User Experience Lebih Baik):** Halaman error kita sekarang akan tampil cantik dan serasi dengan menggunakan tema warna yang sedang aktif dipilih oleh pengguna, alih-alih mendadak berubah ke tema default yang kaku!
-
----
-
-## 🚀 Langkah Uji Coba (Verification)
-Untuk memastikan perbaikan ini sukses, ikuti langkah berikut:
-1. Jalankan aplikasi di lokal (`php artisan serve` dan `npm run dev`).
-2. Masuk ke halaman `/dashboard`.
-3. Buka dropdown pemilih tema (ikon kuas lukis di pojok kanan atas) dan pilih salah satu tema warna (misalnya merah/hijau/biru).
-4. Akses halaman error secara langsung melalui URL: `http://localhost:8000/error/400`.
-5. Perhatikan: Halaman error sekarang tampil dengan tema warna yang kamu pilih!
-6. Klik tombol **"Back to App"** atau kembali ke `/dashboard`.
-7. **Berhasil!** Tema pilihanmu tetap aktif dan tidak kembali ke tema default.
+> **Note untuk Junior Programmer:** 
+> Pastikan setiap kode yang dibuat menjaga *clean code*, memisahkan logika *controller* dengan tampilan *view*, dan memanfaatkan fitur bawaan Laravel (seperti Form Requests untuk validasi) agar *codebase* tetap mudah dikelola di masa mendatang!

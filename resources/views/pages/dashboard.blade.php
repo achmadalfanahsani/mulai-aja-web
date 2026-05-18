@@ -5,61 +5,39 @@
 @section('page-heading', 'Dashboard')
 
 @section('content')
+    {{-- CBT Welcome Banner --}}
     <div class="row">
-        <!-- Row #1 -->
-        <div class="col-md-6 col-xl-3">
-            <a class="block block-rounded block-fx-shadow text-start" href="javascript:void(0)">
-                <div class="block-content block-content-full text-end d-flex justify-content-between align-items-center">
-                    <div>
-                        <i class="si si-heart fa-2x text-gray"></i>
-                    </div>
-                    <div>
-                        <div class="fs-3 fw-semibold text-primary-light">18,490</div>
-                        <div class="fs-sm fw-semibold text-uppercase text-muted">Likes</div>
-                    </div>
+        <div class="col-md-12">
+            <div class="block block-rounded block-themed">
+                <div class="block-content block-content-full bg-gd-dusk text-center p-5 text-white rounded">
+                    <h2 class="h1 font-w800 mb-2">Selamat Datang di MulaiAja CBT</h2>
+                    <p class="font-size-lg text-white-75 mb-4">Platform Ujian Online Berbasis Komputer Modern & Terintegrasi.</p>
+                    
+                    @auth
+                        <div class="d-flex justify-content-center align-items-center flex-wrap">
+                            <span class="badge bg-white-10 text-white font-size-sm py-2 px-3 mr-3 mb-2">
+                                <i class="fa fa-user-circle mr-1"></i> {{ Auth::user()->name }} ({{ ucfirst(Auth::user()->role) }})
+                            </span>
+                            @if(Auth::user()->isAdmin() || Auth::user()->isTeacher())
+                                <a href="{{ route('question-packages.index') }}" class="btn btn-warning font-w700 mr-2 mb-2">
+                                    <i class="fa fa-folder-open mr-1"></i> Kelola Paket Soal
+                                </a>
+                            @endif
+                            @if(Auth::user()->isAdmin() || Auth::user()->isStudent())
+                                <a href="{{ route('exams.index') }}" class="btn btn-info font-w700 mb-2">
+                                    <i class="fa fa-pen-nib mr-1"></i> Mulai Ujian CBT
+                                </a>
+                            @endif
+                        </div>
+                    @else
+                        <p class="mb-4">Silakan masuk menggunakan sistem pengujian instan untuk memulai petualangan belajar Anda.</p>
+                        <a href="{{ route('login') }}" class="btn btn-lg btn-alt-secondary font-w700 px-4">
+                            <i class="fa fa-sign-in-alt mr-1"></i> Masuk via Mock Login
+                        </a>
+                    @endauth
                 </div>
-            </a>
+            </div>
         </div>
-        <div class="col-md-6 col-xl-3">
-            <a class="block block-rounded block-fx-shadow text-start" href="javascript:void(0)">
-                <div class="block-content block-content-full text-end d-flex justify-content-between align-items-center">
-                    <div>
-                        <i class="si si-users fa-2x text-gray"></i>
-                    </div>
-                    <div>
-                        <div class="fs-3 fw-semibold text-primary-light">4,210</div>
-                        <div class="fs-sm fw-semibold text-uppercase text-muted">Followers</div>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <a class="block block-rounded block-fx-shadow text-start" href="javascript:void(0)">
-                <div class="block-content block-content-full text-end d-flex justify-content-between align-items-center">
-                    <div>
-                        <i class="si si-bag fa-2x text-gray"></i>
-                    </div>
-                    <div>
-                        <div class="fs-3 fw-semibold text-primary-light">350</div>
-                        <div class="fs-sm fw-semibold text-uppercase text-muted">Sales</div>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <a class="block block-rounded block-fx-shadow text-start" href="javascript:void(0)">
-                <div class="block-content block-content-full text-end d-flex justify-content-between align-items-center">
-                    <div>
-                        <i class="si si-wallet fa-2x text-gray"></i>
-                    </div>
-                    <div>
-                        <div class="fs-3 fw-semibold text-primary-light">$2,970</div>
-                        <div class="fs-sm fw-semibold text-uppercase text-muted">Earnings</div>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <!-- END Row #1 -->
     </div>
 
     <div class="block block-rounded block-fx-shadow">

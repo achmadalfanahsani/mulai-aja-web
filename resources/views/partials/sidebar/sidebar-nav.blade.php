@@ -15,83 +15,47 @@
         </a>
     </li>
 
-    {{-- Heading: Build --}}
-    <li class="nav-main-heading">Build</li>
+    {{-- Heading: CBT & Ujian --}}
+    <li class="nav-main-heading">CBT & Ujian</li>
+    
+    @auth
+        @if(auth()->user()->isAdmin() || auth()->user()->isTeacher())
+        <li class="nav-main-item">
+            <a class="nav-main-link {{ request()->routeIs('question-packages.*') || request()->routeIs('questions.*') ? 'active' : '' }}"
+                href="{{ route('question-packages.index') }}">
+                <i class="nav-main-link-icon fa fa-folder-open"></i>
+                <span class="nav-main-link-name">Kelola Paket Soal</span>
+            </a>
+        </li>
+        @endif
 
-    {{-- Main Menu (dengan sub-menu) --}}
-    <li class="nav-main-item">
-        <a class="nav-main-link nav-main-link-submenu"
-            data-toggle="submenu"
-            aria-haspopup="true"
-            aria-expanded="false"
-            href="#">
-            <i class="nav-main-link-icon fa fa-puzzle-piece"></i>
-            <span class="nav-main-link-name">Main Menu</span>
-        </a>
-        <ul class="nav-main-submenu">
-            <li class="nav-main-item">
-                <a class="nav-main-link" href="#">
-                    <span class="nav-main-link-name">Link 1-1</span>
-                </a>
-            </li>
-            <li class="nav-main-item">
-                <a class="nav-main-link" href="#">
-                    <span class="nav-main-link-name">Link 1-2</span>
-                </a>
-            </li>
-
-            {{-- Sub Level 2 --}}
-            <li class="nav-main-item">
-                <a class="nav-main-link nav-main-link-submenu"
-                    data-toggle="submenu"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                    href="#">
-                    <span class="nav-main-link-name">Sub Level 2</span>
-                </a>
-                <ul class="nav-main-submenu">
-                    <li class="nav-main-item">
-                        <a class="nav-main-link" href="#">
-                            <span class="nav-main-link-name">Link 2-1</span>
-                        </a>
-                    </li>
-                    <li class="nav-main-item">
-                        <a class="nav-main-link" href="#">
-                            <span class="nav-main-link-name">Link 2-2</span>
-                        </a>
-                    </li>
-
-                    {{-- Sub Level 3 --}}
-                    <li class="nav-main-item">
-                        <a class="nav-main-link nav-main-link-submenu"
-                            data-toggle="submenu"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                            href="#">
-                            <span class="nav-main-link-name">Sub Level 3</span>
-                        </a>
-                        <ul class="nav-main-submenu">
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" href="#">
-                                    <span class="nav-main-link-name">Link 3-1</span>
-                                </a>
-                            </li>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" href="#">
-                                    <span class="nav-main-link-name">Link 3-2</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    {{-- END Sub Level 3 --}}
-
-                </ul>
-            </li>
-            {{-- END Sub Level 2 --}}
-
-        </ul>
-    </li>
-    {{-- END Main Menu --}}
+        @if(auth()->user()->isAdmin() || auth()->user()->isStudent())
+        <li class="nav-main-item">
+            <a class="nav-main-link {{ request()->routeIs('exams.*') ? 'active' : '' }}"
+                href="{{ route('exams.index') }}">
+                <i class="nav-main-link-icon fa fa-pen-nib"></i>
+                <span class="nav-main-link-name">Mulai Ujian</span>
+            </a>
+        </li>
+        @endif
+        
+        <li class="nav-main-item">
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
+            <a class="nav-main-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="nav-main-link-icon fa fa-sign-out-alt text-danger"></i>
+                <span class="nav-main-link-name">Logout ({{ ucfirst(auth()->user()->role) }})</span>
+            </a>
+        </li>
+    @else
+        <li class="nav-main-item">
+            <a class="nav-main-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">
+                <i class="nav-main-link-icon fa fa-sign-in-alt"></i>
+                <span class="nav-main-link-name">Mock Login</span>
+            </a>
+        </li>
+    @endauth
 
     {{-- Heading: Pages --}}
     <li class="nav-main-heading">Pages</li>

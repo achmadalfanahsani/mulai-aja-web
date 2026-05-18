@@ -1,0 +1,136 @@
+<?php
+
+namespace App\Http/Controllers;
+
+use App\Models\QuestionPackage;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class QuestionPackageController extends Controller {
+    /**
+     * Tampilkan semua paket soal yang dibuat oleh guru/admin yang sedang login.
+     */
+    public function index() {
+        $user = Auth::user();
+        
+        // Admin bisa melihat semua, Teacher hanya melihat miliknya sendiri
+        if ($user->isAdmin()) {
+            $packages = QuestionPackage::withCount('questions')->latest()->paginate(10);
+        } else {
+            $packages = QuestionPackage::where('user_id', $user->id)
+                ->withCount('questions')
+                ->latest()
+                ->paginate(10);
+        }
+
+        return view('question_packages.index', compact('packages'));
+    }
+
+    /**
+     * Tampilkan form pembuatan paket soal baru.
+     */
+    public function create() {
+        return view('question_packages.create');
+    }
+
+    /**
+     * Simpan paket soal baru ke database.
+     */
+    public function store(Request $request) {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'duration_minutes' => 'required|integer|min:1|max:480',
+            'passing_score' => 'nullable|integer|min:0|max:100',
+            'shuffle_questions' => 'nullable|boolean',
+            'shuffle_answers' => 'nullable|boolean',
+        ]);
+
+        $validated['user_id'] = Auth::id();
+        $validated['shuffle_questions'] = $request->has('shuffle_questions');
+        $validated['shuffle_answers'] = $request->has('shuffle_answers');
+        $validated['is_published'] = false; // Default draft
+
+        QuestionPackage::create($validated);
+
+        return redirect()->route('question-packages.index')
+            ->with('success', 'Paket soal berhasil dibuat! Silakan tambahkan pertanyaan.');
+    }
+
+    /**
+     * Tampilkan form edit paket soal.
+     */
+    public function edit(QuestionPackage $questionPackage) {
+        // Cek otorisasi
+        $this->authorizeAccess($questionPackage);
+
+        return view('question_packages.edit', compact('questionPackage'));
+    }
+
+    /**
+     * Perbarui paket soal di database.
+     */
+    public function update(Request $request, QuestionPackage $questionPackage) {
+        $this->authorizeAccess($questionPackage);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'duration_minutes' => 'required|integer|min:1|max:480',
+            'passing_score' => 'nullable|integer|min:0|max:100',
+            'shuffle_questions' => 'nullable|boolean',
+            'shuffle_answers' => 'nullable|boolean',
+        ]);
+
+        $validated['shuffle_questions'] = $request->has('shuffle_questions');
+        $validated['shuffle_answers'] = $request->has('shuffle_answers');
+
+        $questionPackage->update($validated);
+
+        return redirect()->route('question-packages.index')
+            ->with('success', 'Paket soal berhasil diperbarui!');
+    }
+
+    /**
+     * Hapus paket soal dari database (soft delete).
+     */
+    public function destroy(QuestionPackage $questionPackage) {
+        $this->authorizeAccess($questionPackage);
+
+        $questionPackage->delete();
+
+        return redirect()->route('question-packages.index')
+            ->with('success', 'Paket soal berhasil dihapus!');
+    }
+
+    /**
+     * Toggle status publikasi paket soal.
+     */
+    public function togglePublish(QuestionPackage $questionPackage) {
+        $this->authorizeAccess($questionPackage);
+
+        if (!$questionPackage->is_published && !$questionPackage->hasMinimumQuestions()) {
+            return redirect()->back()
+                ->with('error', 'Gagal mempublikasikan paket! Paket soal harus memiliki minimal 1 soal aktif.');
+        }
+
+        $questionPackage->update([
+            'is_published' => !$questionPackage->is_published
+        ]);
+
+        $status = $questionPackage->is_published ? 'dipublikasikan' : 'diarsipkan';
+
+        return redirect()->back()
+            ->with('success', "Status paket soal berhasil diubah menjadi {$status}!");
+    }
+
+    /**
+     * Helper untuk membatasi akses edit/delete
+     */
+    private function authorizeAccess(QuestionPackage $package) {
+        $user = Auth::user();
+        if (!$user->isAdmin() && $package->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki hak akses untuk paket soal ini.');
+        }
+    }
+}
