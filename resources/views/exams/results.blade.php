@@ -89,13 +89,13 @@
                             <div class="col-6 mb-3">
                                 <div class="text-muted font-size-xs text-uppercase font-w700 mb-1">Benar / Total Soal</div>
                                 <div class="font-size-sm font-w600 text-success">
-                                    <i class="fa fa-check mr-1"></i> {{ $stats['correct'] }} dari {{ $stats['total'] }} Soal
+                                    <i class="fa fa-check mr-1"></i> {{ $stats['correct_count'] }} dari {{ $stats['total_questions'] }} Soal
                                 </div>
                             </div>
                             <div class="col-6 mb-3">
                                 <div class="text-muted font-size-xs text-uppercase font-w700 mb-1">Salah / Kosong</div>
                                 <div class="font-size-sm font-w600 text-danger">
-                                    <i class="fa fa-times mr-1"></i> {{ $stats['wrong'] }} Salah / {{ $stats['unanswered'] }} Kosong
+                                    <i class="fa fa-times mr-1"></i> {{ $stats['wrong_count'] }} Salah / {{ $stats['unanswered_count'] }} Kosong
                                 </div>
                             </div>
                             <div class="col-12 border-top pt-2">

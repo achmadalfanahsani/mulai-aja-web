@@ -214,7 +214,8 @@
                     @foreach ($navigation as $nav)
                         <a href="{{ route('exams.attempt', [$questionAttempt->id, 'page' => $nav['number']]) }}" 
                            class="nav-btn {{ $nav['is_active'] ? 'active-num' : ($nav['is_answered'] ? 'answered' : 'unanswered') }}"
-                           id="nav-btn-{{ $nav['question_id'] }}">
+                           id="nav-btn-{{ $nav['question_id'] }}"
+                           data-answered="{{ $nav['is_answered'] ? 'true' : 'false' }}">
                             {{ $nav['number'] }}
                         </a>
                     @endforeach
@@ -261,7 +262,7 @@
                     @endphp
                     <span class="font-w600 text-dark">
                         <i class="fa fa-info-circle text-primary"></i> 
-                        Sudah dijawab: <strong class="text-success">{{ $answeredCount }}</strong> • Belum dijawab: <strong class="text-danger">{{ $unansweredCount }}</strong>
+                        Sudah dijawab: <strong class="text-success" id="modal-answered-count">{{ $answeredCount }}</strong> • Belum dijawab: <strong class="text-danger" id="modal-unanswered-count">{{ $unansweredCount }}</strong>
                     </span>
                 </div>
             </div>
@@ -323,6 +324,7 @@
                 if (navBtn) {
                     navBtn.classList.remove('unanswered');
                     navBtn.classList.add('answered');
+                    navBtn.setAttribute('data-answered', 'true');
                 }
             } else {
                 indicator.innerHTML = '<i class="fa fa-times-circle text-danger"></i> Gagal Menyimpan';
@@ -384,5 +386,32 @@
         // Jalankan timer saat halaman dimuat
         updateTimer();
     })();
+
+    // 3. DYNAMICALLY RE-CALCULATE ANSWER COUNTS WHEN MODAL POP-UP SHOWS
+    function updateModalCounts() {
+        const total = {{ count($questionIds) }};
+        let answered = 0;
+        document.querySelectorAll('.nav-btn').forEach(function(btn) {
+            if (btn.getAttribute('data-answered') === 'true') {
+                answered++;
+            }
+        });
+        
+        const unanswered = total - answered;
+        
+        const answeredEl = document.getElementById('modal-answered-count');
+        const unansweredEl = document.getElementById('modal-unanswered-count');
+        if (answeredEl) answeredEl.innerText = answered;
+        if (unansweredEl) unansweredEl.innerText = unanswered;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const confirmSubmitModal = document.getElementById('confirmSubmitModal');
+        if (confirmSubmitModal) {
+            confirmSubmitModal.addEventListener('show.bs.modal', function () {
+                updateModalCounts();
+            });
+        }
+    });
 </script>
 @endpush
