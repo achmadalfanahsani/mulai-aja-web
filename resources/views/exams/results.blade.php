@@ -83,7 +83,7 @@
                             <div class="col-6 mb-3">
                                 <div class="text-muted font-size-xs text-uppercase font-w700 mb-1">Durasi Pengerjaan</div>
                                 <div class="font-size-sm font-w600 text-dark">
-                                    <i class="fa fa-clock mr-1 text-muted"></i> {{ $questionAttempt->getFormattedDuration() }} / {{ $package->duration_minutes }} Menit
+                                    <i class="fa fa-clock mr-1 text-muted"></i> {{ $questionAttempt->getFormattedDuration() }} / {{ $package->getFormattedDuration() }}
                                 </div>
                             </div>
                             <div class="col-6 mb-3">

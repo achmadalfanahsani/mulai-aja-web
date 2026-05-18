@@ -92,7 +92,7 @@
     </div>
 
     @if (session('success'))
-        <div class="alert alert-success bg-success-light border-0 text-white alert-dismissible" role="alert">
+        <div class="alert alert-success bg-success border-0 text-white alert-dismissible" role="alert">
             <div class="d-flex align-items-center">
                 <i class="fa fa-check-circle mr-2"></i>
                 <span>{{ session('success') }}</span>

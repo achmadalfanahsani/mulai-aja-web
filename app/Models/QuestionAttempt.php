@@ -122,14 +122,23 @@ class QuestionAttempt extends Model {
             return 'N/A';
         }
         
-        $hours = intdiv($this->time_spent_seconds, 3600);
-        $minutes = intdiv($this->time_spent_seconds % 3600, 60);
-        $seconds = $this->time_spent_seconds % 60;
+        $totalSeconds = abs((int) $this->time_spent_seconds);
+        $hours = intdiv($totalSeconds, 3600);
+        $minutes = intdiv($totalSeconds % 3600, 60);
+        $seconds = $totalSeconds % 60;
         
+        $parts = [];
         if ($hours > 0) {
-            return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+            $parts[] = "{$hours} Jam";
         }
-        return sprintf('%02d:%02d', $minutes, $seconds);
+        if ($minutes > 0) {
+            $parts[] = "{$minutes} Menit";
+        }
+        if ($seconds > 0 || empty($parts)) {
+            $parts[] = "{$seconds} Detik";
+        }
+        
+        return implode(' ', $parts);
     }
 
     /**

@@ -87,7 +87,8 @@ class QuestionController extends Controller {
     /**
      * Tampilkan form edit soal.
      */
-    public function edit(QuestionPackage $questionPackage, Question $question) {
+    public function edit(Question $question) {
+        $questionPackage = $question->questionPackage;
         // Ambil opsi yang ada dipetakan ke key A-E
         $options = $question->options->pluck('option_text', 'option_label')->toArray();
         return view('questions.edit', compact('questionPackage', 'question', 'options'));
@@ -96,7 +97,8 @@ class QuestionController extends Controller {
     /**
      * Perbarui soal beserta opsinya.
      */
-    public function update(Request $request, QuestionPackage $questionPackage, Question $question) {
+    public function update(Request $request, Question $question) {
+        $questionPackage = $question->questionPackage;
         $request->validate([
             'question_text' => 'required|string',
             'explanation' => 'nullable|string',
@@ -157,7 +159,8 @@ class QuestionController extends Controller {
     /**
      * Hapus soal dari database (soft delete).
      */
-    public function destroy(QuestionPackage $questionPackage, Question $question) {
+    public function destroy(Question $question) {
+        $questionPackage = $question->questionPackage;
         DB::transaction(function () use ($questionPackage, $question) {
             // Soft delete question
             $question->delete();

@@ -93,13 +93,23 @@ class QuestionPackage extends Model {
      * Format durasi untuk display
      */
     public function getFormattedDuration(): string {
-        $hours = intdiv($this->duration_minutes, 60);
-        $minutes = $this->duration_minutes % 60;
-        
-        if ($hours > 0) {
-            return "{$hours}h {$minutes}m";
+        if (is_null($this->duration_minutes)) {
+            return 'N/A';
         }
-        return "{$minutes}m";
+        
+        $totalMinutes = abs((int) $this->duration_minutes);
+        $hours = intdiv($totalMinutes, 60);
+        $minutes = $totalMinutes % 60;
+        
+        $parts = [];
+        if ($hours > 0) {
+            $parts[] = "{$hours} Jam";
+        }
+        if ($minutes > 0) {
+            $parts[] = "{$minutes} Menit";
+        }
+        
+        return empty($parts) ? '0 Menit' : implode(' ', $parts);
     }
 
     /**

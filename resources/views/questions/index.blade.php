@@ -54,13 +54,13 @@
                                     @endif
                                 </h4>
                                 <div class="block-options">
-                                    <a href="{{ route('question-packages.questions.edit', [$questionPackage->id, $question->id]) }}" 
+                                    <a href="{{ route('questions.edit', $question->id) }}" 
                                        class="btn btn-sm btn-alt-warning mr-1" 
                                        data-toggle="tooltip" 
                                        title="Edit Soal">
                                         <i class="fa fa-pencil-alt"></i> Edit
                                     </a>
-                                    <form action="{{ route('question-packages.questions.destroy', [$questionPackage->id, $question->id]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus soal ini?')" style="display:inline-block;">
+                                    <form action="{{ route('questions.destroy', $question->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus soal ini?')" style="display:inline-block;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-alt-danger" data-toggle="tooltip" title="Hapus Soal">

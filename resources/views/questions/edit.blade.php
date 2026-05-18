@@ -16,7 +16,7 @@
             </div>
             
             <div class="block-content">
-                <form action="{{ route('question-packages.questions.update', [$questionPackage->id, $question->id]) }}" method="POST" enctype="multipart/form-data" class="py-3">
+                <form action="{{ route('questions.update', $question->id) }}" method="POST" enctype="multipart/form-data" class="py-3">
                     @csrf
                     @method('PUT')
                     
