@@ -244,7 +244,7 @@
 {{-- MODAL KONFIRMASI SUBMIT --}}
 <div class="modal fade" id="confirmSubmitModal" tabindex="-1" aria-labelledby="confirmSubmitModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content bg-body">
             <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title text-white" id="confirmSubmitModalLabel"><i class="fa fa-exclamation-triangle mr-2"></i> Konfirmasi Selesai Ujian</h5>
                 <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>

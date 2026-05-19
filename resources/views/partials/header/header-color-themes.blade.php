@@ -27,11 +27,11 @@
                 @php
                     $themes = [
                         'text-default'    => 'default',
-                        'text-elegance'   => 'assets/css/themes/elegance.min.css',
-                        'text-pulse'      => 'assets/css/themes/pulse.min.css',
-                        'text-flat'       => 'assets/css/themes/flat.min.css',
-                        'text-corporate'  => 'assets/css/themes/corporate.min.css',
-                        'text-earth'      => 'assets/css/themes/earth.min.css',
+                        'text-elegance'   => asset('assets/css/themes/elegance.min.css'),
+                        'text-pulse'      => asset('assets/css/themes/pulse.min.css'),
+                        'text-flat'       => asset('assets/css/themes/flat.min.css'),
+                        'text-corporate'  => asset('assets/css/themes/corporate.min.css'),
+                        'text-earth'      => asset('assets/css/themes/earth.min.css'),
                     ];
                 @endphp
 
