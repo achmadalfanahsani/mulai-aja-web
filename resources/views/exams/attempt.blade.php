@@ -11,7 +11,7 @@
         font-weight: 800;
         background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
         border: 2px solid #4a5568;
-        box-shadow: 0 0 15px rgba(66, 153, 225, 0.4);
+        box-shadow: 0 0 15px rgba(var(--bs-primary-rgb), 0.4);
     }
     
     /* Option container styling */
@@ -22,30 +22,30 @@
     }
     
     .cbt-option:hover {
-        background-color: rgba(66, 153, 225, 0.05);
-        border-color: #63b3ed !important;
+        background-color: rgba(var(--bs-primary-rgb), 0.05);
+        border-color: var(--bs-primary-border-subtle) !important;
         transform: translateX(4px);
     }
     
     .cbt-option-input:checked + .cbt-option-content {
-        color: #2b6cb0;
+        color: var(--bs-primary) !important;
         font-weight: 700;
     }
     
     .cbt-option-input:checked + .cbt-option-content .cbt-badge-label {
-        background-color: #3182ce !important;
+        background-color: var(--bs-primary) !important;
         color: #fff !important;
     }
     
     .cbt-option-input:checked + .cbt-option-content {
-        border-color: #3182ce !important;
+        border-color: var(--bs-primary) !important;
     }
     
     /* Active option highlight */
     .cbt-option-wrapper.selected .cbt-option {
-        border-color: #3182ce !important;
-        background-color: rgba(49, 130, 206, 0.05);
-        box-shadow: 0 0 8px rgba(49, 130, 206, 0.15);
+        border-color: var(--bs-primary) !important;
+        background-color: var(--bs-primary-bg-subtle) !important;
+        box-shadow: 0 0 8px rgba(var(--bs-primary-rgb), 0.15) !important;
     }
 
     /* Grid navigation numbers */
@@ -76,10 +76,10 @@
     }
 
     .nav-btn.active-num {
-        background-color: #ebf8ff;
-        color: #2b6cb0;
-        border: 2px solid #3182ce;
-        box-shadow: 0 0 10px rgba(49, 130, 206, 0.4);
+        background-color: var(--bs-primary-bg-subtle);
+        color: var(--bs-primary-text-emphasis);
+        border: 2px solid var(--bs-primary);
+        box-shadow: 0 0 10px rgba(var(--bs-primary-rgb), 0.4);
         transform: scale(1.1);
     }
     

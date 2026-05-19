@@ -39,7 +39,7 @@
             <div class="block-content block-content-full p-4">
                 <div class="row align-items-center">
                     {{-- Badge Skor Besar --}}
-                    <div class="col-lg-5 text-center border-right py-3">
+                    <div class="col-lg-5 text-center border-end py-3">
                         <div class="font-size-sm font-w700 text-uppercase text-muted mb-2">Nilai Akhir</div>
                         
                         @php
@@ -224,11 +224,11 @@
                     @else
                         {{-- Jika Benar, bisa buka penjelasan secara opsional --}}
                         @if ($question->explanation)
-                            <div class="mt-2 text-right">
+                            <div class="mt-2 text-end">
                                 <button class="btn btn-sm btn-link text-success p-0 font-w600 font-size-sm" type="button" data-bs-toggle="collapse" data-bs-target="#explanationCollapse-{{ $question->id }}" aria-expanded="false" aria-controls="explanationCollapse-{{ $question->id }}">
                                     <i class="fa fa-search-plus me-1"></i> Lihat Pembahasan Soal
                                 </button>
-                                <div class="collapse text-left mt-2" id="explanationCollapse-{{ $question->id }}">
+                                <div class="collapse text-start mt-2" id="explanationCollapse-{{ $question->id }}">
                                     <div class="alert alert-success bg-success-light border-0 text-dark font-size-sm mb-0" role="alert">
                                         <strong class="text-success"><i class="fa fa-check me-1"></i> Pembahasan:</strong>
                                         <div class="mt-1">{!! nl2br(e($question->explanation)) !!}</div>
