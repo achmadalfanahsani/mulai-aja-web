@@ -57,36 +57,6 @@
         </li>
     @endauth
 
-    {{-- Heading: Pages --}}
-    <li class="nav-main-heading">Pages</li>
 
-    {{-- Error Pages --}}
-    <li class="nav-main-item">
-        <a class="nav-main-link nav-main-link-submenu"
-            data-toggle="submenu"
-            aria-haspopup="true"
-            aria-expanded="false"
-            href="#">
-            <i class="nav-main-link-icon fa fa-flag"></i>
-            <span class="nav-main-link-name">Error</span>
-        </a>
-        <ul class="nav-main-submenu">
-            <li class="nav-main-item">
-                {{-- <a class="nav-main-link" href="{{ route('error.all') }}"> --}}
-                <a class="nav-main-link" href="#">
-                    <span class="nav-main-link-name">All</span>
-                </a>
-            </li>
-            @foreach([400, 401, 403, 404, 500, 503] as $code)
-            <li class="nav-main-item">
-                <a class="nav-main-link" href="{{ route("error.page." . $code) }}">
-                {{-- <a class="nav-main-link" href="#"> --}}
-                    <span class="nav-main-link-name">{{ $code }}</span>
-                </a>
-            </li>
-            @endforeach
-        </ul>
-    </li>
-    {{-- END Error Pages --}}
 
 </ul>

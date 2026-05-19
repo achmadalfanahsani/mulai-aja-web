@@ -8,7 +8,7 @@
         @if (session('success'))
             <div class="alert alert-success d-flex align-items-center justify-content-between" role="alert">
                 <div class="d-flex align-items-center">
-                    <i class="fa fa-check-circle mr-2"></i>
+                    <i class="fa fa-check-circle me-2"></i>
                     <span>{{ session('success') }}</span>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -18,15 +18,15 @@
         <div class="block block-rounded block-themed">
             <div class="block-header block-header-default bg-primary-dark">
                 <h3 class="block-title">
-                    <i class="fa fa-folder mr-2"></i> {{ $questionPackage->name }} 
-                    <span class="badge bg-primary ml-2">{{ $questions->count() }} Soal</span>
+                    <i class="fa fa-folder me-2"></i> {{ $questionPackage->name }} 
+                    <span class="badge bg-primary ms-2">{{ $questions->count() }} Soal</span>
                 </h3>
                 <div class="block-options">
-                    <a href="{{ route('question-packages.index') }}" class="btn btn-sm btn-alt-secondary mr-2">
+                    <a href="{{ route('question-packages.index') }}" class="btn btn-sm btn-alt-secondary me-2">
                         <i class="fa fa-arrow-left"></i> Kembali ke Paket
                     </a>
                     <a href="{{ route('question-packages.questions.create', $questionPackage->id) }}" class="btn btn-sm btn-alt-secondary">
-                        <i class="fa fa-plus mr-1"></i> Tambah Soal Baru
+                        <i class="fa fa-plus me-1"></i> Tambah Soal Baru
                     </a>
                 </div>
             </div>
@@ -48,14 +48,14 @@
                                 <h4 class="block-title font-size-sm font-w700 text-uppercase mb-0 text-muted">
                                     Soal Nomor #{{ $index + 1 }} 
                                     @if ($question->difficulty_level)
-                                        <span class="badge bg-{{ $question->difficulty_level === 'easy' ? 'success' : ($question->difficulty_level === 'medium' ? 'warning' : 'danger') }}-light text-{{ $question->difficulty_level === 'easy' ? 'success' : ($question->difficulty_level === 'medium' ? 'warning' : 'danger') }} font-w600 ml-2">
+                                        <span class="badge bg-{{ $question->difficulty_level === 'easy' ? 'success' : ($question->difficulty_level === 'medium' ? 'warning' : 'danger') }}-light text-{{ $question->difficulty_level === 'easy' ? 'success' : ($question->difficulty_level === 'medium' ? 'warning' : 'danger') }} font-w600 ms-2">
                                             {{ ucfirst($question->difficulty_level) }}
                                         </span>
                                     @endif
                                 </h4>
                                 <div class="block-options">
                                     <a href="{{ route('questions.edit', $question->id) }}" 
-                                       class="btn btn-sm btn-alt-warning mr-1" 
+                                       class="btn btn-sm btn-alt-warning me-1" 
                                        data-toggle="tooltip" 
                                        title="Edit Soal">
                                         <i class="fa fa-pencil-alt"></i> Edit
@@ -91,14 +91,14 @@
                                         @endphp
                                         <div class="col-md-6 mb-2">
                                             <div class="border rounded p-2 d-flex align-items-center {{ $isCorrect ? 'border-success bg-success-light text-success font-w700' : 'border-gray-light bg-body-light text-muted' }}">
-                                                <div class="badge rounded-circle mr-3 {{ $isCorrect ? 'bg-success text-white' : 'bg-secondary text-white' }}" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 13px;">
+                                                <div class="badge rounded-circle me-3 {{ $isCorrect ? 'bg-success text-white' : 'bg-secondary text-white' }}" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 13px;">
                                                     {{ $option->option_label }}
                                                 </div>
-                                                <div class="font-size-sm ml-2">
+                                                <div class="font-size-sm ms-2">
                                                     {{ $option->option_text }}
                                                 </div>
                                                 @if ($isCorrect)
-                                                    <i class="fa fa-check-circle ml-auto mr-2"></i>
+                                                    <i class="fa fa-check-circle ms-auto me-2"></i>
                                                 @endif
                                             </div>
                                         </div>
@@ -108,7 +108,7 @@
                                 {{-- Penjelasan --}}
                                 @if ($question->explanation)
                                     <div class="alert alert-info bg-info-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
-                                        <strong><i class="fa fa-info-circle mr-1"></i> Penjelasan/Kunci Jawaban:</strong>
+                                        <strong><i class="fa fa-info-circle me-1"></i> Penjelasan/Kunci Jawaban:</strong>
                                         <div class="mt-1">{!! nl2br(e($question->explanation)) !!}</div>
                                     </div>
                                 @endif

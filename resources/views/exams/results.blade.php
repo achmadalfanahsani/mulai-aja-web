@@ -3,13 +3,13 @@
 @section('title', 'Hasil Evaluasi Ujian | MulaiAja')
 
 @section('content')
-<div class="row justify-content-center">
+<div class="row">
     {{-- Panel Hasil Skor Utama --}}
-    <div class="col-md-9 mb-4">
+    <div class="col-md-12 mb-4">
         @if (session('success'))
             <div class="alert alert-success d-flex align-items-center justify-content-between" role="alert">
                 <div class="d-flex align-items-center">
-                    <i class="fa fa-check-circle mr-2"></i>
+                    <i class="fa fa-check-circle me-2"></i>
                     <span>{{ session('success') }}</span>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -19,7 +19,7 @@
         @if (session('warning'))
             <div class="alert alert-warning d-flex align-items-center justify-content-between" role="alert">
                 <div class="d-flex align-items-center">
-                    <i class="fa fa-exclamation-triangle mr-2"></i>
+                    <i class="fa fa-exclamation-triangle me-2"></i>
                     <span>{{ session('warning') }}</span>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -28,7 +28,7 @@
 
         <div class="block block-rounded block-themed">
             <div class="block-header block-header-default bg-primary-dark">
-                <h3 class="block-title"><i class="fa fa-chart-bar mr-2"></i> Hasil Evaluasi Ujian CBT</h3>
+                <h3 class="block-title"><i class="fa fa-chart-bar me-2"></i> Hasil Evaluasi Ujian CBT</h3>
                 <div class="block-options">
                     <a href="{{ route('exams.index') }}" class="btn btn-sm btn-alt-secondary">
                         <i class="fa fa-arrow-left"></i> Kembali ke Dashboard
@@ -46,8 +46,8 @@
                             $isPassed = $questionAttempt->isPassed();
                         @endphp
                         
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle border-0 p-4 mb-3" 
-                             style="width: 140px; height: 140px; background: {{ $isPassed === true ? 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)' : ($isPassed === false ? 'linear-gradient(135deg, #f56565 0%, #e53e3e 100%)' : 'linear-gradient(135deg, #4299e1 0%, #3182ce 100%)') }}; box-shadow: 0 10px 20px rgba(0,0,0,0.15);">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle border-0 p-4 mb-3 {{ $isPassed === true ? 'bg-gd-emerald' : ($isPassed === false ? 'bg-gd-cherry' : 'bg-gd-primary') }}" 
+                             style="width: 140px; height: 140px; box-shadow: 0 10px 20px rgba(0,0,0,0.15);">
                             <span class="font-size-h2 font-w800 text-white" style="font-size: 38px;">{{ $questionAttempt->total_score }}</span>
                         </div>
 
@@ -55,17 +55,17 @@
                         <div class="mt-2">
                             @if ($isPassed === true)
                                 <span class="badge bg-success font-size-md font-w700 rounded-pill px-4 py-2 text-white">
-                                    <i class="fa fa-check-circle mr-1"></i> LULUS UJIAN
+                                    <i class="fa fa-check-circle me-1"></i> LULUS UJIAN
                                 </span>
                                 <div class="text-success font-size-sm font-w600 mt-2">Selamat! Anda berhasil melampaui batas nilai kelulusan {{ $package->passing_score }}%.</div>
                             @elseif ($isPassed === false)
                                 <span class="badge bg-danger font-size-md font-w700 rounded-pill px-4 py-2 text-white">
-                                    <i class="fa fa-times-circle mr-1"></i> TIDAK LULUS
+                                    <i class="fa fa-times-circle me-1"></i> TIDAK LULUS
                                 </span>
                                 <div class="text-danger font-size-sm font-w600 mt-2">Maaf, nilai Anda berada di bawah batas minimum kelulusan {{ $package->passing_score }}%. Tetap semangat belajar!</div>
                             @else
                                 <span class="badge bg-primary font-size-md font-w700 rounded-pill px-4 py-2 text-white">
-                                    <i class="fa fa-info-circle mr-1"></i> SELESAI
+                                    <i class="fa fa-info-circle me-1"></i> SELESAI
                                 </span>
                                 <div class="text-muted font-size-sm mt-2">Ujian berhasil diselesaikan tanpa parameter batas nilai kelulusan.</div>
                             @endif
@@ -73,7 +73,7 @@
                     </div>
 
                     {{-- Analisis Statistik Rinci --}}
-                    <div class="col-lg-7 py-3 pl-lg-4">
+                    <div class="col-lg-7 py-3 ps-lg-4">
                         <h4 class="font-w700 text-dark mb-3">Statistik Pengerjaan</h4>
                         <div class="row">
                             <div class="col-6 mb-3">
@@ -83,19 +83,19 @@
                             <div class="col-6 mb-3">
                                 <div class="text-muted font-size-xs text-uppercase font-w700 mb-1">Durasi Pengerjaan</div>
                                 <div class="font-size-sm font-w600 text-dark">
-                                    <i class="fa fa-clock mr-1 text-muted"></i> {{ $questionAttempt->getFormattedDuration() }} / {{ $package->getFormattedDuration() }}
+                                    <i class="fa fa-clock me-1 text-muted"></i> {{ $questionAttempt->getFormattedDuration() }} / {{ $package->getFormattedDuration() }}
                                 </div>
                             </div>
                             <div class="col-6 mb-3">
                                 <div class="text-muted font-size-xs text-uppercase font-w700 mb-1">Benar / Total Soal</div>
                                 <div class="font-size-sm font-w600 text-success">
-                                    <i class="fa fa-check mr-1"></i> {{ $stats['correct_count'] }} dari {{ $stats['total_questions'] }} Soal
+                                    <i class="fa fa-check me-1"></i> {{ $stats['correct_count'] }} dari {{ $stats['total_questions'] }} Soal
                                 </div>
                             </div>
                             <div class="col-6 mb-3">
                                 <div class="text-muted font-size-xs text-uppercase font-w700 mb-1">Salah / Kosong</div>
                                 <div class="font-size-sm font-w600 text-danger">
-                                    <i class="fa fa-times mr-1"></i> {{ $stats['wrong_count'] }} Salah / {{ $stats['unanswered_count'] }} Kosong
+                                    <i class="fa fa-times me-1"></i> {{ $stats['wrong_count'] }} Salah / {{ $stats['unanswered_count'] }} Kosong
                                 </div>
                             </div>
                             <div class="col-12 border-top pt-2">
@@ -112,9 +112,9 @@
     </div>
 
     {{-- Review Lembar Jawaban & Pembahasan Ujian --}}
-    <div class="col-md-9">
+    <div class="col-md-12">
         <h2 class="content-heading d-flex align-items-center">
-            <i class="fa fa-list-ol mr-2 text-primary"></i> Evaluasi Lembar Jawaban & Pembahasan
+            <i class="fa fa-list-ol me-2 text-primary"></i> Evaluasi Lembar Jawaban & Pembahasan
         </h2>
 
         @foreach ($responses as $index => $resp)
@@ -132,17 +132,17 @@
                         Soal Nomor #{{ $index + 1 }}
                         @if ($selected)
                             @if ($isCorrect)
-                                <span class="badge bg-success font-w700 font-size-xs ml-2 text-white">
-                                    <i class="fa fa-check mr-1"></i> BENAR
+                                <span class="badge bg-success font-w700 font-size-xs ms-2 text-white">
+                                    <i class="fa fa-check me-1"></i> BENAR
                                 </span>
                             @else
-                                <span class="badge bg-danger font-w700 font-size-xs ml-2 text-white">
-                                    <i class="fa fa-times mr-1"></i> SALAH
+                                <span class="badge bg-danger font-w700 font-size-xs ms-2 text-white">
+                                    <i class="fa fa-times me-1"></i> SALAH
                                 </span>
                             @endif
                         @else
-                            <span class="badge bg-warning font-w700 font-size-xs ml-2 text-white">
-                                <i class="fa fa-exclamation-triangle mr-1"></i> TIDAK DIJAWAB
+                            <span class="badge bg-warning font-w700 font-size-xs ms-2 text-white">
+                                <i class="fa fa-exclamation-triangle me-1"></i> TIDAK DIJAWAB
                             </span>
                         @endif
                     </h4>
@@ -181,22 +181,22 @@
                                     $bgClass = 'bg-success-light';
                                     $badgeClass = 'bg-success';
                                     $textColor = 'text-success font-w700';
-                                    $icon = '<i class="fa fa-check-circle ml-auto text-success mr-2"></i>';
+                                    $icon = '<i class="fa fa-check-circle ms-auto text-success me-2"></i>';
                                 } elseif ($isOptSelected && !$isCorrect) {
                                     $borderColor = 'border-danger';
                                     $bgClass = 'bg-danger-light';
                                     $badgeClass = 'bg-danger';
                                     $textColor = 'text-danger font-w700';
-                                    $icon = '<i class="fa fa-times-circle ml-auto text-danger mr-2"></i>';
+                                    $icon = '<i class="fa fa-times-circle ms-auto text-danger me-2"></i>';
                                 }
                             @endphp
                             
                             <div class="col-md-6 mb-2">
                                 <div class="border rounded p-2 d-flex align-items-center {{ $borderColor }} {{ $bgClass }} {{ $textColor }}">
-                                    <div class="badge rounded-circle mr-3 {{ $badgeClass }} text-white" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">
+                                    <div class="badge rounded-circle me-3 {{ $badgeClass }} text-white" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">
                                         {{ $optLabel }}
                                     </div>
-                                    <div class="font-size-sm ml-2">
+                                    <div class="font-size-sm ms-2">
                                         {{ $option->option_text }}
                                     </div>
                                     {!! $icon !!}
@@ -209,7 +209,7 @@
                     @if (!$isCorrect)
                         @if ($question->explanation)
                             <div class="alert alert-danger bg-danger-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
-                                <strong class="text-danger"><i class="fa fa-chalkboard mr-1"></i> Pembahasan & Kunci Jawaban:</strong>
+                                <strong class="text-danger"><i class="fa fa-chalkboard me-1"></i> Pembahasan & Kunci Jawaban:</strong>
                                 <div class="mt-2 text-dark font-w600">Jawaban Anda: <strong class="text-danger">{{ $selected ?? 'Kosong (Belum dijawab)' }}</strong> (Kunci Jawaban: <strong class="text-success">{{ $key }}</strong>)</div>
                                 <div class="mt-2 border-top border-danger-light pt-2 font-size-sm">
                                     {!! nl2br(e($question->explanation)) !!}
@@ -217,7 +217,7 @@
                             </div>
                         @else
                             <div class="alert alert-danger bg-danger-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
-                                <strong><i class="fa fa-info-circle mr-1"></i> Kunci Jawaban:</strong>
+                                <strong><i class="fa fa-info-circle me-1"></i> Kunci Jawaban:</strong>
                                 <div class="mt-1 font-w600 text-dark">Kunci jawaban yang benar adalah opsi <strong class="text-success">{{ $key }}</strong>. (Maaf, tidak ada pembahasan untuk soal ini).</div>
                             </div>
                         @endif
@@ -226,11 +226,11 @@
                         @if ($question->explanation)
                             <div class="mt-2 text-right">
                                 <button class="btn btn-sm btn-link text-success p-0 font-w600 font-size-sm" type="button" data-bs-toggle="collapse" data-bs-target="#explanationCollapse-{{ $question->id }}" aria-expanded="false" aria-controls="explanationCollapse-{{ $question->id }}">
-                                    <i class="fa fa-search-plus mr-1"></i> Lihat Pembahasan Soal
+                                    <i class="fa fa-search-plus me-1"></i> Lihat Pembahasan Soal
                                 </button>
                                 <div class="collapse text-left mt-2" id="explanationCollapse-{{ $question->id }}">
                                     <div class="alert alert-success bg-success-light border-0 text-dark font-size-sm mb-0" role="alert">
-                                        <strong class="text-success"><i class="fa fa-check mr-1"></i> Pembahasan:</strong>
+                                        <strong class="text-success"><i class="fa fa-check me-1"></i> Pembahasan:</strong>
                                         <div class="mt-1">{!! nl2br(e($question->explanation)) !!}</div>
                                     </div>
                                 </div>

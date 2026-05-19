@@ -8,7 +8,7 @@
         @if (session('success'))
             <div class="alert alert-success d-flex align-items-center justify-content-between" role="alert">
                 <div class="d-flex align-items-center">
-                    <i class="fa fa-check-circle mr-2"></i>
+                    <i class="fa fa-check-circle me-2"></i>
                     <span>{{ session('success') }}</span>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -18,7 +18,7 @@
         @if (session('error'))
             <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
                 <div class="d-flex align-items-center">
-                    <i class="fa fa-exclamation-circle mr-2"></i>
+                    <i class="fa fa-exclamation-circle me-2"></i>
                     <span>{{ session('error') }}</span>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -30,7 +30,7 @@
                 <h3 class="block-title">Kelola Paket Soal</h3>
                 <div class="block-options">
                     <a href="{{ route('question-packages.create') }}" class="btn btn-sm btn-alt-secondary">
-                        <i class="fa fa-plus mr-1"></i> Buat Paket Baru
+                        <i class="fa fa-plus me-1"></i> Buat Paket Baru
                     </a>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                                         </td>
                                         <td class="d-none d-sm-table-cell">
                                             <span class="badge bg-secondary-light text-secondary font-size-sm">
-                                                <i class="fa fa-clock mr-1"></i> {{ $package->getFormattedDuration() }}
+                                                <i class="fa fa-clock me-1"></i> {{ $package->getFormattedDuration() }}
                                             </span>
                                         </td>
                                         <td class="d-none d-sm-table-cell text-center">
@@ -93,11 +93,11 @@
                                                 @csrf
                                                 @if ($package->is_published)
                                                     <button type="submit" class="btn btn-sm btn-success bg-success-light text-success font-w600 border-0 rounded-pill px-3">
-                                                        <i class="fa fa-check mr-1"></i> Published
+                                                        <i class="fa fa-check me-1"></i> Published
                                                     </button>
                                                 @else
                                                     <button type="submit" class="btn btn-sm btn-warning bg-warning-light text-warning font-w600 border-0 rounded-pill px-3">
-                                                        <i class="fa fa-lock mr-1"></i> Draft
+                                                        <i class="fa fa-lock me-1"></i> Draft
                                                     </button>
                                                 @endif
                                             </form>

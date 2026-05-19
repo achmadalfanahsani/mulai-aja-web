@@ -10,7 +10,7 @@
                 <h3 class="block-title">Tambah Soal Baru</h3>
                 <div class="block-options">
                     <a href="{{ route('question-packages.questions.index', $questionPackage->id) }}" class="btn btn-sm btn-alt-secondary">
-                        <i class="fa fa-arrow-left mr-1"></i> Kembali
+                        <i class="fa fa-arrow-left me-1"></i> Kembali
                     </a>
                 </div>
             </div>
@@ -21,7 +21,7 @@
                     
                     {{-- Detail Paket --}}
                     <div class="alert alert-secondary bg-body-light border-0 text-dark py-2 px-3 mb-4 d-flex align-items-center">
-                        <i class="fa fa-folder-open mr-2 text-primary"></i>
+                        <i class="fa fa-folder-open me-2 text-primary"></i>
                         <span class="font-size-sm">Menambahkan soal ke paket: <strong>{{ $questionPackage->name }}</strong></span>
                     </div>
 
@@ -64,7 +64,7 @@
                     <hr class="my-4">
 
                     {{-- 5 Opsi Jawaban A-E --}}
-                    <h4 class="font-size-md font-w700 text-uppercase text-muted mb-4"><i class="fa fa-list mr-1"></i> Opsi Jawaban (A-E) & Kunci Jawaban</h4>
+                    <h4 class="font-size-md font-w700 text-uppercase text-muted mb-4"><i class="fa fa-list me-1"></i> Opsi Jawaban (A-E) & Kunci Jawaban</h4>
                     
                     @foreach (['A', 'B', 'C', 'D', 'E'] as $label)
                         <div class="row mb-3 align-items-center">
@@ -86,7 +86,7 @@
                             </div>
                         </div>
                     @endforeach
-                    <small class="text-muted d-block mb-4"><i class="fa fa-info-circle mr-1"></i> Centang *Radio Button* di sebelah kiri opsi untuk memilih **kunci jawaban yang benar**.</small>
+                    <small class="text-muted d-block mb-4"><i class="fa fa-info-circle me-1"></i> Centang *Radio Button* di sebelah kiri opsi untuk memilih **kunci jawaban yang benar**.</small>
 
                     <hr class="my-4">
 
@@ -105,7 +105,7 @@
                     <div class="d-flex justify-content-between align-items-center mt-4">
                         <a href="{{ route('question-packages.questions.index', $questionPackage->id) }}" class="btn btn-alt-secondary">Batal</a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-save mr-1"></i> Simpan Soal
+                            <i class="fa fa-save me-1"></i> Simpan Soal
                         </button>
                     </div>
                 </form>
