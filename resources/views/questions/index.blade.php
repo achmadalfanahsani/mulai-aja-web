@@ -83,7 +83,7 @@
                                     </div>
                                 @endif
 
-                                {{-- Opsi Jawaban A-E --}}
+                                {{-- Opsi Jawaban --}}
                                 <div class="row">
                                     @foreach ($question->options as $option)
                                         @php
@@ -92,14 +92,15 @@
                                         <div class="col-md-6 mb-2">
                                             <div class="border rounded p-2 d-flex align-items-center {{ $isCorrect ? 'border-success bg-success-light text-success font-w700' : 'border-gray-light bg-body-light text-muted' }}">
                                                 <div class="badge rounded-circle me-3 {{ $isCorrect ? 'bg-success text-white' : 'bg-secondary text-white' }}" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 13px;">
-                                                    {{ $option->option_label }}
+                                                    @if ($isCorrect)
+                                                        <i class="fa fa-check"></i>
+                                                    @else
+                                                        <i class="fa fa-circle-o"></i>
+                                                    @endif
                                                 </div>
                                                 <div class="font-size-sm ms-2">
                                                     {{ $option->option_text }}
                                                 </div>
-                                                @if ($isCorrect)
-                                                    <i class="fa fa-check-circle ms-auto me-2"></i>
-                                                @endif
                                             </div>
                                         </div>
                                     @endforeach

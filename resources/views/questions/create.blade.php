@@ -63,23 +63,22 @@
 
                     <hr class="my-4">
 
-                    {{-- 5 Opsi Jawaban A-E --}}
-                    <h4 class="font-size-md font-w700 text-uppercase text-muted mb-4"><i class="fa fa-list me-1"></i> Opsi Jawaban (A-E) & Kunci Jawaban</h4>
+                    {{-- 5 Opsi Jawaban --}}
+                    <h4 class="font-size-md font-w700 text-uppercase text-muted mb-4"><i class="fa fa-list me-1"></i> Opsi Jawaban & Kunci Jawaban</h4>
                     
-                    @foreach (['A', 'B', 'C', 'D', 'E'] as $label)
+                    @foreach (['A' => 1, 'B' => 2, 'C' => 3, 'D' => 4, 'E' => 5] as $label => $index)
                         <div class="row mb-3 align-items-center">
                             <div class="col-auto">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="correct_answer" id="correct_{{ $label }}" value="{{ $label }}" {{ old('correct_answer') == $label ? 'checked' : ($label == 'A' ? 'checked' : '') }} required>
                                     <label class="form-check-label font-w700 text-primary font-size-lg" for="correct_{{ $label }}" data-toggle="tooltip" title="Pilih sebagai kunci jawaban yang benar">
-                                        {{ $label }}
                                     </label>
                                 </div>
                             </div>
                             <div class="col">
                                 <input type="text" class="form-control @error('options.' . $label) is-invalid @enderror" 
                                        name="options[{{ $label }}]" value="{{ old('options.' . $label) }}" 
-                                       placeholder="Ketikkan teks untuk Opsi {{ $label }}..." required>
+                                       placeholder="Ketikkan teks untuk Opsi {{ $index }}..." required>
                                 @error('options.' . $label)
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

@@ -194,7 +194,13 @@
                             <div class="col-md-6 mb-2">
                                 <div class="border rounded p-2 d-flex align-items-center {{ $borderColor }} {{ $bgClass }} {{ $textColor }}">
                                     <div class="badge rounded-circle me-3 {{ $badgeClass }} text-white" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">
-                                        {{ $optLabel }}
+                                        @if ($isOptCorrect)
+                                            <i class="fa fa-check"></i>
+                                        @elseif ($isOptSelected)
+                                            <i class="fa fa-times"></i>
+                                        @else
+                                            <i class="fa fa-circle-o text-white-50"></i>
+                                        @endif
                                     </div>
                                     <div class="font-size-sm ms-2">
                                         {{ $option->option_text }}
@@ -206,11 +212,15 @@
                     </div>
 
                     {{-- Detail Pembahasan (Ditampilkan wajib jika JAWABAN SALAH / KOSONG agar siswa belajar) --}}
+                    @php
+                        $correctOptionText = $question->options->where('option_label', $key)->first()->option_text ?? '';
+                        $selectedOptionText = $selected ? ($question->options->where('option_label', $selected)->first()->option_text ?? '') : '';
+                    @endphp
                     @if (!$isCorrect)
                         @if ($question->explanation)
                             <div class="alert alert-danger bg-danger-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
                                 <strong class="text-danger"><i class="fa fa-chalkboard me-1"></i> Pembahasan & Kunci Jawaban:</strong>
-                                <div class="mt-2 text-dark font-w600">Jawaban Anda: <strong class="text-danger">{{ $selected ?? 'Kosong (Belum dijawab)' }}</strong> (Kunci Jawaban: <strong class="text-success">{{ $key }}</strong>)</div>
+                                <div class="mt-2 text-dark font-w600">Jawaban Anda: <strong class="text-danger">"{{ $selectedOptionText ?: 'Kosong (Belum dijawab)' }}"</strong><br>Kunci Jawaban: <strong class="text-success">"{{ $correctOptionText }}"</strong></div>
                                 <div class="mt-2 border-top border-danger-light pt-2 font-size-sm">
                                     {!! nl2br(e($question->explanation)) !!}
                                 </div>
@@ -218,7 +228,7 @@
                         @else
                             <div class="alert alert-danger bg-danger-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
                                 <strong><i class="fa fa-info-circle me-1"></i> Kunci Jawaban:</strong>
-                                <div class="mt-1 font-w600 text-dark">Kunci jawaban yang benar adalah opsi <strong class="text-success">{{ $key }}</strong>. (Maaf, tidak ada pembahasan untuk soal ini).</div>
+                                <div class="mt-1 font-w600 text-dark">Kunci jawaban yang benar adalah: <strong class="text-success">"{{ $correctOptionText }}"</strong>. (Maaf, tidak ada pembahasan untuk soal ini).</div>
                             </div>
                         @endif
                     @else

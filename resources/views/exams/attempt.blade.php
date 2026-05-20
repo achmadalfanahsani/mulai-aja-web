@@ -27,18 +27,40 @@
         transform: translateX(4px);
     }
     
-    .cbt-option-input:checked + .cbt-option-content {
-        color: var(--bs-primary) !important;
-        font-weight: 700;
+    /* Custom Radio Button Indicator */
+    .cbt-radio-indicator {
+        width: 22px;
+        height: 22px;
+        border: 2px solid #cbd5e0;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        transition: all 0.2s ease-in-out;
+        flex-shrink: 0;
     }
-    
-    .cbt-option-input:checked + .cbt-option-content .cbt-badge-label {
-        background-color: var(--bs-primary) !important;
-        color: #fff !important;
+
+    .cbt-option-wrapper:hover .cbt-radio-indicator {
+        border-color: var(--bs-primary-border-subtle);
     }
-    
-    .cbt-option-input:checked + .cbt-option-content {
-        border-color: var(--bs-primary) !important;
+
+    .cbt-option-wrapper.selected .cbt-radio-indicator {
+        border-color: var(--bs-primary);
+    }
+
+    .cbt-radio-indicator::after {
+        content: '';
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var(--bs-primary);
+        transform: scale(0);
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .cbt-option-wrapper.selected .cbt-radio-indicator::after {
+        transform: scale(1);
     }
     
     /* Active option highlight */
@@ -162,9 +184,7 @@
                                            onchange="autoSaveAnswer('{{ $option->option_label }}', this)">
                                     
                                     <div class="cbt-option border rounded p-3 d-flex align-items-center">
-                                        <div class="cbt-badge-label badge rounded-circle bg-secondary text-white mr-3" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;">
-                                            {{ $option->option_label }}
-                                        </div>
+                                        <div class="cbt-radio-indicator mr-3"></div>
                                         <div class="font-size-sm flex-grow-1 text-dark ml-2">
                                             {{ $option->option_text }}
                                         </div>
