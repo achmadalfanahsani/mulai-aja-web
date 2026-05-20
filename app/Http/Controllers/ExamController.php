@@ -53,9 +53,8 @@ class ExamController extends Controller {
 
         $userId = Auth::id();
 
-        // Cek apakah ada attempt yang masih berjalan (InProgress) untuk paket ini
+        // Cek apakah ada attempt yang masih berjalan (InProgress)
         $activeAttempt = QuestionAttempt::where('user_id', $userId)
-            ->where('question_package_id', $questionPackage->id)
             ->inProgress()
             ->first();
 
@@ -64,8 +63,14 @@ class ExamController extends Controller {
             if ($activeAttempt->isExpired()) {
                 $this->gradeAttempt($activeAttempt, true);
             } else {
-                // Lanjutkan attempt yang sedang aktif
-                return redirect()->route('exams.attempt', $activeAttempt->id);
+                // Jika paket yang dikerjakan sama, lanjutkan
+                if ($activeAttempt->question_package_id === $questionPackage->id) {
+                    return redirect()->route('exams.attempt', $activeAttempt->id);
+                }
+                
+                // Blokir jika mencoba memulai paket lain
+                return redirect()->route('exams.index')
+                    ->with('error', 'Anda masih memiliki ujian pada paket lain yang sedang berjalan. Selesaikan ujian tersebut terlebih dahulu.');
             }
         }
 
