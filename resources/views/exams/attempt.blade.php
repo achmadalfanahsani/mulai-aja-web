@@ -28,17 +28,32 @@
     }
     
 
-    /* Active option highlight */
-    .cbt-option-wrapper.selected .cbt-option {
-        border-color: var(--bs-primary) !important;
-        background-color: var(--bs-primary) !important;
-        box-shadow: 0 0 8px rgba(var(--bs-primary-rgb), 0.3) !important;
-    }
-    
-    .cbt-option-wrapper.selected .cbt-option .cbt-option-text {
-        color: #fff !important;
-        font-weight: 600;
-    }
+ /* Light Theme - Active option highlight */
+.cbt-option-wrapper.selected .cbt-option {
+    border-color: rgba(var(--bs-primary-rgb), 0.45) !important;
+    background-color: rgba(var(--bs-primary-rgb), 0.2) !important;
+    box-shadow:
+        0 1px 3px rgba(var(--bs-primary-rgb), 0.10),
+        0 0 0 1px rgba(var(--bs-primary-rgb), 0.08) !important;
+    transition: all 0.2s ease;
+}
+
+.cbt-option-wrapper.selected .cbt-option .cbt-option-text {
+    color: #2b3a50ff !important;
+    font-weight: 600;
+}
+
+/* Dark Theme - Active option highlight */
+.dark .cbt-option-wrapper.selected .cbt-option {
+    border-color: rgba(var(--bs-primary-rgb), 0.55) !important;
+    background-color: rgba(var(--bs-primary-rgb), 0.12) !important;
+    box-shadow: 0 0 6px rgba(var(--bs-primary-rgb), 0.25) !important;
+}
+
+.dark .cbt-option-wrapper.selected .cbt-option .cbt-option-text {
+    color: #c3c3c3ff !important;
+    font-weight: 600;
+}
 
     /* Grid navigation numbers */
     .nav-btn {
