@@ -125,10 +125,18 @@
                                             <i class="fa fa-clock text-muted mr-1"></i> {{ $attempt->getFormattedDuration() }}
                                         </td>
                                         <td class="text-center font-w700 font-size-lg text-primary">
-                                            {{ $attempt->total_score ?? 'N/A' }}
+                                            @if (!$attempt->is_completed)
+                                                <span class="text-muted">-</span>
+                                            @else
+                                                {{ $attempt->total_score ?? '0' }}
+                                            @endif
                                         </td>
                                         <td class="text-center">
-                                            @if ($attempt->isPassed() === true)
+                                            @if (!$attempt->is_completed)
+                                                <span class="badge bg-warning-light text-warning font-w700 font-size-sm rounded-pill px-3">
+                                                    <i class="fa fa-spinner fa-spin mr-1"></i> DALAM PENGERJAAN
+                                                </span>
+                                            @elseif ($attempt->isPassed() === true)
                                                 <span class="badge bg-success-light text-success font-w700 font-size-sm rounded-pill px-3">
                                                     <i class="fa fa-check-circle mr-1"></i> LULUS
                                                 </span>
@@ -143,14 +151,24 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <a href="{{ route('exams.results', $attempt->id) }}" class="btn btn-sm btn-alt-info">
-                                                <i class="fa fa-chart-pie mr-1"></i> Review Hasil
-                                            </a>
+                                            @if (!$attempt->is_completed)
+                                                <a href="{{ route('exams.attempt', $attempt->id) }}" class="btn btn-sm btn-alt-warning">
+                                                    <i class="fa fa-play mr-1"></i> Lanjutkan Ujian
+                                                </a>
+                                            @else
+                                                <a href="{{ route('exams.results', $attempt->id) }}" class="btn btn-sm btn-alt-info">
+                                                    <i class="fa fa-chart-pie mr-1"></i> Review Hasil
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <div class="mt-3">
+                        {{ $attempts->appends(['packages_page' => request('packages_page')])->links() }}
                     </div>
                 @endif
             </div>

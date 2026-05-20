@@ -19,13 +19,24 @@ class ExamController extends Controller {
         $packages = QuestionPackage::published()
             ->withCount('activeQuestions')
             ->latest()
-            ->paginate(9);
+            ->paginate(9, ['*'], 'packages_page');
+
+        // Cek dan proses auto-submit ujian yang ditinggalkan & sudah kedaluwarsa
+        $activeAttempts = QuestionAttempt::where('user_id', Auth::id())
+            ->where('is_completed', false)
+            ->get();
+            
+        foreach ($activeAttempts as $attempt) {
+            if ($attempt->isExpired()) {
+                $this->gradeAttempt($attempt, true);
+            }
+        }
 
         // Ambil riwayat pengerjaan user login
         $attempts = QuestionAttempt::where('user_id', Auth::id())
             ->with('questionPackage')
             ->latest()
-            ->get();
+            ->paginate(10, ['*'], 'history_page');
 
         return view('exams.index', compact('packages', 'attempts'));
     }
