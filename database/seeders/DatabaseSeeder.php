@@ -3,23 +3,33 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
-{
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
-    {
-        // User::factory(10)->create();
-
+class DatabaseSeeder extends Seeder {
+    public function run(): void {
+        // Create admin user (untuk testing)
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'role' => 'admin',
         ]);
+
+        // Create teacher user
+        User::factory()->create([
+            'name' => 'Teacher User',
+            'email' => 'teacher@example.com',
+            'role' => 'teacher',
+        ]);
+
+        // Create student users
+        User::factory()
+            ->count(10)
+            ->state(fn () => ['role' => 'student'])
+            ->create();
+
+        echo "✅ DatabaseSeeder: " . (1 + 1 + 10) . " users dibuat\n";
+
+        // Run question package seeder
+        $this->call(QuestionPackageSeeder::class);
     }
 }

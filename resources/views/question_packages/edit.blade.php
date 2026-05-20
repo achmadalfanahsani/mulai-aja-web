@@ -1,0 +1,110 @@
+@extends('layouts.app')
+
+@section('title', 'Edit Paket Soal | MulaiAja')
+
+@section('content')
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="block block-rounded block-themed">
+            <div class="block-header block-header-default bg-primary-dark">
+                <h3 class="block-title">Edit Paket Soal: {{ $questionPackage->name }}</h3>
+                <div class="block-options">
+                    <a href="{{ route('question-packages.index') }}" class="btn btn-sm btn-alt-secondary">
+                        <i class="fa fa-arrow-left mr-1"></i> Kembali
+                    </a>
+                </div>
+            </div>
+            
+            <div class="block-content">
+                <form action="{{ route('question-packages.update', $questionPackage->id) }}" method="POST" class="py-3">
+                    @csrf
+                    @method('PUT')
+                    
+                    {{-- Nama Paket --}}
+                    <div class="form-group mb-4">
+                        <label class="form-label" for="name">Nama Paket Soal <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                               id="name" name="name" value="{{ old('name', $questionPackage->name) }}" 
+                               placeholder="Contoh: Ujian Tengah Semester Matematika Kelas X" required>
+                        @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Deskripsi --}}
+                    <div class="form-group mb-4">
+                        <label class="form-label" for="description">Deskripsi Singkat</label>
+                        <textarea class="form-control @error('description') is-invalid @enderror" 
+                                  id="description" name="description" rows="4" 
+                                  placeholder="Tuliskan petunjuk pengerjaan atau rincian cakupan materi ujian...">{{ old('description', $questionPackage->description) }}</textarea>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="row">
+                        {{-- Durasi --}}
+                        <div class="col-md-6 form-group mb-4">
+                            <label class="form-label" for="duration_minutes">Durasi Pengerjaan (Menit) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-clock"></i></span>
+                                <input type="number" class="form-control @error('duration_minutes') is-invalid @enderror" 
+                                       id="duration_minutes" name="duration_minutes" value="{{ old('duration_minutes', $questionPackage->duration_minutes) }}" 
+                                       min="1" max="480" required>
+                                <span class="input-group-text">Menit</span>
+                            </div>
+                            <small class="text-muted">Maksimal pengerjaan 8 jam (480 menit).</small>
+                            @error('duration_minutes')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Passing Score --}}
+                        <div class="col-md-6 form-group mb-4">
+                            <label class="form-label" for="passing_score">Nilai Kelulusan minimum (%)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-award"></i></span>
+                                <input type="number" class="form-control @error('passing_score') is-invalid @enderror" 
+                                       id="passing_score" name="passing_score" value="{{ old('passing_score', $questionPackage->passing_score) }}" 
+                                       placeholder="Contoh: 70" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <small class="text-muted">Biarkan kosong jika tidak ada batasan nilai kelulusan.</small>
+                            @error('passing_score')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Konfigurasi Pengacakan --}}
+                    <div class="block block-rounded block-bordered bg-body-light mb-4 p-3">
+                        <h4 class="font-size-sm font-w700 text-uppercase text-muted mb-3">Pengaturan Keamanan & Pengacakan</h4>
+                        
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="shuffle_questions" name="shuffle_questions" value="1" 
+                                {{ $questionPackage->shuffle_questions ? 'checked' : '' }}>
+                            <label class="form-check-label font-w600" for="shuffle_questions">Acak Urutan Soal (Shuffle Questions)</label>
+                            <div class="text-muted font-size-sm">Setiap siswa akan mendapatkan urutan soal yang berbeda-beda saat ujian dimulai.</div>
+                        </div>
+
+                        <div class="form-check form-switch mt-3">
+                            <input class="form-check-input" type="checkbox" id="shuffle_answers" name="shuffle_answers" value="1" 
+                                {{ $questionPackage->shuffle_answers ? 'checked' : '' }}>
+                            <label class="form-check-label font-w600" for="shuffle_answers">Acak Urutan Opsi Jawaban (Shuffle Options)</label>
+                            <div class="text-muted font-size-sm">Opsi jawaban (A s/d E) akan teracak secara otomatis untuk menghindari kerjasama antar siswa.</div>
+                        </div>
+                    </div>
+
+                    {{-- Submit buttons --}}
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a href="{{ route('question-packages.index') }}" class="btn btn-alt-secondary">Batal</a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fa fa-save mr-1"></i> Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

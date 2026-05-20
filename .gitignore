@@ -24,3 +24,8 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Custom folders
+/_buffer_teks/
+/_codebase-source-html/
+
