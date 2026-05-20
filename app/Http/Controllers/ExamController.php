@@ -38,8 +38,20 @@ class ExamController extends Controller {
             ->latest()
             ->paginate(10, ['*'], 'history_page');
 
-        return view('exams.index', compact('packages', 'attempts'));
+    /**
+    * Tampilkan riwayat pengerjaan ujian (halaman terpisah).
+    */
+    public function history()
+    {
+        $userId = Auth::id();
+        $attempts = QuestionAttempt::where('user_id', $userId)
+            ->with('questionPackage')
+            ->latest()
+            ->paginate(10, ['*'], 'history_page');
+
+        return view('exams.history', compact('attempts'));
     }
+
 
     /**
      * Mulai pengerjaan paket soal (Ujian Baru).
