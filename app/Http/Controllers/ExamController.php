@@ -188,8 +188,9 @@ class ExamController extends Controller {
         }
 
         $timeRemaining = $questionAttempt->getTimeRemaining();
+        $endTime = $questionAttempt->started_at->copy()->addMinutes($questionAttempt->questionPackage->duration_minutes)->getPreciseTimestamp(3);
 
-        return view('exams.attempt', compact(
+        return response()->view('exams.attempt', compact(
             'questionAttempt',
             'question',
             'options',
@@ -197,8 +198,12 @@ class ExamController extends Controller {
             'navigation',
             'currentNumber',
             'timeRemaining',
+            'endTime',
             'questionIds'
-        ));
+        ))
+        ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        ->header('Pragma', 'no-cache')
+        ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     /**

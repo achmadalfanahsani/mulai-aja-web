@@ -344,11 +344,14 @@ indicator.className = 'text-white-75 font-size-sm mr-2';
 
     // 2. CLIENT-SIDE COUNTDOWN TIMER WITH SAFE AUTO-SUBMIT LOGICS
     (function() {
-        let timeRemaining = parseInt('{{ $timeRemaining }}'); // Sisa detik
+        const endTimeMs = parseInt('{{ $endTime }}');
         const countdownEl = document.getElementById('countdown');
         const autoSubmitForm = document.getElementById('auto-submit-form');
 
         function updateTimer() {
+            const now = new Date().getTime();
+            let timeRemaining = Math.floor((endTimeMs - now) / 1000);
+
             if (timeRemaining <= 0) {
                 countdownEl.innerHTML = "00:00:00";
                 countdownEl.style.boxShadow = "0 0 15px rgba(245, 101, 101, 0.8)";
@@ -357,8 +360,7 @@ indicator.className = 'text-white-75 font-size-sm mr-2';
                 // Kunci interaksi form
                 document.querySelectorAll('.cbt-option-input').forEach(input => input.disabled = true);
                 
-                // Tampilkan pesan & Auto-submit ke server
-                alert('Waktu pengerjaan Ujian Anda telah habis! Jawaban akan otomatis diserahkan.');
+                // Auto-submit ke server tanpa alert yang memblokir proses
                 autoSubmitForm.submit();
                 return;
             }
@@ -383,7 +385,6 @@ indicator.className = 'text-white-75 font-size-sm mr-2';
                 countdownEl.classList.add('text-warning');
             }
 
-            timeRemaining--;
             setTimeout(updateTimer, 1000);
         }
 
