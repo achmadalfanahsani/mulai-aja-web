@@ -59,4 +59,12 @@
 
 
 
+
+    <li class="nav-main-item">
+        <a class="nav-main-link {{ request()->routeIs('exams.history') ? 'active' : '' }}"
+            href="{{ route('exams.history') }}">
+            <i class="nav-main-link-icon fa fa-history"></i>
+            <span class="nav-main-link-name">Riwayat Ujian</span>
+        </a>
+    </li>
 </ul>

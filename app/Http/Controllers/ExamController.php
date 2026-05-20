@@ -19,16 +19,39 @@ class ExamController extends Controller {
         $packages = QuestionPackage::published()
             ->withCount('activeQuestions')
             ->latest()
-            ->paginate(9);
+            ->paginate(9, ['*'], 'packages_page');
+
+        // Cek dan proses auto-submit ujian yang ditinggalkan & sudah kedaluwarsa
+        $activeAttempts = QuestionAttempt::where('user_id', Auth::id())
+            ->where('is_completed', false)
+            ->get();
+            
+        foreach ($activeAttempts as $attempt) {
+            if ($attempt->isExpired()) {
+                $this->gradeAttempt($attempt, true);
+            }
+        }
 
         // Ambil riwayat pengerjaan user login
         $attempts = QuestionAttempt::where('user_id', Auth::id())
             ->with('questionPackage')
             ->latest()
-            ->get();
+            ->paginate(10, ['*'], 'history_page');
 
-        return view('exams.index', compact('packages', 'attempts'));
+    /**
+    * Tampilkan riwayat pengerjaan ujian (halaman terpisah).
+    */
+    public function history()
+    {
+        $userId = Auth::id();
+        $attempts = QuestionAttempt::where('user_id', $userId)
+            ->with('questionPackage')
+            ->latest()
+            ->paginate(10, ['*'], 'history_page');
+
+        return view('exams.history', compact('attempts'));
     }
+
 
     /**
      * Mulai pengerjaan paket soal (Ujian Baru).
@@ -42,9 +65,8 @@ class ExamController extends Controller {
 
         $userId = Auth::id();
 
-        // Cek apakah ada attempt yang masih berjalan (InProgress) untuk paket ini
+        // Cek apakah ada attempt yang masih berjalan (InProgress)
         $activeAttempt = QuestionAttempt::where('user_id', $userId)
-            ->where('question_package_id', $questionPackage->id)
             ->inProgress()
             ->first();
 
@@ -53,8 +75,14 @@ class ExamController extends Controller {
             if ($activeAttempt->isExpired()) {
                 $this->gradeAttempt($activeAttempt, true);
             } else {
-                // Lanjutkan attempt yang sedang aktif
-                return redirect()->route('exams.attempt', $activeAttempt->id);
+                // Jika paket yang dikerjakan sama, lanjutkan
+                if ($activeAttempt->question_package_id === $questionPackage->id) {
+                    return redirect()->route('exams.attempt', $activeAttempt->id);
+                }
+                
+                // Blokir jika mencoba memulai paket lain
+                return redirect()->route('exams.index')
+                    ->with('error', 'Anda masih memiliki ujian pada paket lain yang sedang berjalan. Selesaikan ujian tersebut terlebih dahulu.');
             }
         }
 
@@ -188,8 +216,9 @@ class ExamController extends Controller {
         }
 
         $timeRemaining = $questionAttempt->getTimeRemaining();
+        $endTime = $questionAttempt->started_at->copy()->addMinutes($questionAttempt->questionPackage->duration_minutes)->getPreciseTimestamp(3);
 
-        return view('exams.attempt', compact(
+        return response()->view('exams.attempt', compact(
             'questionAttempt',
             'question',
             'options',
@@ -197,8 +226,12 @@ class ExamController extends Controller {
             'navigation',
             'currentNumber',
             'timeRemaining',
+            'endTime',
             'questionIds'
-        ));
+        ))
+        ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        ->header('Pragma', 'no-cache')
+        ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     /**

@@ -54,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('exams/attempt/{questionAttempt}', [ExamController::class, 'attempt'])->name('exams.attempt');
     Route::post('exams/attempt/{questionAttempt}/save', [ExamController::class, 'saveResponse'])->name('exams.save-response');
     Route::post('exams/attempt/{questionAttempt}/submit', [ExamController::class, 'submit'])->name('exams.submit');
+        Route::get('exams/history', [ExamController::class, 'history'])->name('exams.history');
     Route::get('exams/results/{questionAttempt}', [ExamController::class, 'results'])->name('exams.results');
 });
 
