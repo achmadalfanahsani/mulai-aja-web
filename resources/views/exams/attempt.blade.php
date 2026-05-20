@@ -27,47 +27,17 @@
         transform: translateX(4px);
     }
     
-    /* Custom Radio Button Indicator */
-    .cbt-radio-indicator {
-        width: 22px;
-        height: 22px;
-        border: 2px solid #cbd5e0;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background-color: transparent;
-        transition: all 0.2s ease-in-out;
-        flex-shrink: 0;
-    }
 
-    .cbt-option-wrapper:hover .cbt-radio-indicator {
-        border-color: var(--bs-primary-border-subtle);
-    }
-
-    .cbt-option-wrapper.selected .cbt-radio-indicator {
-        border-color: var(--bs-primary);
-    }
-
-    .cbt-radio-indicator::after {
-        content: '';
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background-color: var(--bs-primary);
-        transform: scale(0);
-        transition: transform 0.2s ease-in-out;
-    }
-
-    .cbt-option-wrapper.selected .cbt-radio-indicator::after {
-        transform: scale(1);
-    }
-    
     /* Active option highlight */
     .cbt-option-wrapper.selected .cbt-option {
         border-color: var(--bs-primary) !important;
-        background-color: var(--bs-primary-bg-subtle) !important;
-        box-shadow: 0 0 8px rgba(var(--bs-primary-rgb), 0.15) !important;
+        background-color: var(--bs-primary) !important;
+        box-shadow: 0 0 8px rgba(var(--bs-primary-rgb), 0.3) !important;
+    }
+    
+    .cbt-option-wrapper.selected .cbt-option .cbt-option-text {
+        color: #fff !important;
+        font-weight: 600;
     }
 
     /* Grid navigation numbers */
@@ -184,8 +154,7 @@
                                            onchange="autoSaveAnswer('{{ $option->option_label }}', this)">
                                     
                                     <div class="cbt-option border rounded p-3 d-flex align-items-center">
-                                        <div class="cbt-radio-indicator mr-3"></div>
-                                        <div class="font-size-sm flex-grow-1 text-dark ml-2">
+                                        <div class="font-size-sm flex-grow-1 cbt-option-text">
                                             {{ $option->option_text }}
                                         </div>
                                     </div>
