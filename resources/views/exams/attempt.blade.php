@@ -320,8 +320,8 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                indicator.innerHTML = '<i class="fa fa-check-circle text-success"></i> Tersimpan';
-                indicator.className = 'text-success font-size-sm mr-2';
+                indicator.innerHTML = '<i class="fa fa-check-circle text-white-75"></i> Tersimpan';
+indicator.className = 'text-white-75 font-size-sm mr-2';
                 
                 // Update live color of sidebar button to green (answered)
                 const navBtn = document.getElementById('nav-btn-{{ $question->id }}');
