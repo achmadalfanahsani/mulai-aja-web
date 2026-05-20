@@ -31,7 +31,7 @@
     /* Active option highlight */
     .cbt-option-wrapper.selected .cbt-option {
         border-color: var(--bs-primary) !important;
-        background-color: rgba(var(--bs-primary-rgb), 0.85) !important;
+        background-color: var(--bs-primary) !important;
         box-shadow: 0 0 8px rgba(var(--bs-primary-rgb), 0.3) !important;
     }
     
