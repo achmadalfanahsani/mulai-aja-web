@@ -4,58 +4,62 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuestionPackageController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ExamController;
-use App\Models\User;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Superuser\UserController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Auth;
 
-// Dashboard & root
+// Root redirect
 Route::redirect('/', '/dashboard');
-Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
 
-// Mock Auth system for development ease of use
-Route::get('/login', function () {
-    if (Auth::check()) {
-        return redirect('/dashboard');
-    }
-    return view('auth.mock-login');
-})->name('login');
-
-Route::post('/login', function (\Illuminate\Http\Request $request) {
-    $role = $request->input('role', 'student');
-    $user = User::where('role', $role)->first();
-    if (!$user) {
-        $user = User::factory()->create([
-            'name' => ucfirst($role) . ' User',
-            'email' => $role . '@example.com',
-            'role' => $role
-        ]);
-    }
-    Auth::login($user);
-    return redirect('/dashboard')->with('success', "Berhasil masuk sebagai {$role}!");
+// Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register']);
 });
 
-Route::post('/logout', function () {
-    Auth::logout();
-    return redirect('/login')->with('success', 'Berhasil keluar!');
-})->name('logout');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
-// Question Management Routes (Teacher / Admin / Student)
+// Dashboard (Protected by Auth)
 Route::middleware(['auth'])->group(function () {
-    // Question Packages CRUD
-    Route::resource('question-packages', QuestionPackageController::class);
-    Route::post('question-packages/{questionPackage}/toggle-publish', [QuestionPackageController::class, 'togglePublish'])
-        ->name('question-packages.toggle-publish');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
-    // Questions CRUD (Nested under Question Packages)
-    Route::resource('question-packages.questions', QuestionController::class)->shallow();
+// Role-Based Routes
+Route::middleware(['auth'])->group(function () {
 
-    // CBT / Exam Routes (Student)
-    Route::get('exams', [ExamController::class, 'index'])->name('exams.index');
-    Route::post('exams/packages/{questionPackage}/start', [ExamController::class, 'start'])->name('exams.start');
-    Route::get('exams/attempt/{questionAttempt}', [ExamController::class, 'attempt'])->name('exams.attempt');
-    Route::post('exams/attempt/{questionAttempt}/save', [ExamController::class, 'saveResponse'])->name('exams.save-response');
-    Route::post('exams/attempt/{questionAttempt}/submit', [ExamController::class, 'submit'])->name('exams.submit');
-        Route::get('exams/history', [ExamController::class, 'history'])->name('exams.history');
-    Route::get('exams/results/{questionAttempt}', [ExamController::class, 'results'])->name('exams.results');
+    // 1. Superuser Only: User Management
+    Route::middleware(['role:superuser'])->prefix('superuser')->name('superuser.')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.update-role');
+        Route::post('/users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
+        Route::post('/users/{user}/reject', [UserController::class, 'reject'])->name('users.reject');
+        Route::patch('/users/{user}/password', [UserController::class, 'updatePassword'])->name('users.update-password');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    });
+
+    // 2. Question Management (Teacher & Administrator & Superuser)
+    Route::middleware(['role:teacher,administrator,superuser'])->group(function () {
+        Route::resource('question-packages', QuestionPackageController::class);
+        Route::post('question-packages/{questionPackage}/toggle-publish', [QuestionPackageController::class, 'togglePublish'])
+            ->name('question-packages.toggle-publish');
+        Route::get('question-packages/{questionPackage}/results', [QuestionPackageController::class, 'results'])
+            ->name('question-packages.results');
+        Route::resource('question-packages.questions', QuestionController::class)->shallow();
+    });
+
+    // 3. Exam / CBT (Student & Administrator & Superuser)
+    Route::middleware(['role:student,administrator,superuser'])->group(function () {
+        Route::get('exams', [ExamController::class, 'index'])->name('exams.index');
+        Route::post('exams/packages/{questionPackage}/start', [ExamController::class, 'start'])->name('exams.start');
+        Route::get('exams/attempt/{questionAttempt}', [ExamController::class, 'attempt'])->name('exams.attempt');
+        Route::post('exams/attempt/{questionAttempt}/save', [ExamController::class, 'saveResponse'])->name('exams.save-response');
+        Route::post('exams/attempt/{questionAttempt}/submit', [ExamController::class, 'submit'])->name('exams.submit');
+        Route::get('exams/results/{questionAttempt}', [ExamController::class, 'results'])->name('exams.results');
+    });
 });
 
 // Error pages

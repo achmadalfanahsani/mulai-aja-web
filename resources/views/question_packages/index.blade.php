@@ -104,6 +104,12 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group">
+                                                <a href="{{ route('question-packages.results', $package->id) }}" 
+                                                   class="btn btn-sm btn-alt-success" 
+                                                   data-toggle="tooltip" 
+                                                   title="Lihat Hasil Pengerjaan">
+                                                    <i class="fa fa-chart-line"></i>
+                                                </a>
                                                 <a href="{{ route('question-packages.questions.index', $package->id) }}" 
                                                    class="btn btn-sm btn-alt-info" 
                                                    data-toggle="tooltip" 

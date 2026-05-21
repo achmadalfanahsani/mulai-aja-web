@@ -65,6 +65,19 @@ class ExamController extends Controller {
 
         $userId = Auth::id();
 
+        // Validasi: Batas Attempt
+        if (!is_null($questionPackage->attempt_limit)) {
+            $existingAttemptsCount = QuestionAttempt::where('user_id', $userId)
+                ->where('question_package_id', $questionPackage->id)
+                ->where('is_completed', true)
+                ->count();
+
+            if ($existingAttemptsCount >= $questionPackage->attempt_limit) {
+                return redirect()->route('exams.index')
+                    ->with('error', "Anda telah mencapai batas maksimal pengerjaan ({$questionPackage->attempt_limit} kali) untuk paket ini.");
+            }
+        }
+
         // Cek apakah ada attempt yang masih berjalan (InProgress)
         $activeAttempt = QuestionAttempt::where('user_id', $userId)
             ->inProgress()

@@ -20,6 +20,7 @@ class QuestionPackage extends Model {
         'shuffle_questions',
         'shuffle_answers',
         'passing_score',
+        'attempt_limit',
         'total_questions_count',
     ];
 
@@ -27,6 +28,7 @@ class QuestionPackage extends Model {
         'is_published' => 'boolean',
         'shuffle_questions' => 'boolean',
         'shuffle_answers' => 'boolean',
+        'attempt_limit' => 'integer',
     ];
 
     // ===== RELATIONSHIPS =====

@@ -15,11 +15,24 @@
         </a>
     </li>
 
-    {{-- Heading: CBT & Ujian --}}
-    <li class="nav-main-heading">CBT & Ujian</li>
-    
     @auth
-        @if(auth()->user()->isAdmin() || auth()->user()->isTeacher())
+        {{-- Superuser Section --}}
+        @if(auth()->user()->isSuperuser())
+        <li class="nav-main-heading">Management</li>
+        <li class="nav-main-item">
+            <a class="nav-main-link {{ request()->routeIs('superuser.users.*') ? 'active' : '' }}"
+                href="{{ route('superuser.users.index') }}">
+                <i class="nav-main-link-icon fa fa-users-cog"></i>
+                <span class="nav-main-link-name">Manajemen User</span>
+            </a>
+        </li>
+        @endif
+
+        {{-- Heading: CBT & Ujian --}}
+        <li class="nav-main-heading">CBT & Ujian</li>
+        
+        {{-- Question Management: Teacher, Administrator, Superuser --}}
+        @if(auth()->user()->isTeacher() || auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
         <li class="nav-main-item">
             <a class="nav-main-link {{ request()->routeIs('question-packages.*') || request()->routeIs('questions.*') ? 'active' : '' }}"
                 href="{{ route('question-packages.index') }}">
@@ -29,7 +42,8 @@
         </li>
         @endif
 
-        @if(auth()->user()->isAdmin() || auth()->user()->isStudent())
+        {{-- Exam Taking: Student, Administrator, Superuser --}}
+        @if(auth()->user()->isStudent() || auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
         <li class="nav-main-item">
             <a class="nav-main-link {{ request()->routeIs('exams.*') ? 'active' : '' }}"
                 href="{{ route('exams.index') }}">
@@ -52,19 +66,14 @@
         <li class="nav-main-item">
             <a class="nav-main-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">
                 <i class="nav-main-link-icon fa fa-sign-in-alt"></i>
-                <span class="nav-main-link-name">Mock Login</span>
+                <span class="nav-main-link-name">Masuk</span>
+            </a>
+        </li>
+        <li class="nav-main-item">
+            <a class="nav-main-link {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}">
+                <i class="nav-main-link-icon fa fa-user-plus"></i>
+                <span class="nav-main-link-name">Daftar Akun</span>
             </a>
         </li>
     @endauth
-
-
-
-
-    <li class="nav-main-item">
-        <a class="nav-main-link {{ request()->routeIs('exams.history') ? 'active' : '' }}"
-            href="{{ route('exams.history') }}">
-            <i class="nav-main-link-icon fa fa-history"></i>
-            <span class="nav-main-link-name">Riwayat Ujian</span>
-        </a>
-    </li>
 </ul>
