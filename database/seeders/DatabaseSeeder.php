@@ -7,27 +7,16 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder {
     public function run(): void {
-        // Create admin user (untuk testing)
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'role' => 'admin',
-        ]);
+        // Run Role and Permission Seeder
+        $this->call(RoleAndPermissionSeeder::class);
 
-        // Create teacher user
-        User::factory()->create([
-            'name' => 'Teacher User',
-            'email' => 'teacher@example.com',
-            'role' => 'teacher',
-        ]);
-
-        // Create student users
+        // Create additional student users for testing
         User::factory()
-            ->count(10)
-            ->state(fn () => ['role' => 'student'])
+            ->count(5)
+            ->state(fn () => ['role' => 'student', 'is_approved' => true])
             ->create();
 
-        echo "✅ DatabaseSeeder: " . (1 + 1 + 10) . " users dibuat\n";
+        echo "✅ Database seeded successfully!\n";
 
         // Run question package seeder
         $this->call(QuestionPackageSeeder::class);

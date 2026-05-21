@@ -74,6 +74,22 @@
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        {{-- Attempt Limit --}}
+                        <div class="col-md-6 form-group mb-4">
+                            <label class="form-label" for="attempt_limit">Batas Pengerjaan (Attempts)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-redo"></i></span>
+                                <input type="number" class="form-control @error('attempt_limit') is-invalid @enderror" 
+                                       id="attempt_limit" name="attempt_limit" value="{{ old('attempt_limit', $questionPackage->attempt_limit) }}" 
+                                       placeholder="Contoh: 1" min="1">
+                                <span class="input-group-text">Kali</span>
+                            </div>
+                            <small class="text-muted">Berapa kali siswa boleh mengerjakan paket ini. Kosong = Tanpa batas.</small>
+                            @error('attempt_limit')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     {{-- Konfigurasi Pengacakan --}}

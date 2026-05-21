@@ -13,8 +13,8 @@ class QuestionPackageController extends Controller {
     public function index() {
         $user = Auth::user();
         
-        // Admin bisa melihat semua, Teacher hanya melihat miliknya sendiri
-        if ($user->isAdmin()) {
+        // Administrator & Superuser bisa melihat semua, Teacher hanya melihat miliknya sendiri
+        if ($user->isAdministrator() || $user->isSuperuser()) {
             $packages = QuestionPackage::withCount('questions')->latest()->paginate(10);
         } else {
             $packages = QuestionPackage::where('user_id', $user->id)
@@ -42,6 +42,7 @@ class QuestionPackageController extends Controller {
             'description' => 'nullable|string',
             'duration_minutes' => 'required|integer|min:1|max:480',
             'passing_score' => 'nullable|integer|min:0|max:100',
+            'attempt_limit' => 'nullable|integer|min:1',
             'shuffle_questions' => 'nullable|boolean',
             'shuffle_answers' => 'nullable|boolean',
         ]);
@@ -78,6 +79,7 @@ class QuestionPackageController extends Controller {
             'description' => 'nullable|string',
             'duration_minutes' => 'required|integer|min:1|max:480',
             'passing_score' => 'nullable|integer|min:0|max:100',
+            'attempt_limit' => 'nullable|integer|min:1',
             'shuffle_questions' => 'nullable|boolean',
             'shuffle_answers' => 'nullable|boolean',
         ]);
@@ -105,13 +107,13 @@ class QuestionPackageController extends Controller {
 
     /**
      * Toggle status publikasi paket soal.
-     */
     public function togglePublish(QuestionPackage $questionPackage) {
         $this->authorizeAccess($questionPackage);
 
+        // Validasi: Minimal 1 soal sebelum bisa publish
         if (!$questionPackage->is_published && !$questionPackage->hasMinimumQuestions()) {
             return redirect()->back()
-                ->with('error', 'Gagal mempublikasikan paket! Paket soal harus memiliki minimal 1 soal aktif.');
+                ->with('error', 'Gagal mempublikasikan. Paket soal minimal harus memiliki 1 soal yang aktif!');
         }
 
         $questionPackage->update([
@@ -125,11 +127,25 @@ class QuestionPackageController extends Controller {
     }
 
     /**
-     * Helper untuk membatasi akses edit/delete
+     * Tampilkan hasil pengerjaan siswa untuk paket soal ini.
      */
+    public function results(QuestionPackage $questionPackage) {
+        $this->authorizeAccess($questionPackage);
+
+        $attempts = QuestionAttempt::where('question_package_id', $questionPackage->id)
+            ->with('user')
+            ->latest()
+            ->paginate(20);
+
+        return view('question_packages.results', compact('questionPackage', 'attempts'));
+    }
+
+     /**
+      * Helper untuk membatasi akses edit/delete
+      */
     private function authorizeAccess(QuestionPackage $package) {
         $user = Auth::user();
-        if (!$user->isAdmin() && $package->user_id !== $user->id) {
+        if (!$user->isAdministrator() && !$user->isSuperuser() && $package->user_id !== $user->id) {
             abort(403, 'Anda tidak memiliki hak akses untuk paket soal ini.');
         }
     }
