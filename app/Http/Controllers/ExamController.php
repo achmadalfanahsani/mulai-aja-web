@@ -37,6 +37,8 @@ class ExamController extends Controller {
             ->with('questionPackage')
             ->latest()
             ->paginate(10, ['*'], 'history_page');
+
+        return view('exams.index', compact('packages', 'attempts'));
     }
 
     /**
