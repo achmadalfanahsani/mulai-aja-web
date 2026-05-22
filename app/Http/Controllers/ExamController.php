@@ -37,6 +37,7 @@ class ExamController extends Controller {
             ->with('questionPackage')
             ->latest()
             ->paginate(10, ['*'], 'history_page');
+    }
 
     /**
     * Tampilkan riwayat pengerjaan ujian (halaman terpisah).
