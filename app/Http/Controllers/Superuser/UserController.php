@@ -13,9 +13,31 @@ class UserController extends Controller
     /**
      * Display a listing of the users.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('id', '!=', auth()->id())->get();
+        $query = User::where('id', '!=', auth()->id());
+
+        // Filter by name or email
+        if ($request->filled('q')) {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->q . '%')
+                  ->orWhere('email', 'like', '%' . $request->q . '%');
+            });
+        }
+
+        // Filter by role
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $isApproved = $request->status === 'approved';
+            $query->where('is_approved', $isApproved);
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
+
         return view('superuser.users.index', compact('users'));
     }
 
@@ -34,28 +56,20 @@ class UserController extends Controller
     }
 
     /**
-     * Approve administrator
+     * Approve user
      */
     public function approve(User $user)
     {
-        if ($user->role !== User::ROLE_ADMINISTRATOR) {
-            return back()->with('error', 'User bukan merupakan administrator.');
-        }
-
         $user->update(['is_approved' => true]);
 
-        return back()->with('success', "Akun administrator {$user->name} telah di-approve.");
+        return back()->with('success', "Akun {$user->name} telah di-approve.");
     }
 
     /**
-     * Reject/Unapprove administrator
+     * Reject/Unapprove user
      */
     public function reject(User $user)
     {
-        if ($user->role !== User::ROLE_ADMINISTRATOR) {
-            return back()->with('error', 'User bukan merupakan administrator.');
-        }
-
         $user->update(['is_approved' => false]);
 
         return back()->with('success', "Status approval {$user->name} telah dicabut.");
