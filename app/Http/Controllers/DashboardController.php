@@ -20,7 +20,7 @@ class DashboardController extends Controller
 
         if ($user->isSuperuser()) {
             $stats = [
-                'total_users' => User::count(),
+                'total_users' => User::whereNot('role', User::ROLE_SUPERUSER)->count(),
                 'total_students' => User::where('role', User::ROLE_STUDENT)->count(),
                 'total_teachers' => User::where('role', User::ROLE_TEACHER)->count(),
                 'total_administrators' => User::where('role', User::ROLE_ADMINISTRATOR)->count(),
