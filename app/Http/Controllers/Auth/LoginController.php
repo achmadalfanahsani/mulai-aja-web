@@ -30,12 +30,12 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $user = Auth::user();
 
-            // Check if administrator is approved
-            if ($user->role === 'administrator' && !$user->isApproved()) {
+            // Check if user is approved (skip check for superusers)
+            if ($user->role !== 'superuser' && !$user->isApproved()) {
                 Auth::logout();
                 
                 throw ValidationException::withMessages([
-                    'email' => 'Akun Administrator Anda belum di-approve oleh Superuser.',
+                    'email' => 'Akun Anda belum aktif atau belum di-approve oleh administrator.',
                 ]);
             }
 

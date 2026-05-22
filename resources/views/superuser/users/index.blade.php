@@ -8,7 +8,7 @@
     <div class="block-header block-header-default">
         <h3 class="block-title">Daftar Pengguna</h3>
     </div>
-    <div class="block-content block-content-full">
+    <div class="block-content">
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
@@ -23,6 +23,36 @@
             </div>
         @endif
 
+        <!-- Filter Form -->
+        <form action="{{ route('superuser.users.index') }}" method="GET" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="q" class="form-control" placeholder="Cari Nama atau Email..." value="{{ request('q') }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="role" class="form-select">
+                        <option value="">Semua Role</option>
+                        <option value="student" {{ request('role') == 'student' ? 'selected' : '' }}>Student</option>
+                        <option value="teacher" {{ request('role') == 'teacher' ? 'selected' : '' }}>Teacher</option>
+                        <option value="administrator" {{ request('role') == 'administrator' ? 'selected' : '' }}>Administrator</option>
+                        <option value="superuser" {{ request('role') == 'superuser' ? 'selected' : '' }}>Superuser</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa fa-filter me-1"></i> Filter
+                    </button>
+                </div>
+            </div>
+        </form>
+
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-vcenter">
                 <thead>
@@ -36,9 +66,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($users as $user)
+                    @forelse($users as $user)
                     <tr>
-                        <td class="text-center">{{ $loop->iteration }}</td>
+                        <td class="text-center">{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
                         <td class="fw-semibold">{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>
@@ -51,25 +81,22 @@
                             </span>
                         </td>
                         <td class="text-center">
-                            @if($user->role === 'administrator')
-                                @if($user->is_approved)
-                                    <span class="badge bg-success">Approved</span>
-                                @else
-                                    <span class="badge bg-warning text-dark">Pending</span>
-                                @endif
+                            @if($user->is_approved)
+                                <span class="badge bg-success">Approved</span>
                             @else
-                                <span class="badge bg-secondary">N/A</span>
+                                <span class="badge bg-warning">Pending</span>
                             @endif
                         </td>
                         <td class="text-center">
-                            <div class="btn-group">
-                                @if($user->role === 'administrator' && !$user->is_approved)
-                                    <form action="{{ route('superuser.users.approve', $user) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-alt-success" title="Approve">
-                                            <i class="fa fa-check"></i>
-                                        </button>
-                                    </form>
+                            <div class="btn-group" role="group">
+                                @if(!$user->is_approved)
+                                    <button type="submit" form="approve-form-{{ $user->id }}" class="btn btn-sm btn-alt-success" title="Approve">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                @else
+                                    <button type="submit" form="reject-form-{{ $user->id }}" class="btn btn-sm btn-alt-warning" title="Reject/Unapprove">
+                                        <i class="fa fa-times"></i>
+                                    </button>
                                 @endif
                                 
                                 <button type="button" class="btn btn-sm btn-alt-primary" data-bs-toggle="modal" data-bs-target="#modal-role-{{ $user->id }}" title="Ubah Role">
@@ -80,14 +107,21 @@
                                     <i class="fa fa-key"></i>
                                 </button>
 
-                                <form action="{{ route('superuser.users.destroy', $user) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-alt-danger" title="Hapus User">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-sm btn-alt-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-{{ $user->id }}" title="Hapus User">
+                                    <i class="fa fa-trash"></i>
+                                </button>
                             </div>
+
+                            {{-- Hidden Forms for Approval --}}
+                            @if(!$user->is_approved)
+                                <form id="approve-form-{{ $user->id }}" action="{{ route('superuser.users.approve', $user) }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            @else
+                                <form id="reject-form-{{ $user->id }}" action="{{ route('superuser.users.reject', $user) }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            @endif
                         </td>
                     </tr>
 
@@ -163,9 +197,46 @@
                             </div>
                         </div>
                     </div>
-                    @endforeach
+
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="modal-delete-{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-delete-{{ $user->id }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <form action="{{ route('superuser.users.destroy', $user) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <div class="block block-rounded shadow-none mb-0">
+                                        <div class="block-header block-header-default">
+                                            <h3 class="block-title">Hapus User: {{ $user->name }}</h3>
+                                            <div class="block-options">
+                                                <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="block-content fs-sm py-4">
+                                            <p class="mb-0">Apakah Anda yakin ingin menghapus user ini? Tindakan ini tidak dapat dibatalkan.</p>
+                                        </div>
+                                        <div class="block-content block-content-full block-content-sm text-end border-top">
+                                            <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-alt-danger">Ya, Hapus User</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="text-center py-4">Data tidak ditemukan.</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <div class="mt-4">
+            {{ $users->links() }}
         </div>
     </div>
 </div>
