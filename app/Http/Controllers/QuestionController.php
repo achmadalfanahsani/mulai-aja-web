@@ -45,6 +45,8 @@ class QuestionController extends Controller {
             $rules['options.C'] = 'required|string';
             $rules['options.D'] = 'required|string';
             $rules['options.E'] = 'required|string';
+        } else {
+            $rules['correct_answer_essay'] = 'required|string';
         }
 
         $request->validate($rules);
@@ -61,6 +63,10 @@ class QuestionController extends Controller {
             // Dapatkan order terakhir
             $nextOrder = $questionPackage->questions()->max('order') + 1;
 
+            $correctAnswer = $request->question_type === 'multiple_choice' 
+                ? $request->correct_answer 
+                : $request->correct_answer_essay;
+
             // Simpan Soal
             $question = Question::create([
                 'question_package_id' => $questionPackage->id,
@@ -68,7 +74,7 @@ class QuestionController extends Controller {
                 'question_text' => $request->question_text,
                 'explanation' => $request->explanation,
                 'question_image_path' => $imagePath,
-                'correct_answer' => $request->question_type === 'multiple_choice' ? $request->correct_answer : null,
+                'correct_answer' => $correctAnswer,
                 'difficulty_level' => $request->difficulty_level ?? 'medium',
                 'order' => $nextOrder,
                 'is_active' => true,
@@ -124,6 +130,8 @@ class QuestionController extends Controller {
             $rules['options.C'] = 'required|string';
             $rules['options.D'] = 'required|string';
             $rules['options.E'] = 'required|string';
+        } else {
+            $rules['correct_answer_essay'] = 'required|string';
         }
 
         $request->validate($rules);
@@ -144,13 +152,17 @@ class QuestionController extends Controller {
                 );
             }
 
+            $correctAnswer = $request->question_type === 'multiple_choice' 
+                ? $request->correct_answer 
+                : $request->correct_answer_essay;
+
             // Update Soal
             $question->update([
                 'question_type' => $request->question_type,
                 'question_text' => $request->question_text,
                 'explanation' => $request->explanation,
                 'question_image_path' => $imagePath,
-                'correct_answer' => $request->question_type === 'multiple_choice' ? $request->correct_answer : null,
+                'correct_answer' => $correctAnswer,
                 'difficulty_level' => $request->difficulty_level ?? 'medium',
             ]);
 

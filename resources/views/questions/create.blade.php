@@ -103,6 +103,22 @@
                         <small class="text-muted d-block mb-4"><i class="fa fa-info-circle me-1"></i> Centang *Radio Button* di sebelah kiri opsi untuk memilih **kunci jawaban yang benar**.</small>
                     </div>
 
+                    <div id="essay-container" style="display: none;">
+                        <hr class="my-4">
+                        <h4 class="font-size-md font-w700 text-uppercase text-muted mb-4"><i class="fa fa-keyboard me-1"></i> Pengaturan Jawaban Singkat</h4>
+                        
+                        <div class="form-group mb-4">
+                            <label class="form-label" for="correct_answer_essay">Kunci Jawaban Singkat <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control essay-input @error('correct_answer') is-invalid @enderror" 
+                                   id="correct_answer_essay" name="correct_answer_essay" value="{{ old('correct_answer_essay') }}" 
+                                   placeholder="Ketikkan kunci jawaban yang benar untuk soal isian ini...">
+                            <small class="text-muted"><i class="fa fa-info-circle me-1"></i> Untuk soal isian, jawaban siswa akan dibandingkan secara kaku dengan kunci jawaban ini.</small>
+                            @error('correct_answer')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
                     <hr class="my-4">
 
                     {{-- Penjelasan --}}
@@ -134,19 +150,25 @@
 <script>
     function toggleOptions() {
         const type = document.getElementById('question_type').value;
-        const container = document.getElementById('options-container');
-        const inputs = document.querySelectorAll('.multiple-choice-input');
+        const optionsContainer = document.getElementById('options-container');
+        const essayContainer = document.getElementById('essay-container');
+        const mcInputs = document.querySelectorAll('.multiple-choice-input');
+        const essayInputs = document.querySelectorAll('.essay-input');
         
         if (type === 'essay') {
-            container.style.display = 'none';
-            inputs.forEach(input => input.required = false);
+            optionsContainer.style.display = 'none';
+            essayContainer.style.display = 'block';
+            mcInputs.forEach(input => input.required = false);
+            essayInputs.forEach(input => input.required = true);
         } else {
-            container.style.display = 'block';
-            inputs.forEach(input => {
+            optionsContainer.style.display = 'block';
+            essayContainer.style.display = 'none';
+            mcInputs.forEach(input => {
                 if (input.type === 'text') {
                     input.required = true;
                 }
             });
+            essayInputs.forEach(input => input.required = false);
         }
     }
 

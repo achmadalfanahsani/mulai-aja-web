@@ -71,6 +71,10 @@ class QuestionResponse extends Model {
         if ($this->isUnanswered()) {
             return null;
         }
+
+        if ($this->question->isEssay()) {
+            return $this->essay_answer;
+        }
         
         return $this->question
             ->options()
@@ -82,9 +86,13 @@ class QuestionResponse extends Model {
      * Get correct answer text
      */
     public function getCorrectAnswerText(): string {
+        if ($this->question->isEssay()) {
+            return $this->question->correct_answer;
+        }
+
         return $this->question
             ->options()
             ->where('option_label', $this->getCorrectAnswer())
-            ->value('option_text');
+            ->value('option_text') ?? '';
     }
 }

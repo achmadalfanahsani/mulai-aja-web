@@ -44,7 +44,7 @@ Route::middleware(['auth'])->group(function () {
     // 2. Question Management (Teacher & Administrator & Superuser)
     Route::middleware(['role:teacher,administrator,superuser'])->group(function () {
         Route::resource('question-packages', QuestionPackageController::class);
-        Route::post('question-packages/{questionPackage}/toggle-publish', [QuestionPackageController::class, 'togglePublish'])
+        Route::post('question-packages/{question_package}/toggle-publish', [QuestionPackageController::class, 'togglePublish'])
             ->name('question-packages.toggle-publish');
         Route::get('question-packages/{questionPackage}/results', [QuestionPackageController::class, 'results'])
             ->name('question-packages.results');

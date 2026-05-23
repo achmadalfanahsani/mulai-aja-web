@@ -210,10 +210,12 @@
                         @else
                             {{-- Essay Input --}}
                             <div class="essay-container">
-                                <label class="form-label" for="essay_answer">Tuliskan Jawaban Uraian Anda:</label>
-                                <textarea class="form-control" id="essay_answer" name="essay_answer" rows="10" 
-                                          placeholder="Ketikkan jawaban Anda di sini..."
-                                          onblur="autoSaveAnswer(this.value, 'essay')">{{ $currentResponse->essay_answer ?? '' }}</textarea>
+                                <label class="form-label" for="essay_answer">Ketikkan Jawaban Anda:</label>
+                                <input type="text" class="form-control form-control-lg" id="essay_answer" name="essay_answer" 
+                                       placeholder="Ketikkan jawaban Anda di sini..."
+                                       value="{{ $currentResponse->essay_answer ?? '' }}"
+                                       onblur="autoSaveAnswer(this.value, 'essay')"
+                                       autocomplete="off">
                                 <div class="mt-2 text-muted font-size-xs">
                                     <i class="fa fa-info-circle me-1"></i> Jawaban otomatis tersimpan saat Anda berpindah ke kolom lain atau soal lain.
                                 </div>

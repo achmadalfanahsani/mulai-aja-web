@@ -161,75 +161,98 @@
                         </div>
                     @endif
 
-                    {{-- 5 Opsi Pilihan Jawaban A-E --}}
-                    <div class="row">
-                        @foreach ($question->options as $option)
-                            @php
-                                $optLabel = $option->option_label;
-                                $isOptCorrect = $optLabel === $key;
-                                $isOptSelected = $optLabel === $selected;
-                                
-                                // Set style warna per opsi
-                                $borderColor = 'border-gray-light';
-                                $bgClass = 'bg-body-light';
-                                $badgeClass = 'bg-secondary';
-                                $textColor = 'text-muted';
-                                $icon = '';
+                    @if($question->isMultipleChoice())
+                        {{-- 5 Opsi Pilihan Jawaban A-E --}}
+                        <div class="row">
+                            @foreach ($question->options as $option)
+                                @php
+                                    $optLabel = $option->option_label;
+                                    $isOptCorrect = $optLabel === $key;
+                                    $isOptSelected = $optLabel === $selected;
+                                    
+                                    // Set style warna per opsi
+                                    $borderColor = 'border-gray-light';
+                                    $bgClass = 'bg-body-light';
+                                    $badgeClass = 'bg-secondary';
+                                    $textColor = 'text-muted';
+                                    $icon = '';
 
-                                if ($isOptCorrect) {
-                                    $borderColor = 'border-success';
-                                    $bgClass = 'bg-success-light';
-                                    $badgeClass = 'bg-success';
-                                    $textColor = 'text-success font-w700';
-                                    $icon = '<i class="fa fa-check-circle ms-auto text-success me-2"></i>';
-                                } elseif ($isOptSelected && !$isCorrect) {
-                                    $borderColor = 'border-danger';
-                                    $bgClass = 'bg-danger-light';
-                                    $badgeClass = 'bg-danger';
-                                    $textColor = 'text-danger font-w700';
-                                    $icon = '<i class="fa fa-times-circle ms-auto text-danger me-2"></i>';
-                                }
-                            @endphp
-                            
-                            <div class="col-md-6 mb-2">
-                                <div class="border rounded p-2 d-flex align-items-center {{ $borderColor }} {{ $bgClass }} {{ $textColor }}">
-                                    <div class="badge rounded-circle me-3 {{ $badgeClass }} text-white" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">
-                                        @if ($isOptCorrect)
-                                            <i class="fa fa-check"></i>
-                                        @elseif ($isOptSelected)
-                                            <i class="fa fa-times"></i>
-                                        @else
-                                            <i class="fa fa-circle-o text-white-50"></i>
-                                        @endif
+                                    if ($isOptCorrect) {
+                                        $borderColor = 'border-success';
+                                        $bgClass = 'bg-success-light';
+                                        $badgeClass = 'bg-success';
+                                        $textColor = 'text-success font-w700';
+                                        $icon = '<i class="fa fa-check-circle ms-auto text-success me-2"></i>';
+                                    } elseif ($isOptSelected && !$isCorrect) {
+                                        $borderColor = 'border-danger';
+                                        $bgClass = 'bg-danger-light';
+                                        $badgeClass = 'bg-danger';
+                                        $textColor = 'text-danger font-w700';
+                                        $icon = '<i class="fa fa-times-circle ms-auto text-danger me-2"></i>';
+                                    }
+                                @endphp
+                                
+                                <div class="col-md-6 mb-2">
+                                    <div class="border rounded p-2 d-flex align-items-center {{ $borderColor }} {{ $bgClass }} {{ $textColor }}">
+                                        <div class="badge rounded-circle me-3 {{ $badgeClass }} text-white" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">
+                                            @if ($isOptCorrect)
+                                                <i class="fa fa-check"></i>
+                                            @elseif ($isOptSelected)
+                                                <i class="fa fa-times"></i>
+                                            @else
+                                                <i class="fa fa-circle-o text-white-50"></i>
+                                            @endif
+                                        </div>
+                                        <div class="font-size-sm ms-2">
+                                            {{ $option->option_text }}
+                                        </div>
+                                        {!! $icon !!}
                                     </div>
-                                    <div class="font-size-sm ms-2">
-                                        {{ $option->option_text }}
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        {{-- Essay/Short Answer Review --}}
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="border rounded p-3 bg-body-light">
+                                    <div class="mb-3">
+                                        <span class="text-muted font-size-xs text-uppercase font-w700"><i class="fa fa-user me-1"></i> Jawaban Anda:</span>
+                                        <div class="font-size-md mt-1 p-2 border rounded {{ $isCorrect ? 'bg-success-light text-success border-success' : 'bg-danger-light text-danger border-danger' }} font-w600">
+                                            {{ $resp->essay_answer ?: '(Tidak ada jawaban)' }}
+                                        </div>
                                     </div>
-                                    {!! $icon !!}
+                                    <div>
+                                        <span class="text-muted font-size-xs text-uppercase font-w700"><i class="fa fa-check-circle me-1"></i> Kunci Jawaban:</span>
+                                        <div class="font-size-md mt-1 p-2 border border-success bg-success-light text-success rounded font-w600">
+                                            {{ $question->correct_answer }}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
+                        </div>
+                    @endif
 
                     {{-- Detail Pembahasan (Ditampilkan wajib jika JAWABAN SALAH / KOSONG agar siswa belajar) --}}
                     @php
-                        $correctOptionText = $question->options->where('option_label', $key)->first()->option_text ?? '';
-                        $selectedOptionText = $selected ? ($question->options->where('option_label', $selected)->first()->option_text ?? '') : '';
+                        $correctText = $resp->getCorrectAnswerText();
+                        $selectedText = $resp->getSelectedAnswerText();
                     @endphp
                     @if (!$isCorrect)
                         @if ($question->explanation)
                             <div class="alert alert-danger bg-danger-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
-                                <strong class="text-danger"><i class="fa fa-chalkboard me-1"></i> Pembahasan & Kunci Jawaban:</strong>
-                                <div class="mt-2 text-dark font-w600">Jawaban Anda: <strong class="text-danger">"{{ $selectedOptionText ?: 'Kosong (Belum dijawab)' }}"</strong><br>Kunci Jawaban: <strong class="text-success">"{{ $correctOptionText }}"</strong></div>
+                                <strong class="text-danger"><i class="fa fa-chalkboard me-1"></i> Pembahasan:</strong>
                                 <div class="mt-2 border-top border-danger-light pt-2 font-size-sm">
                                     {!! nl2br(e($question->explanation)) !!}
                                 </div>
                             </div>
                         @else
-                            <div class="alert alert-danger bg-danger-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
-                                <strong><i class="fa fa-info-circle me-1"></i> Kunci Jawaban:</strong>
-                                <div class="mt-1 font-w600 text-dark">Kunci jawaban yang benar adalah: <strong class="text-success">"{{ $correctOptionText }}"</strong>. (Maaf, tidak ada pembahasan untuk soal ini).</div>
-                            </div>
+                            @if($question->isMultipleChoice())
+                                <div class="alert alert-danger bg-danger-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
+                                    <strong><i class="fa fa-info-circle me-1"></i> Kunci Jawaban:</strong>
+                                    <div class="mt-1 font-w600 text-dark">Kunci jawaban yang benar adalah: <strong class="text-success">"{{ $correctText }}"</strong>. (Maaf, tidak ada pembahasan untuk soal ini).</div>
+                                </div>
+                            @endif
                         @endif
                     @else
                         {{-- Jika Benar, bisa buka penjelasan secara opsional --}}

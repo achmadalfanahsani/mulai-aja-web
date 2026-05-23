@@ -126,23 +126,25 @@ class QuestionPackageController extends Controller {
     /**
      * Toggle status publikasi paket soal.
      */
-    public function togglePublish(QuestionPackage $questionPackage) {
-        $this->authorizeAccess($questionPackage);
+    public function togglePublish($question_package) {
+        if (!($question_package instanceof QuestionPackage)) {
+            $question_package = QuestionPackage::findOrFail($question_package);
+        }
+
+        $this->authorizeAccess($question_package);
 
         // Validasi: Minimal 1 soal sebelum bisa publish
-        if (!$questionPackage->is_published && !$questionPackage->hasMinimumQuestions()) {
+        if (!$question_package->is_published && $question_package->activeQuestions()->count() < 1) {
             return redirect()->back()
                 ->with('error', 'Gagal mempublikasikan. Paket soal minimal harus memiliki 1 soal yang aktif!');
         }
 
-        $questionPackage->update([
-            'is_published' => !$questionPackage->is_published
+        $question_package->update([
+            'is_published' => !$question_package->is_published
         ]);
 
-        $status = $questionPackage->is_published ? 'dipublikasikan' : 'diarsipkan';
-
         return redirect()->back()
-            ->with('success', "Status paket soal berhasil diubah menjadi {$status}!");
+            ->with('success', "Status paket soal berhasil diubah!");
     }
 
     /**

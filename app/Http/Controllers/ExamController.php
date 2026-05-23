@@ -355,8 +355,18 @@ class ExamController extends Controller {
                 
                 // Jika dijawab dan jawabannya benar
                 $isCorrect = false;
-                if (!is_null($response->selected_answer)) {
-                    $isCorrect = $response->selected_answer === $question->correct_answer;
+
+                if ($question->isMultipleChoice()) {
+                    if (!is_null($response->selected_answer)) {
+                        $isCorrect = $response->selected_answer === $question->correct_answer;
+                    }
+                } elseif ($question->isEssay()) {
+                    if (!is_null($response->essay_answer)) {
+                        // Mekanisme isian kaku: trim dan case-insensitive
+                        $userAnswer = trim($response->essay_answer);
+                        $correctAnswer = trim($question->correct_answer);
+                        $isCorrect = strtolower($userAnswer) === strtolower($correctAnswer);
+                    }
                 }
                 
                 if ($isCorrect) {
