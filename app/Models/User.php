@@ -57,6 +57,11 @@ class User extends Authenticatable {
         return $this->role === self::ROLE_SUPERUSER;
     }
 
+    public function setRole(string $role): void {
+        $this->role = $role;
+        $this->save();
+    }
+
     /**
      * Check if user is approved
      */
