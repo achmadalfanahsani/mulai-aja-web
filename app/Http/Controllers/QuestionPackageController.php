@@ -32,11 +32,25 @@ class QuestionPackageController extends Controller {
             $query->where('is_published', $isPublished);
         }
 
-        // Filter by question type (ESSAY)
-        if ($request->get('type') === 'essay') {
-            $query->whereHas('questions', function($q) {
-                $q->where('question_type', 'essay');
-            });
+        // Filter by question type
+        if ($request->filled('type')) {
+            $type = $request->query('type');
+            
+            if ($type === 'multiple_choice') {
+                $query->whereDoesntHave('questions', function ($q) {
+                    $q->where('question_type', 'essay');
+                });
+            } elseif ($type === 'essay') {
+                $query->whereDoesntHave('questions', function ($q) {
+                    $q->where('question_type', 'multiple_choice');
+                });
+            } elseif ($type === 'mixed') {
+                $query->whereHas('questions', function ($q) {
+                    $q->where('question_type', 'multiple_choice');
+                })->whereHas('questions', function ($q) {
+                    $q->where('question_type', 'essay');
+                });
+            }
         }
 
         $packages = $query->withCount('questions')->latest()->paginate(10)->withQueryString();

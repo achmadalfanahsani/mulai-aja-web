@@ -34,17 +34,24 @@
         {{-- Question Management: Teacher, Administrator, Superuser --}}
         @if(auth()->user()->isTeacher() || auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
         <li class="nav-main-item">
-            <a class="nav-main-link {{ request()->routeIs('question-packages.*') || request()->routeIs('questions.*') ? 'active' : '' }}"
-                href="{{ route('question-packages.index') }}">
-                <i class="nav-main-link-icon fa fa-folder-open"></i>
-                <span class="nav-main-link-name">Kelola Paket Soal</span>
+            <a class="nav-main-link {{ request()->fullUrlIs(route('question-packages.index', ['type' => 'multiple_choice'])) ? 'active' : '' }}"
+                href="{{ route('question-packages.index', ['type' => 'multiple_choice']) }}">
+                <i class="nav-main-link-icon fa fa-check-square"></i>
+                <span class="nav-main-link-name">Paket Soal Pilihan Ganda</span>
             </a>
         </li>
         <li class="nav-main-item">
             <a class="nav-main-link {{ request()->fullUrlIs(route('question-packages.index', ['type' => 'essay'])) ? 'active' : '' }}"
                 href="{{ route('question-packages.index', ['type' => 'essay']) }}">
-                <i class="nav-main-link-icon fa fa-file-alt"></i>
-                <span class="nav-main-link-name">Soal Uraian</span>
+                <i class="nav-main-link-icon fa fa-keyboard"></i>
+                <span class="nav-main-link-name">Paket Soal Isian Singkat</span>
+            </a>
+        </li>
+        <li class="nav-main-item">
+            <a class="nav-main-link {{ request()->fullUrlIs(route('question-packages.index', ['type' => 'mixed'])) ? 'active' : '' }}"
+                href="{{ route('question-packages.index', ['type' => 'mixed']) }}">
+                <i class="nav-main-link-icon fa fa-layer-group"></i>
+                <span class="nav-main-link-name">Paket Soal Campuran</span>
             </a>
         </li>
         @endif
@@ -60,7 +67,7 @@
         </li>
         @endif
         
-        <li class="nav-main-item">
+        <li class="nav-main-item mt-4">
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                 @csrf
             </form>

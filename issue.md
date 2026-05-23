@@ -1,64 +1,42 @@
-# Rencana Implementasi: Fitur Soal Tipe Uraian (Essay)
+# Issue: Perapihan Sidebar dan Pemisahan Paket Soal
 
-## Deskripsi Masalah
-Saat ini sistem hanya mendukung soal pilihan ganda. Diperlukan penambahan tipe soal baru yaitu **Uraian (Essay)**. Mekanisme pengelolaan paket soal tetap sama, namun pada saat pengisian jawaban, siswa akan mengetikkan teks uraian alih-alih memilih opsi A-E.
+## Deskripsi
+Sidebar saat ini kurang rapi dan menu manajemen soal perlu dipisah berdasarkan tipe soal agar pengguna lebih mudah mengelola paket ujian. Selain itu, jarak tombol logout perlu disesuaikan agar tampilan lebih nyaman.
 
-## Tujuan
-1. Mendukung pembuatan soal tipe uraian.
-2. Menampilkan kolom input teks pada halaman ujian untuk soal tipe uraian.
-3. Menambahkan menu navigasi baru di sidebar untuk akses cepat pengelolaan tipe soal ini.
+## Planning Implementasi
 
----
+### 1. Perubahan Struktur Menu (Sidebar)
+Ubah menu di `resources/views/partials/sidebar/sidebar-nav.blade.php`.
+- Hapus menu "Manajemen Soal" yang lama.
+- Tambahkan sub-menu baru di bawah CBT & Ujian:
+    1. **Paket Soal Pilihan Ganda** (Link ke `question-packages.index` dengan filter `type=multiple_choice`)
+    2. **Paket Soal Isian Singkat** (Link ke `question-packages.index` dengan filter `type=essay`)
+    3. **Paket Soal Campuran** (Link ke `question-packages.index` dengan filter `type=mixed`)
+    4. **Mulai Ujian** (Link ke `exams.index`)
 
-## Rencana Pengerjaan (Panduan Junior Developer/AI)
+### 2. Penyesuaian Backend (Filter)
+- Update `QuestionPackageController@index` untuk menangani parameter `type` baru.
+- Logika filter:
+    - `multiple_choice`: Filter paket yang *hanya* berisi soal `multiple_choice`.
+    - `essay`: Filter paket yang *hanya* berisi soal `essay`.
+    - `mixed`: Filter paket yang berisi *kombinasi* keduanya.
 
-### 1. Perubahan Database (Migration)
-Kita perlu membedakan mana soal pilihan ganda dan mana soal uraian.
-- **File:** `database/migrations/xxxx_add_type_to_questions_table.php`
-- **Tugas:** Tambahkan kolom `question_type` pada tabel `questions`.
-- **Nilai:** `multiple_choice` (default) dan `essay`.
-- **Perubahan tabel responses:** Pastikan tabel `question_responses` memiliki kolom `essay_answer` (text/longText) untuk menyimpan jawaban uraian siswa.
-
-### 2. Pembaruan Model (`app/Models/Question.php`)
-- Tambahkan konstanta untuk tipe soal:
-  ```php
-  const TYPE_MULTIPLE_CHOICE = 'multiple_choice';
-  const TYPE_ESSAY = 'essay';
-  ```
-- Tambahkan logic di model untuk mengecek tipe: `isEssay()` dan `isMultipleChoice()`.
-
-### 3. Antarmuka Pengguna (UI/UX)
-
-#### A. Sidebar Menu
-- **File:** `resources/views/partials/sidebar/sidebar.blade.php` (atau file sidebar terkait).
-- **Tugas:** Tambahkan item menu baru "Soal Uraian" yang mengarah ke daftar paket soal yang difilter atau halaman manajemen terkait.
-
-#### B. Pembuatan Soal
-- **File:** `resources/views/questions/create.blade.php`
-- **Tugas:** Tambahkan pilihan (dropdown/radio) untuk memilih tipe soal. Jika memilih `essay`, sembunyikan input 5 opsi jawaban menggunakan JavaScript sederhana.
-
-#### C. Halaman Ujian (Exam Attempt)
-- **File:** `resources/views/exams/attempt.blade.php`
-- **Tugas:** 
-    - Cek `$question->question_type`.
-    - Jika `multiple_choice`: Tampilkan radio button A-E (seperti yang sudah ada).
-    - Jika `essay`: Tampilkan `<textarea>` agar siswa bisa mengetik jawaban.
-    - Pastikan fungsi `autoSaveAnswer` juga mengirim data teks uraian ke server.
-
-### 4. Logic Penyimpanan (Controller)
-- **File:** `app/Http/Controllers/QuestionController.php` & `ExamController.php`
-- **Tugas:** 
-    - Sesuaikan fungsi `store` dan `update` soal untuk menangani field `question_type`.
-    - Sesuaikan fungsi `saveResponse` di `ExamController` untuk menyimpan ke kolom `essay_answer` jika tipe soal adalah essay.
+### 3. Perubahan Styling
+- Cari class CSS untuk tombol logout di sidebar.
+- Tambahkan `margin-top` atau `padding-top` agar tombol logout terpisah (ada jarak) dari daftar menu di atasnya.
 
 ---
 
-## Langkah Verifikasi
-1. Buat soal baru dengan tipe "Uraian" di salah satu paket.
-2. Pastikan input pilihan ganda tidak muncul saat membuat soal uraian.
-3. Masuk ke halaman ujian sebagai siswa.
-4. Pastikan soal tipe uraian menampilkan `textarea` dan jawaban tersimpan secara otomatis saat mengetik (debounce/onblur).
-5. Cek di database apakah kolom `essay_answer` terisi dengan benar.
+### Panduan Teknis untuk Implementator
 
----
-*Catatan:* Gunakan class Bootstrap yang konsisten dengan tema **Codebase** agar UI tetap rapi. Untuk referensi styling codebase terdapat pada folder _codebase-source-html
+**Langkah 1: Update Route/Controller**
+- Pastikan route `question-packages.index` bisa menerima parameter query `type`.
+- Di `QuestionPackageController@index`, tambahkan logika `switch` atau `if` untuk memfilter koleksi paket soal berdasarkan relasi soalnya.
+
+**Langkah 2: Update View Sidebar**
+- Buka `resources/views/partials/sidebar/sidebar-nav.blade.php`.
+- Gunakan struktur `<ul>` dan `<li>` yang konsisten dengan template Codebase.
+- Gunakan `request()->query('type')` untuk memberikan class `active` pada menu yang sedang dipilih.
+
+**Langkah 3: Styling**
+- Jika perlu, tambahkan style khusus di file CSS atau gunakan class utility Bootstrap seperti `mt-4` pada elemen tombol logout.
