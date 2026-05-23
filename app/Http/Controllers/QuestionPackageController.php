@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\QuestionPackage;
+use App\Models\QuestionAttempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
