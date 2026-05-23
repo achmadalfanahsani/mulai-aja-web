@@ -92,11 +92,11 @@
                                             <form action="{{ route('question-packages.toggle-publish', $package->id) }}" method="POST">
                                                 @csrf
                                                 @if ($package->is_published)
-                                                    <button type="submit" class="btn btn-sm btn-success bg-success-light text-success font-w600 border-0 rounded-pill px-3">
+                                                    <button type="submit" class="btn btn-sm btn-success bg-success-light text-success font-w600 border-0 rounded-pill px-3" style="white-space: nowrap;">
                                                         <i class="fa fa-check me-1"></i> Published
                                                     </button>
                                                 @else
-                                                    <button type="submit" class="btn btn-sm btn-warning bg-warning-light text-warning font-w600 border-0 rounded-pill px-3">
+                                                    <button type="submit" class="btn btn-sm btn-warning bg-warning-light text-warning font-w600 border-0 rounded-pill px-3" style="white-space: nowrap;">
                                                         <i class="fa fa-lock me-1"></i> Draft
                                                     </button>
                                                 @endif
@@ -104,31 +104,47 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group">
-                                                <a href="{{ route('question-packages.results', $package->id) }}" 
-                                                   class="btn btn-sm btn-alt-success" 
-                                                   data-toggle="tooltip" 
-                                                   title="Lihat Hasil Pengerjaan">
+                                                <a href="{{ route('question-packages.results', $package->id) }}" class="btn btn-sm btn-alt-success" data-toggle="tooltip" title="Lihat Hasil Pengerjaan">
                                                     <i class="fa fa-chart-line"></i>
                                                 </a>
-                                                <a href="{{ route('question-packages.questions.index', $package->id) }}" 
-                                                   class="btn btn-sm btn-alt-info" 
-                                                   data-toggle="tooltip" 
-                                                   title="Kelola Soal">
+                                                <a href="{{ route('question-packages.questions.index', $package->id) }}" class="btn btn-sm btn-alt-info" data-toggle="tooltip" title="Kelola Soal">
                                                     <i class="fa fa-list"></i>
                                                 </a>
-                                                <a href="{{ route('question-packages.edit', $package->id) }}" 
-                                                   class="btn btn-sm btn-alt-warning" 
-                                                   data-toggle="tooltip" 
-                                                   title="Edit Paket">
+                                                <a href="{{ route('question-packages.edit', $package->id) }}" class="btn btn-sm btn-alt-warning" data-toggle="tooltip" title="Edit Paket">
                                                     <i class="fa fa-pencil-alt"></i>
                                                 </a>
-                                                <form action="{{ route('question-packages.destroy', $package->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus paket soal ini? Seluruh data soal dan jawaban siswa akan hilang!')" style="display:inline-block;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-alt-danger" data-toggle="tooltip" title="Hapus Paket">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                                <button type="button" class="btn btn-sm btn-alt-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-{{ $package->id }}" title="Hapus Paket">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- Delete Modal -->
+                                            <div class="modal fade" id="modal-delete-{{ $package->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-delete-{{ $package->id }}" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('question-packages.destroy', $package->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <div class="block block-rounded shadow-none mb-0">
+                                                                <div class="block-header block-header-default">
+                                                                    <h3 class="block-title">Hapus Paket Soal: {{ $package->name }}</h3>
+                                                                    <div class="block-options">
+                                                                        <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                                                                            <i class="fa fa-times"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="block-content fs-sm py-4">
+                                                                    <p class="mb-0">Apakah Anda yakin ingin menghapus paket soal ini? Seluruh data soal dan jawaban siswa akan hilang!</p>
+                                                                </div>
+                                                                <div class="block-content block-content-full block-content-sm text-end border-top">
+                                                                    <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                    <button type="submit" class="btn btn-alt-danger">Ya, Hapus</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
