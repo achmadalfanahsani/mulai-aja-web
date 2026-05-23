@@ -37,6 +37,19 @@ Ditemukan `ParseError: syntax error, unexpected token "public"` pada `app/Http/C
 
 ---
 
-## 📝 Catatan Tambahan
-- Semua perubahan telah mengikuti standar penulisan Laravel dan menggunakan fitur bawaan seperti Route Model Binding.
-- Pesan sukses/error (Flash Messages) telah diintegrasikan untuk memberikan feedback kepada pengguna.
+## 3. Issue: Class "QuestionAttempt" Not Found di QuestionPackageController
+
+### Deskripsi
+Saat mengakses halaman hasil pengerjaan (`/question-packages/{id}/results`), muncul error *Internal Server Error* dengan pesan:
+`Class "App\Http\Controllers\QuestionAttempt" not found`.
+
+Ini terjadi karena model `QuestionAttempt` digunakan di dalam `QuestionPackageController` (pada method `results`), namun belum di-import menggunakan pernyataan `use` di bagian atas file.
+
+### Rencana Aksi
+- [x] **Identifikasi File:** Buka file `app/Http/Controllers/QuestionPackageController.php`.
+- [x] **Tambah Import:** Tambahkan `use App\Models\QuestionAttempt;` di bagian atas file.
+- [x] **Verifikasi Kode:** Pastikan baris tersebut diletakkan bersama dengan import model lainnya.
+- [x] **Pengujian:** Akses rute `/question-packages/{id}/results` dan pastikan halaman dimuat.
+
+### Status: ✅ SELESAI
+*Model QuestionAttempt telah di-import di QuestionPackageController dan verifikasi sukses.*
