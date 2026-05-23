@@ -32,6 +32,13 @@ class QuestionPackageController extends Controller {
             $query->where('is_published', $isPublished);
         }
 
+        // Filter by question type (ESSAY)
+        if ($request->get('type') === 'essay') {
+            $query->whereHas('questions', function($q) {
+                $q->where('question_type', 'essay');
+            });
+        }
+
         $packages = $query->withCount('questions')->latest()->paginate(10)->withQueryString();
 
         return view('question_packages.index', compact('packages'));

@@ -29,19 +29,25 @@ class QuestionController extends Controller {
      * Simpan soal baru beserta 5 opsi jawabannya.
      */
     public function store(Request $request, QuestionPackage $questionPackage) {
-        $request->validate([
+        $rules = [
+            'question_type' => 'required|in:multiple_choice,essay',
             'question_text' => 'required|string',
             'explanation' => 'nullable|string',
             'question_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'correct_answer' => 'required|in:A,B,C,D,E',
             'difficulty_level' => 'nullable|in:easy,medium,hard',
-            'options' => 'required|array|size:5',
-            'options.A' => 'required|string',
-            'options.B' => 'required|string',
-            'options.C' => 'required|string',
-            'options.D' => 'required|string',
-            'options.E' => 'required|string',
-        ]);
+        ];
+
+        if ($request->question_type === 'multiple_choice') {
+            $rules['correct_answer'] = 'required|in:A,B,C,D,E';
+            $rules['options'] = 'required|array|size:5';
+            $rules['options.A'] = 'required|string';
+            $rules['options.B'] = 'required|string';
+            $rules['options.C'] = 'required|string';
+            $rules['options.D'] = 'required|string';
+            $rules['options.E'] = 'required|string';
+        }
+
+        $request->validate($rules);
 
         DB::transaction(function () use ($request, $questionPackage) {
             $imagePath = null;
@@ -58,22 +64,25 @@ class QuestionController extends Controller {
             // Simpan Soal
             $question = Question::create([
                 'question_package_id' => $questionPackage->id,
+                'question_type' => $request->question_type,
                 'question_text' => $request->question_text,
                 'explanation' => $request->explanation,
                 'question_image_path' => $imagePath,
-                'correct_answer' => $request->correct_answer,
+                'correct_answer' => $request->question_type === 'multiple_choice' ? $request->correct_answer : null,
                 'difficulty_level' => $request->difficulty_level ?? 'medium',
                 'order' => $nextOrder,
                 'is_active' => true,
             ]);
 
-            // Simpan 5 opsi
-            foreach ($request->options as $label => $text) {
-                QuestionOption::create([
-                    'question_id' => $question->id,
-                    'option_label' => $label,
-                    'option_text' => $text,
-                ]);
+            // Simpan 5 opsi jika pilihan ganda
+            if ($request->question_type === 'multiple_choice') {
+                foreach ($request->options as $label => $text) {
+                    QuestionOption::create([
+                        'question_id' => $question->id,
+                        'option_label' => $label,
+                        'option_text' => $text,
+                    ]);
+                }
             }
 
             // Update cache total questions di package
@@ -99,19 +108,25 @@ class QuestionController extends Controller {
      */
     public function update(Request $request, Question $question) {
         $questionPackage = $question->questionPackage;
-        $request->validate([
+        $rules = [
+            'question_type' => 'required|in:multiple_choice,essay',
             'question_text' => 'required|string',
             'explanation' => 'nullable|string',
             'question_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'correct_answer' => 'required|in:A,B,C,D,E',
             'difficulty_level' => 'nullable|in:easy,medium,hard',
-            'options' => 'required|array|size:5',
-            'options.A' => 'required|string',
-            'options.B' => 'required|string',
-            'options.C' => 'required|string',
-            'options.D' => 'required|string',
-            'options.E' => 'required|string',
-        ]);
+        ];
+
+        if ($request->question_type === 'multiple_choice') {
+            $rules['correct_answer'] = 'required|in:A,B,C,D,E';
+            $rules['options'] = 'required|array|size:5';
+            $rules['options.A'] = 'required|string';
+            $rules['options.B'] = 'required|string';
+            $rules['options.C'] = 'required|string';
+            $rules['options.D'] = 'required|string';
+            $rules['options.E'] = 'required|string';
+        }
+
+        $request->validate($rules);
 
         DB::transaction(function () use ($request, $questionPackage, $question) {
             $imagePath = $question->question_image_path;
@@ -131,24 +146,30 @@ class QuestionController extends Controller {
 
             // Update Soal
             $question->update([
+                'question_type' => $request->question_type,
                 'question_text' => $request->question_text,
                 'explanation' => $request->explanation,
                 'question_image_path' => $imagePath,
-                'correct_answer' => $request->correct_answer,
+                'correct_answer' => $request->question_type === 'multiple_choice' ? $request->correct_answer : null,
                 'difficulty_level' => $request->difficulty_level ?? 'medium',
             ]);
 
-            // Update 5 opsi
-            foreach ($request->options as $label => $text) {
-                QuestionOption::updateOrCreate(
-                    [
-                        'question_id' => $question->id,
-                        'option_label' => $label
-                    ],
-                    [
-                        'option_text' => $text
-                    ]
-                );
+            // Update 5 opsi jika pilihan ganda
+            if ($request->question_type === 'multiple_choice') {
+                foreach ($request->options as $label => $text) {
+                    QuestionOption::updateOrCreate(
+                        [
+                            'question_id' => $question->id,
+                            'option_label' => $label
+                        ],
+                        [
+                            'option_text' => $text
+                        ]
+                    );
+                }
+            } else {
+                // Jika berubah dari pilihan ganda ke essay, hapus opsinya
+                $question->options()->delete();
             }
         });
 

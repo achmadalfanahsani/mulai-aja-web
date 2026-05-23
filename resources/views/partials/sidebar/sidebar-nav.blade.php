@@ -40,6 +40,13 @@
                 <span class="nav-main-link-name">Kelola Paket Soal</span>
             </a>
         </li>
+        <li class="nav-main-item">
+            <a class="nav-main-link {{ request()->fullUrlIs(route('question-packages.index', ['type' => 'essay'])) ? 'active' : '' }}"
+                href="{{ route('question-packages.index', ['type' => 'essay']) }}">
+                <i class="nav-main-link-icon fa fa-file-alt"></i>
+                <span class="nav-main-link-name">Soal Uraian</span>
+            </a>
+        </li>
         @endif
 
         {{-- Exam Taking: Student, Administrator, Superuser --}}

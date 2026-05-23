@@ -1,43 +1,64 @@
-# Issue: Image Display Not Working in Question Management and Exam Attempt
+# Rencana Implementasi: Fitur Soal Tipe Uraian (Essay)
 
-## Description
-Images uploaded for questions are not displaying in the following areas:
-1. **Question List View:** `/question-packages/{id}/questions`
-2. **Exam Attempt View:** `/exams/attempt/{id}`
+## Deskripsi Masalah
+Saat ini sistem hanya mendukung soal pilihan ganda. Diperlukan penambahan tipe soal baru yaitu **Uraian (Essay)**. Mekanisme pengelolaan paket soal tetap sama, namun pada saat pengisian jawaban, siswa akan mengetikkan teks uraian alih-alih memilih opsi A-E.
 
-## Objective
-Enable images to be rendered correctly in both the administrative question management interface and the student-facing exam interface.
+## Tujuan
+1. Mendukung pembuatan soal tipe uraian.
+2. Menampilkan kolom input teks pada halaman ujian untuk soal tipe uraian.
+3. Menambahkan menu navigasi baru di sidebar untuk akses cepat pengelolaan tipe soal ini.
 
-## Technical Context
-- Images are likely stored in `storage/app/public/questions`.
-- The current implementation likely uses relative paths or lacks the proper URL generation (e.g., using `Storage::url()`).
+---
 
-## Plan for Implementation
+## Rencana Pengerjaan (Panduan Junior Developer/AI)
 
-### 1. Research & Verification
-- Check how the `Question` model handles the image path.
-- Identify the current Blade views for the question list and exam attempt.
-- Verify if `storage:link` has been executed (the `public/storage` symlink should point to `storage/app/public`).
+### 1. Perubahan Database (Migration)
+Kita perlu membedakan mana soal pilihan ganda dan mana soal uraian.
+- **File:** `database/migrations/xxxx_add_type_to_questions_table.php`
+- **Tugas:** Tambahkan kolom `question_type` pada tabel `questions`.
+- **Nilai:** `multiple_choice` (default) dan `essay`.
+- **Perubahan tabel responses:** Pastikan tabel `question_responses` memiliki kolom `essay_answer` (text/longText) untuk menyimpan jawaban uraian siswa.
 
-### 2. Implementation Steps
-- **Step 1: Check/Create Symlink**
-  Ensure the storage link exists:
-  ```bash
-  php artisan storage:link
+### 2. Pembaruan Model (`app/Models/Question.php`)
+- Tambahkan konstanta untuk tipe soal:
+  ```php
+  const TYPE_MULTIPLE_CHOICE = 'multiple_choice';
+  const TYPE_ESSAY = 'essay';
   ```
+- Tambahkan logic di model untuk mengecek tipe: `isEssay()` dan `isMultipleChoice()`.
 
-- **Step 2: Update View Controllers/Models**
-  - Ensure the `Question` model returns the correct full URL or path for the image.
-  - In Blade templates, use the `asset()` helper or `Storage::url()` to generate the correct source URL for `<img>` tags.
+### 3. Antarmuka Pengguna (UI/UX)
 
-- **Step 3: Update Views**
-  - Locate the `<img>` tags in the following files:
-    - `resources/views/questions/index.blade.php` (or relevant view)
-    - `resources/views/exams/attempt.blade.php`
-  - Ensure they look like:
-    `<img src="{{ asset('storage/' . $question->image_path) }}" alt="Question Image">`
+#### A. Sidebar Menu
+- **File:** `resources/views/partials/sidebar/sidebar.blade.php` (atau file sidebar terkait).
+- **Tugas:** Tambahkan item menu baru "Soal Uraian" yang mengarah ke daftar paket soal yang difilter atau halaman manajemen terkait.
 
-### 3. Verification
-- Upload a new image for a question.
-- Navigate to the Question Management list and verify the image displays.
-- Start an exam attempt and verify the image displays within the test interface.
+#### B. Pembuatan Soal
+- **File:** `resources/views/questions/create.blade.php`
+- **Tugas:** Tambahkan pilihan (dropdown/radio) untuk memilih tipe soal. Jika memilih `essay`, sembunyikan input 5 opsi jawaban menggunakan JavaScript sederhana.
+
+#### C. Halaman Ujian (Exam Attempt)
+- **File:** `resources/views/exams/attempt.blade.php`
+- **Tugas:** 
+    - Cek `$question->question_type`.
+    - Jika `multiple_choice`: Tampilkan radio button A-E (seperti yang sudah ada).
+    - Jika `essay`: Tampilkan `<textarea>` agar siswa bisa mengetik jawaban.
+    - Pastikan fungsi `autoSaveAnswer` juga mengirim data teks uraian ke server.
+
+### 4. Logic Penyimpanan (Controller)
+- **File:** `app/Http/Controllers/QuestionController.php` & `ExamController.php`
+- **Tugas:** 
+    - Sesuaikan fungsi `store` dan `update` soal untuk menangani field `question_type`.
+    - Sesuaikan fungsi `saveResponse` di `ExamController` untuk menyimpan ke kolom `essay_answer` jika tipe soal adalah essay.
+
+---
+
+## Langkah Verifikasi
+1. Buat soal baru dengan tipe "Uraian" di salah satu paket.
+2. Pastikan input pilihan ganda tidak muncul saat membuat soal uraian.
+3. Masuk ke halaman ujian sebagai siswa.
+4. Pastikan soal tipe uraian menampilkan `textarea` dan jawaban tersimpan secara otomatis saat mengetik (debounce/onblur).
+5. Cek di database apakah kolom `essay_answer` terisi dengan benar.
+
+---
+*Catatan:* Gunakan class Bootstrap yang konsisten dengan tema **Codebase** agar UI tetap rapi. Untuk referensi styling codebase terdapat pada folder _codebase-source-html

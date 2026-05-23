@@ -37,6 +37,18 @@
                     </div>
 
                     <div class="row">
+                        {{-- Question Type --}}
+                        <div class="col-md-6 form-group mb-4">
+                            <label class="form-label" for="question_type">Tipe Soal</label>
+                            <select class="form-select @error('question_type') is-invalid @enderror" id="question_type" name="question_type" onchange="toggleOptions()">
+                                <option value="multiple_choice" {{ old('question_type', 'multiple_choice') == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
+                                <option value="essay" {{ old('question_type') == 'essay' ? 'selected' : '' }}>Uraian (Essay)</option>
+                            </select>
+                            @error('question_type')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         {{-- Difficulty --}}
                         <div class="col-md-6 form-group mb-4">
                             <label class="form-label" for="difficulty_level">Tingkat Kesulitan</label>
@@ -49,9 +61,11 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                    </div>
 
+                    <div class="row">
                         {{-- Gambar Pendukung --}}
-                        <div class="col-md-6 form-group mb-4">
+                        <div class="col-md-12 form-group mb-4">
                             <label class="form-label" for="question_image">Gambar Penjelas (Opsional)</label>
                             <input class="form-control @error('question_image') is-invalid @enderror" type="file" id="question_image" name="question_image" accept="image/*">
                             <small class="text-muted">Maksimal resolusi gambar 2MB. Format: png, jpg, jpeg.</small>
@@ -61,31 +75,33 @@
                         </div>
                     </div>
 
-                    <hr class="my-4">
+                    <div id="options-container">
+                        <hr class="my-4">
 
-                    {{-- 5 Opsi Jawaban --}}
-                    <h4 class="font-size-md font-w700 text-uppercase text-muted mb-4"><i class="fa fa-list me-1"></i> Opsi Jawaban & Kunci Jawaban</h4>
-                    
-                    @foreach (['A' => 1, 'B' => 2, 'C' => 3, 'D' => 4, 'E' => 5] as $label => $index)
-                        <div class="row mb-3 align-items-center">
-                            <div class="col-auto">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="correct_answer" id="correct_{{ $label }}" value="{{ $label }}" {{ old('correct_answer') == $label ? 'checked' : ($label == 'A' ? 'checked' : '') }} required>
-                                    <label class="form-check-label font-w700 text-primary font-size-lg" for="correct_{{ $label }}" data-toggle="tooltip" title="Pilih sebagai kunci jawaban yang benar">
-                                    </label>
+                        {{-- 5 Opsi Jawaban --}}
+                        <h4 class="font-size-md font-w700 text-uppercase text-muted mb-4"><i class="fa fa-list me-1"></i> Opsi Jawaban & Kunci Jawaban</h4>
+                        
+                        @foreach (['A' => 1, 'B' => 2, 'C' => 3, 'D' => 4, 'E' => 5] as $label => $index)
+                            <div class="row mb-3 align-items-center">
+                                <div class="col-auto">
+                                    <div class="form-check">
+                                        <input class="form-check-input multiple-choice-input" type="radio" name="correct_answer" id="correct_{{ $label }}" value="{{ $label }}" {{ old('correct_answer') == $label ? 'checked' : ($label == 'A' ? 'checked' : '') }}>
+                                        <label class="form-check-label font-w700 text-primary font-size-lg" for="correct_{{ $label }}" data-toggle="tooltip" title="Pilih sebagai kunci jawaban yang benar">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control multiple-choice-input @error('options.' . $label) is-invalid @enderror" 
+                                           name="options[{{ $label }}]" value="{{ old('options.' . $label) }}" 
+                                           placeholder="Ketikkan teks untuk Opsi {{ $index }}...">
+                                    @error('options.' . $label)
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
-                            <div class="col">
-                                <input type="text" class="form-control @error('options.' . $label) is-invalid @enderror" 
-                                       name="options[{{ $label }}]" value="{{ old('options.' . $label) }}" 
-                                       placeholder="Ketikkan teks untuk Opsi {{ $index }}..." required>
-                                @error('options.' . $label)
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    @endforeach
-                    <small class="text-muted d-block mb-4"><i class="fa fa-info-circle me-1"></i> Centang *Radio Button* di sebelah kiri opsi untuk memilih **kunci jawaban yang benar**.</small>
+                        @endforeach
+                        <small class="text-muted d-block mb-4"><i class="fa fa-info-circle me-1"></i> Centang *Radio Button* di sebelah kiri opsi untuk memilih **kunci jawaban yang benar**.</small>
+                    </div>
 
                     <hr class="my-4">
 
@@ -116,8 +132,28 @@
 
 @push('scripts')
 <script>
+    function toggleOptions() {
+        const type = document.getElementById('question_type').value;
+        const container = document.getElementById('options-container');
+        const inputs = document.querySelectorAll('.multiple-choice-input');
+        
+        if (type === 'essay') {
+            container.style.display = 'none';
+            inputs.forEach(input => input.required = false);
+        } else {
+            container.style.display = 'block';
+            inputs.forEach(input => {
+                if (input.type === 'text') {
+                    input.required = true;
+                }
+            });
+        }
+    }
+
     // Inisialisasi tooltips bootstrap
     document.addEventListener("DOMContentLoaded", function() {
+        toggleOptions(); // Run on load to set initial state
+        
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)

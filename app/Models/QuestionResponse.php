@@ -13,6 +13,7 @@ class QuestionResponse extends Model {
         'question_attempt_id',
         'question_id',
         'selected_answer',
+        'essay_answer',
         'is_correct',
         'time_spent_seconds',
     ];
@@ -50,7 +51,10 @@ class QuestionResponse extends Model {
      * Check apakah user tidak menjawab
      */
     public function isUnanswered(): bool {
-        return is_null($this->selected_answer);
+        if ($this->question->isMultipleChoice()) {
+            return is_null($this->selected_answer);
+        }
+        return is_null($this->essay_answer) || trim($this->essay_answer) === '';
     }
 
     /**

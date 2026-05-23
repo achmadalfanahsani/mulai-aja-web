@@ -13,6 +13,7 @@ class Question extends Model {
 
     protected $fillable = [
         'question_package_id',
+        'question_type',
         'question_text',
         'explanation',
         'question_image_path',
@@ -21,6 +22,17 @@ class Question extends Model {
         'order',
         'is_active',
     ];
+
+    const TYPE_MULTIPLE_CHOICE = 'multiple_choice';
+    const TYPE_ESSAY = 'essay';
+
+    public function isEssay(): bool {
+        return $this->question_type === self::TYPE_ESSAY;
+    }
+
+    public function isMultipleChoice(): bool {
+        return $this->question_type === self::TYPE_MULTIPLE_CHOICE;
+    }
 
     protected $casts = [
         'is_active' => 'boolean',

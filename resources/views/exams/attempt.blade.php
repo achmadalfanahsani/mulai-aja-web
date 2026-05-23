@@ -181,31 +181,44 @@
                     </div>
                 @endif
 
-                {{-- 5 Opsi Pilihan Jawaban A-E --}}
+                {{-- Pilihan Jawaban (Multiple Choice or Essay) --}}
                 <div class="mb-4">
                     <form id="draft-form" action="{{ route('exams.save-response', $questionAttempt->id) }}" method="POST">
                         @csrf
                         <input type="hidden" name="question_id" value="{{ $question->id }}">
                         
-                        <div class="cbt-options-list">
-                            @foreach ($options as $option)
-                                @php
-                                    $isSelected = $currentResponse && $currentResponse->selected_answer === $option->option_label;
-                                @endphp
-                                <label class="cbt-option-wrapper d-block mb-3 {{ $isSelected ? 'selected' : '' }}" style="cursor:pointer;">
-                                    <input type="radio" name="selected_answer" value="{{ $option->option_label }}" 
-                                           class="cbt-option-input d-none" 
-                                           {{ $isSelected ? 'checked' : '' }}
-                                           onchange="autoSaveAnswer('{{ $option->option_label }}', this)">
-                                    
-                                    <div class="cbt-option border rounded p-3 d-flex align-items-center">
-                                        <div class="font-size-sm flex-grow-1 cbt-option-text">
-                                            {{ $option->option_text }}
+                        @if($question->isMultipleChoice())
+                            <div class="cbt-options-list">
+                                @foreach ($options as $option)
+                                    @php
+                                        $isSelected = $currentResponse && $currentResponse->selected_answer === $option->option_label;
+                                    @endphp
+                                    <label class="cbt-option-wrapper d-block mb-3 {{ $isSelected ? 'selected' : '' }}" style="cursor:pointer;">
+                                        <input type="radio" name="selected_answer" value="{{ $option->option_label }}" 
+                                               class="cbt-option-input d-none" 
+                                               {{ $isSelected ? 'checked' : '' }}
+                                               onchange="autoSaveAnswer('{{ $option->option_label }}', 'multiple_choice')">
+                                        
+                                        <div class="cbt-option border rounded p-3 d-flex align-items-center">
+                                            <div class="font-size-sm flex-grow-1 cbt-option-text">
+                                                {{ $option->option_text }}
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                            @endforeach
-                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+                        @else
+                            {{-- Essay Input --}}
+                            <div class="essay-container">
+                                <label class="form-label" for="essay_answer">Tuliskan Jawaban Uraian Anda:</label>
+                                <textarea class="form-control" id="essay_answer" name="essay_answer" rows="10" 
+                                          placeholder="Ketikkan jawaban Anda di sini..."
+                                          onblur="autoSaveAnswer(this.value, 'essay')">{{ $currentResponse->essay_answer ?? '' }}</textarea>
+                                <div class="mt-2 text-muted font-size-xs">
+                                    <i class="fa fa-info-circle me-1"></i> Jawaban otomatis tersimpan saat Anda berpindah ke kolom lain atau soal lain.
+                                </div>
+                            </div>
+                        @endif
                     </form>
                 </div>
             </div>
@@ -374,12 +387,14 @@
 </script>
 <script>
     // 1. DRAFT ANSWER AUTO-SAVE VIA AJAX FETCH
-    function autoSaveAnswer(answer, element) {
-        // Highlight active option wrapper
-        document.querySelectorAll('.cbt-option-wrapper').forEach(function(el) {
-            el.classList.remove('selected');
-        });
-        element.closest('.cbt-option-wrapper').classList.add('selected');
+    function autoSaveAnswer(answer, type) {
+        if (type === 'multiple_choice') {
+            // Highlight active option wrapper
+            document.querySelectorAll('.cbt-option-wrapper').forEach(function(el) {
+                el.classList.remove('selected');
+            });
+            event.target.closest('.cbt-option-wrapper').classList.add('selected');
+        }
 
         const indicator = document.getElementById('save-indicator');
         indicator.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Menyimpan...';
@@ -388,7 +403,12 @@
         const formData = new FormData();
         formData.append('_token', '{{ csrf_token() }}');
         formData.append('question_id', '{{ $question->id }}');
-        formData.append('selected_answer', answer);
+        
+        if (type === 'multiple_choice') {
+            formData.append('selected_answer', answer);
+        } else {
+            formData.append('essay_answer', answer);
+        }
 
         fetch('{{ route("exams.save-response", $questionAttempt->id) }}', {
             method: 'POST',

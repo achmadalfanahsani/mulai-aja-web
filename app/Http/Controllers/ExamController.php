@@ -223,10 +223,14 @@ class ExamController extends Controller {
         $navigation = [];
         foreach ($questionIds as $index => $qId) {
             $resp = $responsesStatus[$qId] ?? null;
+            $isAnswered = false;
+            if ($resp) {
+                $isAnswered = !is_null($resp->selected_answer) || !is_null($resp->essay_answer);
+            }
             $navigation[] = [
                 'number' => $index + 1,
                 'question_id' => $qId,
-                'is_answered' => $resp && !is_null($resp->selected_answer),
+                'is_answered' => $isAnswered,
                 'is_active' => ($index + 1) == $currentNumber,
             ];
         }
@@ -261,6 +265,7 @@ class ExamController extends Controller {
         $request->validate([
             'question_id' => 'required|exists:questions,id',
             'selected_answer' => 'nullable|in:A,B,C,D,E',
+            'essay_answer' => 'nullable|string',
         ]);
 
         // Simpan jawaban draft
@@ -271,6 +276,7 @@ class ExamController extends Controller {
             ],
             [
                 'selected_answer' => $request->selected_answer,
+                'essay_answer' => $request->essay_answer,
             ]
         );
 
