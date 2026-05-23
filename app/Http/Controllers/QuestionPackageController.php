@@ -11,18 +11,28 @@ class QuestionPackageController extends Controller {
     /**
      * Tampilkan semua paket soal yang dibuat oleh guru/admin yang sedang login.
      */
-    public function index() {
+    public function index(Request $request) {
         $user = Auth::user();
         
+        $query = QuestionPackage::query();
+
         // Administrator & Superuser bisa melihat semua, Teacher hanya melihat miliknya sendiri
-        if ($user->isAdministrator() || $user->isSuperuser()) {
-            $packages = QuestionPackage::withCount('questions')->latest()->paginate(10);
-        } else {
-            $packages = QuestionPackage::where('user_id', $user->id)
-                ->withCount('questions')
-                ->latest()
-                ->paginate(10);
+        if (!$user->isAdministrator() && !$user->isSuperuser()) {
+            $query->where('user_id', $user->id);
         }
+
+        // Filter by name
+        if ($request->filled('q')) {
+            $query->where('name', 'like', '%' . $request->q . '%');
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $isPublished = $request->status === 'published';
+            $query->where('is_published', $isPublished);
+        }
+
+        $packages = $query->withCount('questions')->latest()->paginate(10)->withQueryString();
 
         return view('question_packages.index', compact('packages'));
     }

@@ -1,34 +1,39 @@
+# Planning: Implementasi Filter pada `QuestionPackage`
 
-## Issue: UI/UX Improvements pada Halaman Kelola Paket Soal
+## Deskripsi
+Implementasikan fitur pencarian dan filter pada halaman daftar `QuestionPackage` (route `/question-packages`). Saat ini, daftar paket ditampilkan tanpa kemampuan untuk melakukan pencarian atau pemfilteran, yang menyulitkan admin/guru ketika jumlah paket sudah banyak.
 
-### Deskripsi
-Dibutuhkan beberapa peningkatan visual dan fungsional pada halaman `/question-packages` (Kelola Paket Soal) untuk meningkatkan pengalaman pengguna (UX) dan estetika antarmuka.
+## Target
+1.  Menambahkan formulir filter pada `resources/views/question_packages/index.blade.php`.
+2.  Memperbarui `QuestionPackageController@index` untuk menangani parameter request pencarian dan filter.
 
-Peningkatan yang diperlukan:
-1.  **Styling Tombol Aksi:** Mengubah kumpulan tombol aksi menjadi satu grup tombol yang terlihat menyatu.
-2.  **Responsivitas Label Status:** Memastikan label status (Draft/Published) tidak terlipat atau berubah ukuran saat layar mengecil.
-3.  **Konfirmasi Hapus:** Mengganti konfirmasi browser standar (`onsubmit="return confirm(...)"`) dengan modal konfirmasi Bootstrap yang lebih modern, serupa dengan yang ada di manajemen user.
+## Spesifikasi Filter
+- **Pencarian:** Cari berdasarkan nama paket.
+- **Filter Berdasarkan Status:** (Jika ada field status, tambahkan opsi filter aktif/non-aktif).
+- **Pagination:** Pastikan filter tetap terjaga saat pindah halaman (menggunakan `withQueryString()`).
 
-### Rencana Aksi (Panduan Junior Programmer)
+## Langkah Pengerjaan
+1.  **Backend (`QuestionPackageController`):**
+    - Ambil data `Request $request`.
+    - Buat query builder untuk model `QuestionPackage`.
+    - Tambahkan klausa `where` jika `$request->filled('q')` (search).
+    - Tambahkan klausa `where` untuk filter status jika diperlukan.
+    - Gunakan `paginate(10)->withQueryString()`.
+    - Kirim data ke view.
 
-#### 1. Memperbaiki Styling Tombol Aksi
-- Buka `resources/views/question_packages/index.blade.php`.
-- Temukan elemen `<div class="btn-group">` di dalam kolom aksi.
-- Pastikan semua elemen di dalamnya (link dan form) berada di dalam satu container `btn-group` agar terlihat menyatu sebagai satu kesatuan.
-- Gunakan class `btn-group` dari Bootstrap 5 untuk merapatkan tombol-tombol tersebut.
+2.  **Frontend (`index.blade.php`):**
+    - Tambahkan section `<form action="{{ route('question-packages.index') }}" method="GET">` di atas tabel.
+    - Tambahkan `input` untuk pencarian (`name="q"`) dan `select` untuk filter status.
+    - Pastikan nilai input diisi dengan `request('...')` untuk menjaga status setelah submit.
+    - Pastikan tombol submit memiliki icon filter.
 
-#### 2. Memperbaiki Label Status (Published/Draft)
-- Temukan bagian kolom Status di tabel.
-- Tambahkan inline CSS `white-space: nowrap;` atau gunakan class utilitas Bootstrap (jika tersedia) pada tombol status agar teks "Published" atau "Draft" tetap dalam satu baris dan tidak terpotong saat lebar kolom menyempit.
-- Contoh: `<button ... style="white-space: nowrap;">`.
+## Contoh Referensi
+Lihat implementasi pada:
+- `App\Http\Controllers\Superuser\UserController@index`
+- `resources/views/superuser/users/index.blade.php`
 
-#### 3. Implementasi Modal Konfirmasi Hapus
-- Hapus atribut `onsubmit="return confirm(...)"` pada tag `<form>` hapus yang ada saat ini.
-- Ubah tombol hapus (`<button type="submit" ...>`) menjadi tombol pemicu modal:
-  - Ganti `type="submit"` menjadi `type="button"`.
-  - Tambahkan atribut `data-bs-toggle="modal"` dan `data-bs-target="#modal-delete-{{ $package->id }}"`.
-- Tambahkan kode HTML Modal di dalam loop `@foreach`, diletakkan setelah tag `</tr>` atau di bagian bawah file.
-- Kode modal harus berisi form hapus yang sebenarnya, serupa dengan pola di `resources/views/superuser/users/index.blade.php`.
-
-### Status: ✅ SELESAI
-*Peningkatan UI/UX telah diimplementasikan: tombol aksi disatukan, label status diperbaiki, dan modal konfirmasi hapus telah diterapkan.*
+---
+*Catatan untuk Junior Developer:*
+- Pastikan untuk selalu menggunakan `withQueryString()` pada hasil pagination agar filter tidak hilang saat navigasi halaman.
+- Gunakan `Blade` directive untuk menjaga state form seperti `request('q')`.
+- Ikuti konsistensi styling Bootstrap 5 yang digunakan pada template Codebase.

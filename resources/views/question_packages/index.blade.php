@@ -36,6 +36,27 @@
             </div>
             
             <div class="block-content block-content-full">
+                <!-- Filter Form -->
+                <form action="{{ route('question-packages.index') }}" method="GET" class="mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <input type="text" name="q" class="form-control" placeholder="Cari Nama Paket..." value="{{ request('q') }}">
+                        </div>
+                        <div class="col-md-5">
+                            <select name="status" class="form-select">
+                                <option value="">Semua Status</option>
+                                <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Published</option>
+                                <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fa fa-filter me-1"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
                 @if ($packages->isEmpty())
                     <div class="text-center py-5">
                         <i class="fa fa-folder-open fa-3x text-muted mb-3"></i>
