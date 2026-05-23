@@ -82,7 +82,7 @@ class Question extends Model {
      */
     public function getImageUrl(): ?string {
         if ($this->hasImage()) {
-            return asset('storage/' . $this->question_image_path);
+            return '/storage/' . $this->question_image_path;
         }
         return null;
     }

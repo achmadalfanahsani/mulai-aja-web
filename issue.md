@@ -1,39 +1,43 @@
-# Planning: Implementasi Filter pada `QuestionPackage`
+# Issue: Image Display Not Working in Question Management and Exam Attempt
 
-## Deskripsi
-Implementasikan fitur pencarian dan filter pada halaman daftar `QuestionPackage` (route `/question-packages`). Saat ini, daftar paket ditampilkan tanpa kemampuan untuk melakukan pencarian atau pemfilteran, yang menyulitkan admin/guru ketika jumlah paket sudah banyak.
+## Description
+Images uploaded for questions are not displaying in the following areas:
+1. **Question List View:** `/question-packages/{id}/questions`
+2. **Exam Attempt View:** `/exams/attempt/{id}`
 
-## Target
-1.  Menambahkan formulir filter pada `resources/views/question_packages/index.blade.php`.
-2.  Memperbarui `QuestionPackageController@index` untuk menangani parameter request pencarian dan filter.
+## Objective
+Enable images to be rendered correctly in both the administrative question management interface and the student-facing exam interface.
 
-## Spesifikasi Filter
-- **Pencarian:** Cari berdasarkan nama paket.
-- **Filter Berdasarkan Status:** (Jika ada field status, tambahkan opsi filter aktif/non-aktif).
-- **Pagination:** Pastikan filter tetap terjaga saat pindah halaman (menggunakan `withQueryString()`).
+## Technical Context
+- Images are likely stored in `storage/app/public/questions`.
+- The current implementation likely uses relative paths or lacks the proper URL generation (e.g., using `Storage::url()`).
 
-## Langkah Pengerjaan
-1.  **Backend (`QuestionPackageController`):**
-    - Ambil data `Request $request`.
-    - Buat query builder untuk model `QuestionPackage`.
-    - Tambahkan klausa `where` jika `$request->filled('q')` (search).
-    - Tambahkan klausa `where` untuk filter status jika diperlukan.
-    - Gunakan `paginate(10)->withQueryString()`.
-    - Kirim data ke view.
+## Plan for Implementation
 
-2.  **Frontend (`index.blade.php`):**
-    - Tambahkan section `<form action="{{ route('question-packages.index') }}" method="GET">` di atas tabel.
-    - Tambahkan `input` untuk pencarian (`name="q"`) dan `select` untuk filter status.
-    - Pastikan nilai input diisi dengan `request('...')` untuk menjaga status setelah submit.
-    - Pastikan tombol submit memiliki icon filter.
+### 1. Research & Verification
+- Check how the `Question` model handles the image path.
+- Identify the current Blade views for the question list and exam attempt.
+- Verify if `storage:link` has been executed (the `public/storage` symlink should point to `storage/app/public`).
 
-## Contoh Referensi
-Lihat implementasi pada:
-- `App\Http\Controllers\Superuser\UserController@index`
-- `resources/views/superuser/users/index.blade.php`
+### 2. Implementation Steps
+- **Step 1: Check/Create Symlink**
+  Ensure the storage link exists:
+  ```bash
+  php artisan storage:link
+  ```
 
----
-*Catatan untuk Junior Developer:*
-- Pastikan untuk selalu menggunakan `withQueryString()` pada hasil pagination agar filter tidak hilang saat navigasi halaman.
-- Gunakan `Blade` directive untuk menjaga state form seperti `request('q')`.
-- Ikuti konsistensi styling Bootstrap 5 yang digunakan pada template Codebase.
+- **Step 2: Update View Controllers/Models**
+  - Ensure the `Question` model returns the correct full URL or path for the image.
+  - In Blade templates, use the `asset()` helper or `Storage::url()` to generate the correct source URL for `<img>` tags.
+
+- **Step 3: Update Views**
+  - Locate the `<img>` tags in the following files:
+    - `resources/views/questions/index.blade.php` (or relevant view)
+    - `resources/views/exams/attempt.blade.php`
+  - Ensure they look like:
+    `<img src="{{ asset('storage/' . $question->image_path) }}" alt="Question Image">`
+
+### 3. Verification
+- Upload a new image for a question.
+- Navigate to the Question Management list and verify the image displays.
+- Start an exam attempt and verify the image displays within the test interface.
