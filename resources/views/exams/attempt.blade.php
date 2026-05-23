@@ -1,11 +1,36 @@
 @extends('layouts.app')
 
 @section('title', 'CBT Lembar Ujian | MulaiAja')
-
 @push('styles')
 <style>
+    .img-zoom-wrapper {
+        position: relative;
+        overflow: hidden;
+        cursor: zoom-in;
+        border-radius: 0.375rem;
+        background-color: #f8f9fa;
+        display: inline-block;
+        max-width: 100%;
+    }
+    .img-zoom-wrapper.zoomed {
+        cursor: grab;
+    }
+    .img-zoom-wrapper.zoomed:active {
+        cursor: grabbing;
+    }
+    .img-zoom-wrapper img {
+        transition: transform 0.3s ease;
+        transform-origin: center center;
+        display: block;
+        max-width: 100%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
     /* Glowing Timer */
     .cbt-timer {
+...
         font-family: 'Courier New', Courier, monospace;
         font-size: 24px;
         font-weight: 800;
@@ -147,7 +172,12 @@
                 {{-- Gambar jika ada --}}
                 @if ($question->hasImage())
                     <div class="mb-4 text-center text-sm-left">
-                        <img src="{{ $question->getImageUrl() }}" alt="Gambar Soal #{{ $currentNumber }}" class="img-fluid rounded border p-2" style="max-height: 300px; object-fit: contain;">
+                        <div class="img-zoom-wrapper border p-2" onclick="toggleZoom(this)">
+                            <img src="{{ $question->getImageUrl() }}" alt="Gambar Soal #{{ $currentNumber }}" style="max-height: 300px; object-fit: contain;">
+                        </div>
+                        <div class="mt-2 text-muted font-size-xs">
+                            <i class="fa fa-search-plus me-1"></i> Klik gambar untuk memperbesar & geser
+                        </div>
                     </div>
                 @endif
 
@@ -292,6 +322,56 @@
 @endsection
 
 @push('scripts')
+<script>
+    function toggleZoom(wrapper) {
+        const img = wrapper.querySelector('img');
+        
+        if (wrapper.classList.contains('zoomed')) {
+            wrapper.classList.remove('zoomed');
+            img.style.transform = 'scale(1) translate(0, 0)';
+            img.dataset.scale = 1;
+            img.dataset.translateX = 0;
+            img.dataset.translateY = 0;
+            wrapper.onmousedown = null;
+            window.onmousemove = null;
+            window.onmouseup = null;
+        } else {
+            wrapper.classList.add('zoomed');
+            img.style.transform = 'scale(2.5)';
+            img.dataset.scale = 2.5;
+            img.dataset.translateX = 0;
+            img.dataset.translateY = 0;
+            initDragging(wrapper, img);
+        }
+    }
+
+    function initDragging(wrapper, img) {
+        let isDragging = false;
+        let startX, startY;
+        let translateX = 0;
+        let translateY = 0;
+
+        wrapper.onmousedown = function(e) {
+            if (!wrapper.classList.contains('zoomed')) return;
+            e.preventDefault();
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+        };
+
+        window.onmousemove = function(e) {
+            if (!isDragging) return;
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            const scale = img.dataset.scale || 2.5;
+            img.style.transform = `scale(${scale}) translate(${translateX / scale}px, ${translateY / scale}px)`;
+        };
+
+        window.onmouseup = function() {
+            isDragging = false;
+        };
+    }
+</script>
 <script>
     // 1. DRAFT ANSWER AUTO-SAVE VIA AJAX FETCH
     function autoSaveAnswer(answer, element) {
