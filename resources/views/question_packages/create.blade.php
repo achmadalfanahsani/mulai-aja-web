@@ -41,6 +41,23 @@
                         @enderror
                     </div>
 
+                    {{-- Tipe Paket --}}
+                    <div class="form-group mb-4">
+                        <label class="form-label" for="package_type">Tipe Paket Soal <span class="text-danger">*</span></label>
+                        <select class="form-select @error('package_type') is-invalid @enderror" id="package_type" name="package_type" required>
+                            @php
+                                $requestedType = request()->query('type');
+                            @endphp
+                            <option value="multiple_choice" {{ old('package_type', $requestedType) == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
+                            <option value="essay" {{ old('package_type', $requestedType) == 'essay' ? 'selected' : '' }}>Isian Singkat (Essay)</option>
+                            <option value="mixed" {{ old('package_type', $requestedType) == 'mixed' ? 'selected' : '' }}>Campuran</option>
+                        </select>
+                        <small class="text-muted">Pilih tipe soal yang akan ada di dalam paket ini agar terorganisir dengan baik.</small>
+                        @error('package_type')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <div class="row">
                         {{-- Durasi --}}
                         <div class="col-md-6 form-group mb-4">

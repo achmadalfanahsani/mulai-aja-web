@@ -29,7 +29,7 @@
             <div class="block-header block-header-default bg-primary-dark">
                 <h3 class="block-title">Kelola Paket Soal</h3>
                 <div class="block-options">
-                    <a href="{{ route('question-packages.create') }}" class="btn btn-sm btn-alt-secondary">
+                    <a href="{{ route('question-packages.create', ['type' => request('type')]) }}" class="btn btn-sm btn-alt-secondary">
                         <i class="fa fa-plus me-1"></i> Buat Paket Baru
                     </a>
                 </div>
@@ -62,7 +62,7 @@
                         <i class="fa fa-folder-open fa-3x text-muted mb-3"></i>
                         <h4 class="text-muted">Belum ada Paket Soal yang Dibuat</h4>
                         <p class="text-muted">Buat paket soal pertama Anda untuk mendistribusikan ujian ke siswa.</p>
-                        <a href="{{ route('question-packages.create') }}" class="btn btn-primary">
+                        <a href="{{ route('question-packages.create', ['type' => request('type')]) }}" class="btn btn-primary">
                             <i class="fa fa-plus"></i> Buat Paket Soal
                         </a>
                     </div>

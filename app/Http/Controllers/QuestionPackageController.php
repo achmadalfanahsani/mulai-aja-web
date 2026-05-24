@@ -35,22 +35,7 @@ class QuestionPackageController extends Controller {
         // Filter by question type
         if ($request->filled('type')) {
             $type = $request->query('type');
-            
-            if ($type === 'multiple_choice') {
-                $query->whereDoesntHave('questions', function ($q) {
-                    $q->where('question_type', 'essay');
-                });
-            } elseif ($type === 'essay') {
-                $query->whereDoesntHave('questions', function ($q) {
-                    $q->where('question_type', 'multiple_choice');
-                });
-            } elseif ($type === 'mixed') {
-                $query->whereHas('questions', function ($q) {
-                    $q->where('question_type', 'multiple_choice');
-                })->whereHas('questions', function ($q) {
-                    $q->where('question_type', 'essay');
-                });
-            }
+            $query->where('package_type', $type);
         }
 
         $packages = $query->withCount('questions')->latest()->paginate(10)->withQueryString();
@@ -72,6 +57,7 @@ class QuestionPackageController extends Controller {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'package_type' => 'required|in:multiple_choice,essay,mixed',
             'duration_minutes' => 'required|integer|min:1|max:480',
             'passing_score' => 'nullable|integer|min:0|max:100',
             'attempt_limit' => 'nullable|integer|min:1',
@@ -103,12 +89,13 @@ class QuestionPackageController extends Controller {
     /**
      * Perbarui paket soal di database.
      */
-    public function update(Request $request, QuestionPackage $questionPackage) {
-        $this->authorizeAccess($questionPackage);
+    public function update(Request $request, QuestionPackage $question_package) {
+        $this->authorizeAccess($question_package);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'package_type' => 'required|in:multiple_choice,essay,mixed',
             'duration_minutes' => 'required|integer|min:1|max:480',
             'passing_score' => 'nullable|integer|min:0|max:100',
             'attempt_limit' => 'nullable|integer|min:1',
@@ -116,10 +103,11 @@ class QuestionPackageController extends Controller {
             'shuffle_answers' => 'nullable|boolean',
         ]);
 
+
         $validated['shuffle_questions'] = $request->has('shuffle_questions');
         $validated['shuffle_answers'] = $request->has('shuffle_answers');
 
-        $questionPackage->update($validated);
+        $question_package->update($validated);
 
         return redirect()->route('question-packages.index')
             ->with('success', 'Paket soal berhasil diperbarui!');

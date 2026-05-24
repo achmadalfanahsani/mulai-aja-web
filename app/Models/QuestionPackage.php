@@ -15,6 +15,7 @@ class QuestionPackage extends Model {
         'user_id',
         'name',
         'description',
+        'package_type',
         'duration_minutes',
         'is_published',
         'shuffle_questions',
