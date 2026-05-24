@@ -51,10 +51,10 @@
                     <span class="badge bg-primary ms-2">{{ $questions->count() }} Soal</span>
                 </h3>
                 <div class="block-options">
-                    <a href="{{ route('question-packages.index') }}" class="btn btn-sm btn-alt-secondary me-2">
+                    <a href="{{ route('question-packages.index', ['type' => request('type')]) }}" class="btn btn-sm btn-alt-secondary me-2">
                         <i class="fa fa-arrow-left"></i> Kembali ke Paket
                     </a>
-                    <a href="{{ route('question-packages.questions.create', $questionPackage->id) }}" class="btn btn-sm btn-alt-secondary">
+                    <a href="{{ route('question-packages.questions.create', [$questionPackage->id, 'type' => request('type')]) }}" class="btn btn-sm btn-alt-secondary">
                         <i class="fa fa-plus me-1"></i> Tambah Soal Baru
                     </a>
                 </div>
@@ -66,7 +66,7 @@
                         <i class="fa fa-list-ol fa-3x text-muted mb-3"></i>
                         <h4 class="text-muted">Belum ada Soal di Paket ini</h4>
                         <p class="text-muted">Mulai isi paket soal dengan menekan tombol di bawah.</p>
-                        <a href="{{ route('question-packages.questions.create', $questionPackage->id) }}" class="btn btn-primary">
+                        <a href="{{ route('question-packages.questions.create', [$questionPackage->id, 'type' => request('type')]) }}" class="btn btn-primary">
                             <i class="fa fa-plus"></i> Tambah Soal Pertama
                         </a>
                     </div>

@@ -9,24 +9,23 @@ use Illuminate\Support\Facades\Auth;
 
 class QuestionPackageController extends Controller {
     /**
-     * Tampilkan semua paket soal yang dibuat oleh guru/admin yang sedang login.
+     * Tampilkan daftar paket soal.
      */
     public function index(Request $request) {
         $user = Auth::user();
-        
         $query = QuestionPackage::query();
 
-        // Administrator & Superuser bisa melihat semua, Teacher hanya melihat miliknya sendiri
-        if (!$user->isAdministrator() && !$user->isSuperuser()) {
+        // Admin & Superuser bisa melihat semua, Teacher hanya miliknya
+        if ($user->isTeacher()) {
             $query->where('user_id', $user->id);
         }
 
-        // Filter by name
+        // Pencarian Nama
         if ($request->filled('q')) {
             $query->where('name', 'like', '%' . $request->q . '%');
         }
 
-        // Filter by status
+        // Filter Status
         if ($request->filled('status')) {
             $isPublished = $request->status === 'published';
             $query->where('is_published', $isPublished);
@@ -70,9 +69,9 @@ class QuestionPackageController extends Controller {
         $validated['shuffle_answers'] = $request->has('shuffle_answers');
         $validated['is_published'] = false; // Default draft
 
-        QuestionPackage::create($validated);
+        $package = QuestionPackage::create($validated);
 
-        return redirect()->route('question-packages.index')
+        return redirect()->route('question-packages.index', ['type' => $package->package_type])
             ->with('success', 'Paket soal berhasil dibuat! Silakan tambahkan pertanyaan.');
     }
 
@@ -103,13 +102,12 @@ class QuestionPackageController extends Controller {
             'shuffle_answers' => 'nullable|boolean',
         ]);
 
-
         $validated['shuffle_questions'] = $request->has('shuffle_questions');
         $validated['shuffle_answers'] = $request->has('shuffle_answers');
 
         $question_package->update($validated);
 
-        return redirect()->route('question-packages.index')
+        return redirect()->route('question-packages.index', ['type' => $question_package->package_type])
             ->with('success', 'Paket soal berhasil diperbarui!');
     }
 
@@ -119,9 +117,10 @@ class QuestionPackageController extends Controller {
     public function destroy(QuestionPackage $questionPackage) {
         $this->authorizeAccess($questionPackage);
 
+        $type = $questionPackage->package_type;
         $questionPackage->delete();
 
-        return redirect()->route('question-packages.index')
+        return redirect()->route('question-packages.index', ['type' => $type])
             ->with('success', 'Paket soal berhasil dihapus!');
     }
 
@@ -155,17 +154,18 @@ class QuestionPackageController extends Controller {
     public function results(QuestionPackage $questionPackage) {
         $this->authorizeAccess($questionPackage);
 
-        $attempts = QuestionAttempt::where('question_package_id', $questionPackage->id)
+        $attempts = $questionPackage->attempts()
             ->with('user')
+            ->whereNotNull('finished_at')
             ->latest()
             ->paginate(20);
 
         return view('question_packages.results', compact('questionPackage', 'attempts'));
     }
 
-     /**
-      * Helper untuk membatasi akses edit/delete
-      */
+    /**
+     * Helper: Cek hak akses user terhadap paket soal.
+     */
     private function authorizeAccess(QuestionPackage $package) {
         $user = Auth::user();
         if (!$user->isAdministrator() && !$user->isSuperuser() && $package->user_id !== $user->id) {

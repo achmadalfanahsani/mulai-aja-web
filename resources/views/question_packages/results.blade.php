@@ -9,7 +9,7 @@
             <div class="block-header block-header-default bg-primary-dark">
                 <h3 class="block-title">Hasil Pengerjaan: {{ $questionPackage->name }}</h3>
                 <div class="block-options">
-                    <a href="{{ route('question-packages.index') }}" class="btn btn-sm btn-alt-secondary">
+                    <a href="{{ route('question-packages.index', ['type' => request('type')]) }}" class="btn btn-sm btn-alt-secondary">
                         <i class="fa fa-arrow-left mr-1"></i> Kembali
                     </a>
                 </div>

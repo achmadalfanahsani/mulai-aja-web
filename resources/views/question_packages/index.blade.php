@@ -125,13 +125,13 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group">
-                                                <a href="{{ route('question-packages.results', $package->id) }}" class="btn btn-sm btn-alt-success" data-toggle="tooltip" title="Lihat Hasil Pengerjaan">
+                                                <a href="{{ route('question-packages.results', [$package->id, 'type' => request('type')]) }}" class="btn btn-sm btn-alt-success" data-toggle="tooltip" title="Lihat Hasil Pengerjaan">
                                                     <i class="fa fa-chart-line"></i>
                                                 </a>
-                                                <a href="{{ route('question-packages.questions.index', $package->id) }}" class="btn btn-sm btn-alt-info" data-toggle="tooltip" title="Kelola Soal">
+                                                <a href="{{ route('question-packages.questions.index', [$package->id, 'type' => request('type')]) }}" class="btn btn-sm btn-alt-info" data-toggle="tooltip" title="Kelola Soal">
                                                     <i class="fa fa-list"></i>
                                                 </a>
-                                                <a href="{{ route('question-packages.edit', $package->id) }}" class="btn btn-sm btn-alt-warning" data-toggle="tooltip" title="Edit Paket">
+                                                <a href="{{ route('question-packages.edit', [$package->id, 'type' => request('type')]) }}" class="btn btn-sm btn-alt-warning" data-toggle="tooltip" title="Edit Paket">
                                                     <i class="fa fa-pencil-alt"></i>
                                                 </a>
                                                 <button type="button" class="btn btn-sm btn-alt-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-{{ $package->id }}" title="Hapus Paket">
