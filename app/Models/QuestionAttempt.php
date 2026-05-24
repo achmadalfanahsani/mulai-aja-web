@@ -97,20 +97,39 @@ class QuestionAttempt extends Model {
      * Dapatkan statistik jawaban
      */
     public function getAnswerStatistics() {
+        $totalQuestions = $this->questionPackage->activeQuestions()->count();
+        
+        $answeredCount = $this->responses()
+            ->where(function($query) {
+                $query->whereNotNull('selected_answer')
+                    ->orWhere(function($q) {
+                        $q->whereNotNull('essay_answer')
+                          ->where('essay_answer', '!=', '');
+                    });
+            })
+            ->count();
+            
+        $correctCount = $this->responses()
+            ->where('is_correct', true)
+            ->count();
+            
+        $wrongCount = $this->responses()
+            ->where('is_correct', false)
+            ->where(function($query) {
+                $query->whereNotNull('selected_answer')
+                    ->orWhere(function($q) {
+                        $q->whereNotNull('essay_answer')
+                          ->where('essay_answer', '!=', '');
+                    });
+            })
+            ->count();
+
         return [
-            'total_questions' => $this->responses()->count(),
-            'answered_count' => $this->responses()
-                ->whereNotNull('selected_answer')
-                ->count(),
-            'unanswered_count' => $this->responses()
-                ->whereNull('selected_answer')
-                ->count(),
-            'correct_count' => $this->responses()
-                ->where('is_correct', true)
-                ->count(),
-            'wrong_count' => $this->responses()
-                ->where('is_correct', false)
-                ->count(),
+            'total_questions' => $totalQuestions,
+            'answered_count' => $answeredCount,
+            'unanswered_count' => max(0, $totalQuestions - $answeredCount),
+            'correct_count' => $correctCount,
+            'wrong_count' => $wrongCount,
         ];
     }
 
@@ -149,11 +168,7 @@ class QuestionAttempt extends Model {
             return null;
         }
         
-        $passingScore = $this->questionPackage->passing_score;
-        
-        if (is_null($passingScore)) {
-            return null; // Tidak ada passing score
-        }
+        $passingScore = $this->questionPackage->passing_score ?? 0;
         
         return $this->total_score >= $passingScore;
     }

@@ -15,11 +15,22 @@ class ExamController extends Controller {
     /**
      * Tampilkan semua paket soal yang aktif/published untuk dikerjakan siswa.
      */
-    public function index() {
-        $packages = QuestionPackage::published()
+    public function index(Request $request) {
+        $packageQuery = QuestionPackage::published()
             ->withCount('activeQuestions')
-            ->latest()
-            ->paginate(9, ['*'], 'packages_page');
+            ->latest();
+
+        // Search by name
+        if ($request->filled('q')) {
+            $packageQuery->where('name', 'like', '%' . $request->q . '%');
+        }
+
+        // Filter by type
+        if ($request->filled('type')) {
+            $packageQuery->where('package_type', $request->type);
+        }
+
+        $packages = $packageQuery->paginate(9, ['*'], 'packages_page')->withQueryString();
 
         // Cek dan proses auto-submit ujian yang ditinggalkan & sudah kedaluwarsa
         $activeAttempts = QuestionAttempt::where('user_id', Auth::id())
@@ -36,7 +47,11 @@ class ExamController extends Controller {
         $attempts = QuestionAttempt::where('user_id', Auth::id())
             ->with('questionPackage')
             ->latest()
-            ->paginate(10, ['*'], 'history_page');
+            ->paginate(5, ['*'], 'history_page');
+
+        if ($request->ajax()) {
+            return view('exams._history_table', compact('attempts'))->render();
+        }
 
         return view('exams.index', compact('packages', 'attempts'));
     }
@@ -217,6 +232,7 @@ class ExamController extends Controller {
 
         // Dapatkan status pengerjaan seluruh soal untuk panel navigasi (Sidebar nomor soal)
         $responsesStatus = QuestionResponse::where('question_attempt_id', $questionAttempt->id)
+            ->with('question')
             ->get()
             ->keyBy('question_id');
 
@@ -225,7 +241,7 @@ class ExamController extends Controller {
             $resp = $responsesStatus[$qId] ?? null;
             $isAnswered = false;
             if ($resp) {
-                $isAnswered = !is_null($resp->selected_answer) || !is_null($resp->essay_answer);
+                $isAnswered = !$resp->isUnanswered();
             }
             $navigation[] = [
                 'number' => $index + 1,
@@ -348,7 +364,7 @@ class ExamController extends Controller {
         DB::transaction(function () use ($attempt, $isAutoSubmitted) {
             $responses = $attempt->responses()->with('question')->get();
             $correctCount = 0;
-            $totalQuestions = count($responses);
+            $totalQuestions = $attempt->questionPackage->activeQuestions()->count();
 
             foreach ($responses as $response) {
                 $question = $response->question;

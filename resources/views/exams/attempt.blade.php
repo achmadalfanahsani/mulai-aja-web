@@ -242,7 +242,7 @@
                         Soal Selanjutnya <i class="fa fa-arrow-right ml-1"></i>
                     </a>
                 @else
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal">
+                    <button type="button" class="btn btn-success" onclick="prepareSubmit()">
                         <i class="fa fa-check-circle mr-1"></i> Selesai Ujian
                     </button>
                 @endif
@@ -282,7 +282,7 @@
                 </div>
 
                 {{-- Tombol selesai --}}
-                <button type="button" class="btn btn-danger w-100 font-w700 mt-2 py-2" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal">
+                <button type="button" class="btn btn-danger w-100 font-w700 mt-2 py-2" onclick="prepareSubmit()">
                     <i class="fa fa-paper-plane mr-1"></i> Serahkan Ujian (Submit)
                 </button>
             </div>
@@ -290,40 +290,47 @@
     </div>
 </div>
 
-{{-- MODAL KONFIRMASI SUBMIT --}}
+{{-- MODAL KONFIRMASI SUBMIT (OPSI 1) --}}
 <div class="modal fade" id="confirmSubmitModal" tabindex="-1" aria-labelledby="confirmSubmitModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-body">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title text-white" id="confirmSubmitModalLabel"><i class="fa fa-exclamation-triangle mr-2"></i> Konfirmasi Selesai Ujian</h5>
-                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content bg-body border-0 shadow rounded-4 overflow-hidden">
+            
+            <div class="modal-header bg-primary border-0 py-3 px-4">
+                <h5 class="modal-title text-white font-w700" id="confirmSubmitModalLabel">
+                    <i class="fa fa-paper-plane me-2"></i> Konfirmasi Selesai Ujian
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body py-4 text-center">
-                <i class="fa fa-question-circle fa-4x text-danger mb-3"></i>
-                <h4>Apakah Anda yakin ingin mengakhiri ujian ini?</h4>
-                <p class="text-muted">Setelah diserahkan, Anda tidak dapat mengubah jawaban Anda lagi.</p>
+            
+            <div class="modal-body py-4 px-4 text-center">
+                <i class="fa fa-question-circle fa-4x text-primary-light mb-3 opacity-50"></i>
+                <h4 class="font-w700 text-dark">Apakah Anda yakin ingin mengakhiri ujian ini?</h4>
+                <p class="text-muted mb-0">Setelah diserahkan, Anda tidak dapat mengubah jawaban Anda lagi.</p>
                 
                 {{-- Rangkuman Soal Terisi --}}
-                <div class="alert alert-secondary bg-body-light border-0 py-2 px-3 mt-3 d-inline-block">
+                <div class="alert alert-secondary bg-body-light border-0 py-2 px-3 mt-4 d-inline-block rounded-3">
                     @php
-                        $answeredCount = $questionAttempt->responses()->whereNotNull('selected_answer')->count();
-                        $unansweredCount = count($questionIds) - $answeredCount;
+                        $stats = $questionAttempt->getAnswerStatistics();
+                        $answeredCount = $stats['answered_count'];
+                        $unansweredCount = $stats['unanswered_count'];
                     @endphp
-                    <span class="font-w600 text-dark">
-                        <i class="fa fa-info-circle text-primary"></i> 
-                        Sudah dijawab: <strong class="text-success" id="modal-answered-count">{{ $answeredCount }}</strong> • Belum dijawab: <strong class="text-danger" id="modal-unanswered-count">{{ $unansweredCount }}</strong>
+                    <span class="font-w600 text-dark fs-sm">
+                        <i class="fa fa-info-circle text-primary me-1"></i> 
+                        Sudah dijawab: <strong class="text-success" id="modal-answered-count">{{ $answeredCount }}</strong> &nbsp;•&nbsp; Belum dijawab: <strong class="text-warning" id="modal-unanswered-count">{{ $unansweredCount }}</strong>
                     </span>
                 </div>
             </div>
-            <div class="modal-footer bg-body-light d-flex justify-content-between">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Lanjutkan Mengerjakan</button>
-                <form action="{{ route('exams.submit', $questionAttempt->id) }}" method="POST">
+            
+            <div class="modal-footer bg-body-light border-0 py-3 px-4 d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary font-w600 rounded-3 px-3 py-2" data-bs-dismiss="modal">Lanjutkan Mengerjakan</button>
+                <form action="{{ route('exams.submit', $questionAttempt->id) }}" method="POST" class="m-0">
                     @csrf
-                    <button type="submit" class="btn btn-danger font-w700">
-                        <i class="fa fa-check-circle mr-1"></i> Ya, Selesai & Kirim
+                    <button type="submit" class="btn btn-primary font-w700 rounded-3 px-3 py-2 shadow-sm">
+                        <i class="fa fa-check-circle me-1"></i> Ya, Selesai & Kirim
                     </button>
                 </form>
             </div>
+            
         </div>
     </div>
 </div>
@@ -388,6 +395,9 @@
     }
 </script>
 <script>
+    // Global variable to track pending auto-save promises
+    let pendingSave = null;
+
     // 1. DRAFT ANSWER AUTO-SAVE VIA AJAX FETCH
     function autoSaveAnswer(answer, type) {
         if (type === 'multiple_choice') {
@@ -412,7 +422,8 @@
             formData.append('essay_answer', answer);
         }
 
-        fetch('{{ route("exams.save-response", $questionAttempt->id) }}', {
+        // Assign the promise to pendingSave
+        pendingSave = fetch('{{ route("exams.save-response", $questionAttempt->id) }}', {
             method: 'POST',
             body: formData,
             headers: {
@@ -423,25 +434,55 @@
         .then(data => {
             if (data.success) {
                 indicator.innerHTML = '<i class="fa fa-check-circle text-white-75"></i> Tersimpan';
-indicator.className = 'text-white-75 font-size-sm mr-2';
+                indicator.className = 'text-white-75 font-size-sm mr-2';
                 
                 // Update live color of sidebar button to green (answered)
                 const navBtn = document.getElementById('nav-btn-{{ $question->id }}');
                 if (navBtn) {
-                    navBtn.classList.remove('unanswered');
-                    navBtn.classList.add('answered');
-                    navBtn.setAttribute('data-answered', 'true');
+                    const isAnswered = (type === 'multiple_choice' && answer) || (type === 'essay' && answer.trim() !== '');
+                    
+                    if (isAnswered) {
+                        navBtn.classList.remove('unanswered');
+                        navBtn.classList.add('answered');
+                        navBtn.setAttribute('data-answered', 'true');
+                    } else {
+                        navBtn.classList.remove('answered');
+                        navBtn.classList.add('unanswered');
+                        navBtn.setAttribute('data-answered', 'false');
+                    }
                 }
             } else {
                 indicator.innerHTML = '<i class="fa fa-times-circle text-danger"></i> Gagal Menyimpan';
                 indicator.className = 'text-danger font-size-sm mr-2';
             }
+            pendingSave = null; // Clear pending save
         })
         .catch(error => {
             console.error('Error:', error);
             indicator.innerHTML = '<i class="fa fa-times-circle text-danger"></i> Offline / Error';
             indicator.className = 'text-danger font-size-sm mr-2';
+            pendingSave = null; // Clear pending save
         });
+    }
+
+    function prepareSubmit() {
+        const essayInput = document.getElementById('essay_answer');
+        
+        // If it's an essay question, trigger a manual save if not already saved
+        if (essayInput) {
+            autoSaveAnswer(essayInput.value, 'essay');
+        }
+
+        // Wait for any pending save to finish before showing the modal
+        if (pendingSave) {
+            pendingSave.then(() => {
+                const modal = new bootstrap.Modal(document.getElementById('confirmSubmitModal'));
+                modal.show();
+            });
+        } else {
+            const modal = new bootstrap.Modal(document.getElementById('confirmSubmitModal'));
+            modal.show();
+        }
     }
 
     // 2. CLIENT-SIDE COUNTDOWN TIMER WITH SAFE AUTO-SUBMIT LOGICS

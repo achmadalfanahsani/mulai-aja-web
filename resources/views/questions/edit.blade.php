@@ -50,7 +50,7 @@
                                 @php
                                     $label = $question->question_type === 'essay' ? 'Uraian (Essay)' : 'Pilihan Ganda';
                                 @endphp
-                                <input type="text" class="form-control bg-light" value="{{ $label }}" readonly>
+                                <input type="text" class="form-control" value="{{ $label }}" readonly>
                                 <input type="hidden" id="question_type" name="question_type" value="{{ $question->question_type }}">
                             @endif
                             @error('question_type')

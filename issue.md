@@ -1,42 +1,47 @@
-# Issue: Perapihan Sidebar dan Pemisahan Paket Soal
+# Issue: Perapihan Halaman Exams dan Sidebar
 
 ## Deskripsi
-Sidebar saat ini kurang rapi dan menu manajemen soal perlu dipisah berdasarkan tipe soal agar pengguna lebih mudah mengelola paket ujian. Selain itu, jarak tombol logout perlu disesuaikan agar tampilan lebih nyaman.
+Halaman daftar ujian (`/exams`) memerlukan fitur filter untuk mempermudah siswa mencari paket soal. Selain itu, bagian riwayat ujian perlu dioptimalkan dengan pagination AJAX agar pengalaman pengguna lebih mulus. Sidebar juga perlu disesuaikan untuk memberikan jarak yang lebih baik antar menu.
 
 ## Planning Implementasi
 
-### 1. Perubahan Struktur Menu (Sidebar)
-Ubah menu di `resources/views/partials/sidebar/sidebar-nav.blade.php`.
-- Hapus menu "Manajemen Soal" yang lama.
-- Tambahkan sub-menu baru di bawah CBT & Ujian:
-    1. **Paket Soal Pilihan Ganda** (Link ke `question-packages.index` dengan filter `type=multiple_choice`)
-    2. **Paket Soal Isian Singkat** (Link ke `question-packages.index` dengan filter `type=essay`)
-    3. **Paket Soal Campuran** (Link ke `question-packages.index` dengan filter `type=mixed`)
-    4. **Mulai Ujian** (Link ke `exams.index`)
+### 1. Fitur Filter Paket Soal
+Tambahkan form filter pada bagian "Ujian CBT yang Tersedia".
+- **Backend:**
+    - Update `ExamController@index` untuk menerima parameter `q` (nama) dan `type` (tipe paket).
+    - Tambahkan logika query `where` pada variabel `$packages`.
+- **Frontend:**
+    - Tambahkan form di atas daftar paket soal pada `resources/views/exams/index.blade.php`.
+    - Input: Text (Nama Paket) dan Select (Tipe: Pilihan Ganda, Isian Singkat, Campuran).
 
-### 2. Penyesuaian Backend (Filter)
-- Update `QuestionPackageController@index` untuk menangani parameter `type` baru.
-- Logika filter:
-    - `multiple_choice`: Filter paket yang *hanya* berisi soal `multiple_choice`.
-    - `essay`: Filter paket yang *hanya* berisi soal `essay`.
-    - `mixed`: Filter paket yang berisi *kombinasi* keduanya.
+### 2. Pagination AJAX Riwayat Ujian
+Optimalkan bagian "Riwayat Ujian Anda".
+- **Backend:**
+    - Ubah pagination `$attempts` di `ExamController@index` menjadi 5 baris per halaman.
+    - Tambahkan pengecekan `if ($request->ajax())` untuk mengembalikan partial view khusus tabel riwayat jika dipanggil via AJAX.
+- **Frontend:**
+    - Bungkus tabel riwayat ujian dalam sebuah container ID (misal: `#history-container`).
+    - Gunakan JavaScript (Vanilla JS atau jQuery) untuk menangani klik link pagination.
+    - Lakukan fetch data ke URL pagination dan perbarui isi `#history-container` tanpa refresh halaman.
 
-### 3. Perubahan Styling
-- Cari class CSS untuk tombol logout di sidebar.
-- Tambahkan `margin-top` atau `padding-top` agar tombol logout terpisah (ada jarak) dari daftar menu di atasnya.
+### 3. Penyesuaian Sidebar
+Memberikan jarak pada tombol "Mulai Ujian".
+- Buka `resources/views/partials/sidebar/sidebar-nav.blade.php`.
+- Cari elemen `<li>` yang membungkus menu "Mulai Ujian".
+- Tambahkan class utility CSS seperti `mt-3` atau `mt-4` untuk memberikan margin top.
 
 ---
 
 ### Panduan Teknis untuk Implementator
 
-**Langkah 1: Update Route/Controller**
-- Pastikan route `question-packages.index` bisa menerima parameter query `type`.
-- Di `QuestionPackageController@index`, tambahkan logika `switch` atau `if` untuk memfilter koleksi paket soal berdasarkan relasi soalnya.
+**Langkah 1: Sidebar**
+- Tambahkan `mt-4` pada `li` menu Mulai Ujian.
 
-**Langkah 2: Update View Sidebar**
-- Buka `resources/views/partials/sidebar/sidebar-nav.blade.php`.
-- Gunakan struktur `<ul>` dan `<li>` yang konsisten dengan template Codebase.
-- Gunakan `request()->query('type')` untuk memberikan class `active` pada menu yang sedang dipilih.
+**Langkah 2: Controller Filtering**
+- Gunakan `$request->query('q')` dan `$request->query('type')`.
+- Tipe data `package_type` di database: `multiple_choice`, `essay`, `mixed`.
 
-**Langkah 3: Styling**
-- Jika perlu, tambahkan style khusus di file CSS atau gunakan class utility Bootstrap seperti `mt-4` pada elemen tombol logout.
+**Langkah 3: AJAX Pagination**
+- Buat file view baru `resources/views/exams/_history_table.blade.php` yang hanya berisi isi tabel dan pagination links.
+- Di controller: `return view('exams._history_table', compact('attempts'))->render();` jika request adalah AJAX.
+- Di script: `fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })`.

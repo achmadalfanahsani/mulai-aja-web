@@ -122,15 +122,16 @@
                 $question = $resp->question;
                 $isCorrect = $resp->is_correct;
                 $selected = $resp->selected_answer;
+                $isAnswered = !$resp->isUnanswered();
                 $key = $question->correct_answer;
             @endphp
             
             <div class="block block-rounded block-bordered mb-4">
                 {{-- Header Soal --}}
-                <div class="block-header block-header-default d-flex justify-content-between align-items-center py-2 px-3 {{ $selected ? ($isCorrect ? 'bg-success-light text-success' : 'bg-danger-light text-danger') : 'bg-body-light text-muted' }}">
+                <div class="block-header block-header-default d-flex justify-content-between align-items-center py-2 px-3 {{ $isAnswered ? ($isCorrect ? 'bg-success-light text-success' : 'bg-danger-light text-danger') : 'bg-body-light text-muted' }}">
                     <h4 class="block-title font-size-sm font-w700 text-uppercase mb-0">
                         Soal Nomor #{{ $index + 1 }}
-                        @if ($selected)
+                        @if ($isAnswered)
                             @if ($isCorrect)
                                 <span class="badge bg-success font-w700 font-size-xs ms-2 text-white">
                                     <i class="fa fa-check me-1"></i> BENAR

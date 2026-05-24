@@ -69,7 +69,7 @@
 
         {{-- Exam Taking: Student, Administrator, Superuser --}}
         @if(auth()->user()->isStudent() || auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
-        <li class="nav-main-item">
+        <li class="nav-main-item mt-4">
             <a class="nav-main-link {{ request()->routeIs('exams.*') ? 'active' : '' }}"
                 href="{{ route('exams.index') }}">
                 <i class="nav-main-link-icon fa fa-pen-nib"></i>

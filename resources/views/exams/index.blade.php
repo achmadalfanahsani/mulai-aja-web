@@ -27,8 +27,40 @@
 
         {{-- Ujian CBT yang Tersedia --}}
         <h2 class="content-heading d-flex align-items-center">
-            <i class="fa fa-pen-nib mr-2 text-primary"></i> Ujian CBT yang Tersedia
+            <i class="fa fa-pen-nib me-2 text-primary"></i> Ujian CBT yang Tersedia
         </h2>
+
+        {{-- Filter Form --}}
+        <div class="block block-rounded block-bordered mb-4">
+            <div class="block-content block-content-full">
+                <form action="{{ route('exams.index') }}" method="GET">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-right-0">
+                                    <i class="fa fa-search text-muted"></i>
+                                </span>
+                                <input type="text" name="q" class="form-control border-left-0" 
+                                       placeholder="Cari nama paket soal..." value="{{ request('q') }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select name="type" class="form-select">
+                                <option value="">Semua Tipe Soal</option>
+                                <option value="multiple_choice" {{ request('type') == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
+                                <option value="essay" {{ request('type') == 'essay' ? 'selected' : '' }}>Isian Singkat</option>
+                                <option value="mixed" {{ request('type') == 'mixed' ? 'selected' : '' }}>Campuran</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fa fa-filter mr-1"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
         
         @if ($packages->isEmpty())
             <div class="block block-rounded block-bordered p-5 text-center">
@@ -88,7 +120,7 @@
 
         {{-- Riwayat Ujian --}}
         <h2 class="content-heading d-flex align-items-center mt-4">
-            <i class="fa fa-history mr-2 text-primary"></i> Riwayat Ujian Anda
+            <i class="fa fa-history me-2 text-primary"></i> Riwayat Ujian Anda
         </h2>
 
         <div class="block block-rounded block-themed">
@@ -96,83 +128,49 @@
                 <h3 class="block-title">Riwayat Pengerjaan</h3>
             </div>
             
-            <div class="block-content block-content-full">
-                @if ($attempts->isEmpty())
-                    <div class="text-center py-4">
-                        <p class="text-muted mb-0">Anda belum pernah mengambil ujian CBT apa pun.</p>
-                    </div>
-                @else
-                    <div class="table-responsive">
-                        <table class="table table-hover table-vcenter">
-                            <thead>
-                                <tr>
-                                    <th>Paket Ujian</th>
-                                    <th>Tanggal Mulai</th>
-                                    <th>Durasi Spent</th>
-                                    <th class="text-center">Skor</th>
-                                    <th class="text-center">Status Kelulusan</th>
-                                    <th class="text-center">Evaluasi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($attempts as $attempt)
-                                    <tr>
-                                        <td class="font-w600">{{ $attempt->questionPackage->name }}</td>
-                                        <td class="font-size-sm text-muted">
-                                            {{ $attempt->started_at->format('d M Y, H:i') }}
-                                        </td>
-                                        <td class="font-size-sm">
-                                            <i class="fa fa-clock text-muted mr-1"></i> {{ $attempt->getFormattedDuration() }}
-                                        </td>
-                                        <td class="text-center font-w700 font-size-lg text-primary">
-                                            @if (!$attempt->is_completed)
-                                                <span class="text-muted">-</span>
-                                            @else
-                                                {{ $attempt->total_score ?? '0' }}
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            @if (!$attempt->is_completed)
-                                                <span class="badge bg-warning-light text-warning font-w700 font-size-sm rounded-pill px-3">
-                                                    <i class="fa fa-spinner fa-spin mr-1"></i> DALAM PENGERJAAN
-                                                </span>
-                                            @elseif ($attempt->isPassed() === true)
-                                                <span class="badge bg-success-light text-success font-w700 font-size-sm rounded-pill px-3">
-                                                    <i class="fa fa-check-circle mr-1"></i> LULUS
-                                                </span>
-                                            @elseif ($attempt->isPassed() === false)
-                                                <span class="badge bg-danger-light text-danger font-w700 font-size-sm rounded-pill px-3">
-                                                    <i class="fa fa-times-circle mr-1"></i> TIDAK LULUS
-                                                </span>
-                                            @else
-                                                <span class="badge bg-secondary-light text-secondary font-w700 font-size-sm rounded-pill px-3">
-                                                    Selesai
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            @if (!$attempt->is_completed)
-                                                <a href="{{ route('exams.attempt', $attempt->id) }}" class="btn btn-sm btn-alt-warning">
-                                                    <i class="fa fa-play mr-1"></i> Lanjutkan Ujian
-                                                </a>
-                                            @else
-                                                <a href="{{ route('exams.results', $attempt->id) }}" class="btn btn-sm btn-alt-info">
-                                                    <i class="fa fa-chart-pie mr-1"></i> Review Hasil
-                                                </a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="mt-3">
-                        {{ $attempts->appends(['packages_page' => request('packages_page')])->links() }}
-                    </div>
-                @endif
+            <div class="block-content block-content-full" id="history-container">
+                @include('exams._history_table')
             </div>
         </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('history-container');
+
+        container.addEventListener('click', function(e) {
+            // Find the closest link inside pagination-ajax
+            const link = e.target.closest('.pagination-ajax a');
+            
+            if (link) {
+                e.preventDefault();
+                const url = link.getAttribute('href');
+                
+                // Show loading state (optional)
+                container.style.opacity = '0.5';
+                
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    container.innerHTML = html;
+                    container.style.opacity = '1';
+                    
+                    // Scroll back to container top if needed
+                    // container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                })
+                .catch(error => {
+                    console.error('Error fetching history:', error);
+                    container.style.opacity = '1';
+                });
+            }
+        });
+    });
+</script>
+@endpush
