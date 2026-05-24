@@ -41,10 +41,18 @@
                         {{-- Question Type --}}
                         <div class="col-md-6 form-group mb-4">
                             <label class="form-label" for="question_type">Tipe Soal</label>
-                            <select class="form-select @error('question_type') is-invalid @enderror" id="question_type" name="question_type" onchange="toggleOptions()">
-                                <option value="multiple_choice" {{ old('question_type', $question->question_type) == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
-                                <option value="essay" {{ old('question_type', $question->question_type) == 'essay' ? 'selected' : '' }}>Uraian (Essay)</option>
-                            </select>
+                            @if($questionPackage->package_type === 'mixed')
+                                <select class="form-select @error('question_type') is-invalid @enderror" id="question_type" name="question_type" onchange="toggleOptions()">
+                                    <option value="multiple_choice" {{ old('question_type', $question->question_type) == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
+                                    <option value="essay" {{ old('question_type', $question->question_type) == 'essay' ? 'selected' : '' }}>Uraian (Essay)</option>
+                                </select>
+                            @else
+                                @php
+                                    $label = $question->question_type === 'essay' ? 'Uraian (Essay)' : 'Pilihan Ganda';
+                                @endphp
+                                <input type="text" class="form-control bg-light" value="{{ $label }}" readonly>
+                                <input type="hidden" id="question_type" name="question_type" value="{{ $question->question_type }}">
+                            @endif
                             @error('question_type')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
