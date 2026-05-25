@@ -1,33 +1,41 @@
-# Masalah: Filter Paket Soal Mengarahkan ke "Semua Paket Soal"
+# Masalah: Dropdown Profil Header Kurang Informatif dan Tidak Sinkron
 
 ## Deskripsi Masalah
-Saat ini, ketika pengguna berada di halaman khusus tipe paket soal (misalnya "Paket Soal Isian Singkat") dan melakukan filter (pencarian nama atau status), hasilnya justru diarahkan ke halaman "Semua Paket Soal". Hal ini terjadi karena parameter `type` hilang saat formulir filter dikirimkan.
+Saat ini, dropdown profil di bar header masih menggunakan data statis/placeholder untuk beberapa menu (seperti Inbox, Invoices) yang tidak ada dalam aplikasi "MulaiAja". Selain itu, informasi pengguna yang ditampilkan sangat minim (hanya nama) dan aksi logout belum terhubung dengan rute yang benar.
 
 ## Analisis Teknis
-1. Di `sidebar-nav.blade.php`, menu navigasi menggunakan parameter `type` (misal: `?type=essay`) untuk membedakan kategori paket soal.
-2. Di `resources/views/question_packages/index.blade.php`, formulir filter menggunakan metode `GET` dan mengarah ke `route('question-packages.index')` tanpa menyertakan parameter `type`.
-3. Saat tombol filter ditekan, browser hanya mengirimkan parameter yang ada di dalam input form (`q` dan `status`), sehingga parameter `type` yang ada di URL sebelumnya menjadi hilang.
+1. File yang bertanggung jawab adalah `resources/views/partials/header/header-user-dropdown.blade.php`.
+2. Menu "Inbox", "Invoices", dan "Settings" saat ini tidak fungsional dan tidak relevan dengan kebutuhan aplikasi CBT MulaiAja.
+3. Informasi peran (*role*) pengguna (Superuser, Administrator, Teacher, Student) tidak ditampilkan, padahal ini penting untuk konteks navigasi.
+4. Rute logout masih menggunakan placeholder `#` bukannya `route('logout')`.
 
 ## Rencana Penyelesaian
-Untuk memperbaiki ini, kita perlu memastikan parameter `type` tetap terjaga saat filter dilakukan.
+Kita akan merombak isi dropdown agar lebih bersih, informatif, dan fungsional sesuai dengan ekosistem MulaiAja.
 
 ### Langkah-langkah:
-1. **Tambahkan Input Hidden di Form Filter:**
-   Buka file `resources/views/question_packages/index.blade.php`. Di dalam `<form>`, tambahkan input tersembunyi (*hidden input*) yang mengambil nilai `type` dari request saat ini.
-   ```html
-   @if(request()->has('type'))
-       <input type="hidden" name="type" value="{{ request('type') }}">
-   @endif
-   ```
+1. **Pembersihan Menu Tidak Relevan:**
+   Hapus menu "Inbox", "Invoices", dan "Settings" (side overlay) karena aplikasi saat ini tidak menggunakan fitur tersebut.
 
-2. **Verifikasi di Controller (Opsional):**
-   Pastikan `QuestionPackageController@index` tetap memproses parameter `type` dengan benar meskipun ada filter `q` atau `status`. (Berdasarkan pengamatan awal, controller seharusnya sudah menangani ini jika menggunakan `request()->all()` atau pengecekan per parameter).
+2. **Penambahan Informasi Role:**
+   Tampilkan label peran pengguna di bawah nama pengguna menggunakan Badge Bootstrap agar lebih jelas siapa yang sedang login.
 
-3. **Uji Coba:**
-   - Masuk ke menu "Paket Soal Isian Singkat".
-   - Lakukan pencarian nama paket.
-   - Pastikan URL tetap mengandung `type=essay` dan halaman tidak berpindah ke "Semua Paket Soal".
+3. **Sinkronisasi Rute Logout:**
+   Pastikan link "Sign Out" dan form logout tersembunyi mengarah ke `route('logout')`.
+
+4. **Penyesuaian Visual:**
+   - Gunakan avatar default (icon user) yang lebih menarik atau inisial nama.
+   - Tambahkan informasi email jika perlu untuk membedakan akun.
+
+5. **Struktur Baru yang Diusulkan:**
+   - **Header Info:** Nama (Bold) + Badge Role + Email (Kecil/Muted).
+   - **Menu Aksi:**
+     - Dashboard (Kembali ke halaman utama).
+     - Ganti Password (Jika sudah ada rutenya, atau placeholder yang rapi).
+     - Divider.
+     - Sign Out (Logout).
 
 ## Catatan untuk Junior Programmer
-- Ingat bahwa formulir dengan `method="GET"` akan menimpa seluruh *query string* di URL dengan data yang ada di dalam input form.
-- Menggunakan `<input type="hidden">` adalah cara paling sederhana untuk "mengoper" data yang sudah ada di URL ke pengiriman form berikutnya tanpa menampilkannya ke pengguna.
+- Gunakan `@if(auth()->check())` atau `@auth` untuk membungkus logika akses data user.
+- Manfaatkan helper Laravel seperti `ucfirst(auth()->user()->role)` untuk memformat tampilan role.
+- Pastikan form logout menyertakan `@csrf` agar tidak ditolak oleh Laravel.
+- Gunakan class-class utility dari Bootstrap 5 (seperti `fw-bold`, `fs-sm`, `text-muted`) untuk memoles tampilan tanpa menulis CSS tambahan.
