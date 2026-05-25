@@ -1,47 +1,33 @@
-# Issue: Perapihan Halaman Exams dan Sidebar
+# Masalah: Filter Paket Soal Mengarahkan ke "Semua Paket Soal"
 
-## Deskripsi
-Halaman daftar ujian (`/exams`) memerlukan fitur filter untuk mempermudah siswa mencari paket soal. Selain itu, bagian riwayat ujian perlu dioptimalkan dengan pagination AJAX agar pengalaman pengguna lebih mulus. Sidebar juga perlu disesuaikan untuk memberikan jarak yang lebih baik antar menu.
+## Deskripsi Masalah
+Saat ini, ketika pengguna berada di halaman khusus tipe paket soal (misalnya "Paket Soal Isian Singkat") dan melakukan filter (pencarian nama atau status), hasilnya justru diarahkan ke halaman "Semua Paket Soal". Hal ini terjadi karena parameter `type` hilang saat formulir filter dikirimkan.
 
-## Planning Implementasi
+## Analisis Teknis
+1. Di `sidebar-nav.blade.php`, menu navigasi menggunakan parameter `type` (misal: `?type=essay`) untuk membedakan kategori paket soal.
+2. Di `resources/views/question_packages/index.blade.php`, formulir filter menggunakan metode `GET` dan mengarah ke `route('question-packages.index')` tanpa menyertakan parameter `type`.
+3. Saat tombol filter ditekan, browser hanya mengirimkan parameter yang ada di dalam input form (`q` dan `status`), sehingga parameter `type` yang ada di URL sebelumnya menjadi hilang.
 
-### 1. Fitur Filter Paket Soal
-Tambahkan form filter pada bagian "Ujian CBT yang Tersedia".
-- **Backend:**
-    - Update `ExamController@index` untuk menerima parameter `q` (nama) dan `type` (tipe paket).
-    - Tambahkan logika query `where` pada variabel `$packages`.
-- **Frontend:**
-    - Tambahkan form di atas daftar paket soal pada `resources/views/exams/index.blade.php`.
-    - Input: Text (Nama Paket) dan Select (Tipe: Pilihan Ganda, Isian Singkat, Campuran).
+## Rencana Penyelesaian
+Untuk memperbaiki ini, kita perlu memastikan parameter `type` tetap terjaga saat filter dilakukan.
 
-### 2. Pagination AJAX Riwayat Ujian
-Optimalkan bagian "Riwayat Ujian Anda".
-- **Backend:**
-    - Ubah pagination `$attempts` di `ExamController@index` menjadi 5 baris per halaman.
-    - Tambahkan pengecekan `if ($request->ajax())` untuk mengembalikan partial view khusus tabel riwayat jika dipanggil via AJAX.
-- **Frontend:**
-    - Bungkus tabel riwayat ujian dalam sebuah container ID (misal: `#history-container`).
-    - Gunakan JavaScript (Vanilla JS atau jQuery) untuk menangani klik link pagination.
-    - Lakukan fetch data ke URL pagination dan perbarui isi `#history-container` tanpa refresh halaman.
+### Langkah-langkah:
+1. **Tambahkan Input Hidden di Form Filter:**
+   Buka file `resources/views/question_packages/index.blade.php`. Di dalam `<form>`, tambahkan input tersembunyi (*hidden input*) yang mengambil nilai `type` dari request saat ini.
+   ```html
+   @if(request()->has('type'))
+       <input type="hidden" name="type" value="{{ request('type') }}">
+   @endif
+   ```
 
-### 3. Penyesuaian Sidebar
-Memberikan jarak pada tombol "Mulai Ujian".
-- Buka `resources/views/partials/sidebar/sidebar-nav.blade.php`.
-- Cari elemen `<li>` yang membungkus menu "Mulai Ujian".
-- Tambahkan class utility CSS seperti `mt-3` atau `mt-4` untuk memberikan margin top.
+2. **Verifikasi di Controller (Opsional):**
+   Pastikan `QuestionPackageController@index` tetap memproses parameter `type` dengan benar meskipun ada filter `q` atau `status`. (Berdasarkan pengamatan awal, controller seharusnya sudah menangani ini jika menggunakan `request()->all()` atau pengecekan per parameter).
 
----
+3. **Uji Coba:**
+   - Masuk ke menu "Paket Soal Isian Singkat".
+   - Lakukan pencarian nama paket.
+   - Pastikan URL tetap mengandung `type=essay` dan halaman tidak berpindah ke "Semua Paket Soal".
 
-### Panduan Teknis untuk Implementator
-
-**Langkah 1: Sidebar**
-- Tambahkan `mt-4` pada `li` menu Mulai Ujian.
-
-**Langkah 2: Controller Filtering**
-- Gunakan `$request->query('q')` dan `$request->query('type')`.
-- Tipe data `package_type` di database: `multiple_choice`, `essay`, `mixed`.
-
-**Langkah 3: AJAX Pagination**
-- Buat file view baru `resources/views/exams/_history_table.blade.php` yang hanya berisi isi tabel dan pagination links.
-- Di controller: `return view('exams._history_table', compact('attempts'))->render();` jika request adalah AJAX.
-- Di script: `fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })`.
+## Catatan untuk Junior Programmer
+- Ingat bahwa formulir dengan `method="GET"` akan menimpa seluruh *query string* di URL dengan data yang ada di dalam input form.
+- Menggunakan `<input type="hidden">` adalah cara paling sederhana untuk "mengoper" data yang sudah ada di URL ke pengiriman form berikutnya tanpa menampilkannya ke pengguna.

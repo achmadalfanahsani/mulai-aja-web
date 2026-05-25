@@ -38,6 +38,9 @@
             <div class="block-content block-content-full">
                 <!-- Filter Form -->
                 <form action="{{ route('question-packages.index') }}" method="GET" class="mb-4">
+                    @if(request()->has('type'))
+                        <input type="hidden" name="type" value="{{ request('type') }}">
+                    @endif
                     <div class="row g-3">
                         <div class="col-md-5">
                             <input type="text" name="q" class="form-control" placeholder="Cari Nama Paket..." value="{{ request('q') }}">
