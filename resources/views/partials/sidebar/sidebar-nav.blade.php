@@ -48,10 +48,18 @@
             // Logic to determine active state for each category
             $currentType = request('type');
             $packageType = $questionPackage->package_type ?? $package->package_type ?? null;
+            $isPackageRoute = request()->routeIs('question-packages.*') || request()->routeIs('questions.*');
+            $hasTypeParam = request()->has('type');
 
-            $isMultipleChoiceActive = ($currentType === 'multiple_choice') || ($packageType === 'multiple_choice');
-            $isEssayActive = ($currentType === 'essay') || ($packageType === 'essay');
-            $isMixedActive = ($currentType === 'mixed') || ($packageType === 'mixed');
+            // Category is active if:
+            // 1. URL has explicit type parameter matching the category
+            // 2. OR we are viewing a specific package (detail/edit/questions) that matches the type
+            // BUT: If we are on the index page WITHOUT a type parameter, NO specific category should be active.
+            $isIndexWithoutType = request()->routeIs('question-packages.index') && !$hasTypeParam;
+
+            $isMultipleChoiceActive = !$isIndexWithoutType && (($currentType === 'multiple_choice') || ($packageType === 'multiple_choice'));
+            $isEssayActive = !$isIndexWithoutType && (($currentType === 'essay') || ($packageType === 'essay'));
+            $isMixedActive = !$isIndexWithoutType && (($currentType === 'mixed') || ($packageType === 'mixed'));
         @endphp
         <li class="nav-main-item">
             <a class="nav-main-link {{ $isMultipleChoiceActive ? 'active' : '' }}"
