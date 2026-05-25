@@ -9,7 +9,7 @@
             <div class="block-header block-header-default bg-primary-dark">
                 <h3 class="block-title">Edit Soal</h3>
                 <div class="block-options">
-                    <a href="{{ route('question-packages.questions.index', $questionPackage->id) }}" class="btn btn-sm btn-alt-secondary">
+                    <a href="{{ route('question-packages.questions.index', [$questionPackage->id, 'type' => request('type')]) }}" class="btn btn-sm btn-alt-secondary">
                         <i class="fa fa-arrow-left me-1"></i> Kembali
                     </a>
                 </div>
@@ -153,7 +153,7 @@
 
                     {{-- Submit --}}
                     <div class="d-flex justify-content-between align-items-center mt-4">
-                        <a href="{{ route('question-packages.questions.index', $questionPackage->id) }}" class="btn btn-alt-secondary">Batal</a>
+                        <a href="{{ route('question-packages.questions.index', [$questionPackage->id, 'type' => request('type')]) }}" class="btn btn-alt-secondary">Batal</a>
                         <button type="submit" class="btn btn-warning">
                             <i class="fa fa-save me-1"></i> Simpan Perubahan
                         </button>

@@ -95,7 +95,7 @@ class QuestionController extends Controller {
             $questionPackage->increment('total_questions_count');
         });
 
-        return redirect()->route('question-packages.questions.index', $questionPackage->id)
+        return redirect()->route('question-packages.questions.index', [$questionPackage->id, 'type' => $questionPackage->package_type])
             ->with('success', 'Soal berhasil ditambahkan ke dalam paket!');
     }
 
@@ -185,7 +185,7 @@ class QuestionController extends Controller {
             }
         });
 
-        return redirect()->route('question-packages.questions.index', $questionPackage->id)
+        return redirect()->route('question-packages.questions.index', [$questionPackage->id, 'type' => $questionPackage->package_type])
             ->with('success', 'Soal berhasil diperbarui!');
     }
 
@@ -204,7 +204,7 @@ class QuestionController extends Controller {
             }
         });
 
-        return redirect()->route('question-packages.questions.index', $questionPackage->id)
+        return redirect()->route('question-packages.questions.index', [$questionPackage->id, 'type' => $questionPackage->package_type])
             ->with('success', 'Soal berhasil dihapus dari paket!');
     }
 }

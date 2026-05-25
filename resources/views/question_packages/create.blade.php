@@ -46,7 +46,7 @@
                             <label class="form-label" for="package_type">Tipe Paket Soal <span
                                     class="text-danger">*</span></label>
                             @php
-                                $requestedType = request()->query('type');
+                                $requestedType = $type ?? request()->query('type');
                                 $isReadonly = !empty($requestedType);
                             @endphp
 

@@ -44,22 +44,31 @@
         
         {{-- Question Management: Teacher, Administrator, Superuser --}}
         @if(auth()->user()->isTeacher() || auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
+        @php
+            // Logic to determine active state for each category
+            $currentType = request('type');
+            $packageType = $questionPackage->package_type ?? $package->package_type ?? null;
+
+            $isMultipleChoiceActive = ($currentType === 'multiple_choice') || ($packageType === 'multiple_choice');
+            $isEssayActive = ($currentType === 'essay') || ($packageType === 'essay');
+            $isMixedActive = ($currentType === 'mixed') || ($packageType === 'mixed');
+        @endphp
         <li class="nav-main-item">
-            <a class="nav-main-link {{ request()->fullUrlIs(route('question-packages.index', ['type' => 'multiple_choice'])) ? 'active' : '' }}"
+            <a class="nav-main-link {{ $isMultipleChoiceActive ? 'active' : '' }}"
                 href="{{ route('question-packages.index', ['type' => 'multiple_choice']) }}">
                 <i class="nav-main-link-icon fa fa-check-square"></i>
                 <span class="nav-main-link-name">Paket Soal Pilihan Ganda</span>
             </a>
         </li>
         <li class="nav-main-item">
-            <a class="nav-main-link {{ request()->fullUrlIs(route('question-packages.index', ['type' => 'essay'])) ? 'active' : '' }}"
+            <a class="nav-main-link {{ $isEssayActive ? 'active' : '' }}"
                 href="{{ route('question-packages.index', ['type' => 'essay']) }}">
                 <i class="nav-main-link-icon fa fa-keyboard"></i>
                 <span class="nav-main-link-name">Paket Soal Isian Singkat</span>
             </a>
         </li>
         <li class="nav-main-item">
-            <a class="nav-main-link {{ request()->fullUrlIs(route('question-packages.index', ['type' => 'mixed'])) ? 'active' : '' }}"
+            <a class="nav-main-link {{ $isMixedActive ? 'active' : '' }}"
                 href="{{ route('question-packages.index', ['type' => 'mixed']) }}">
                 <i class="nav-main-link-icon fa fa-layer-group"></i>
                 <span class="nav-main-link-name">Paket Soal Campuran</span>
