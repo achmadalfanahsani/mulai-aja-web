@@ -65,6 +65,12 @@
                 @endif
             @endauth
 
+            <a class="dropdown-item d-flex align-items-center justify-content-between"
+                href="javascript:void(0)">
+                <span>Ganti Password</span>
+                <i class="fa fa-fw fa-key opacity-25"></i>
+            </a>
+
             <div class="dropdown-divider"></div>
 
             {{-- Sign Out --}}
