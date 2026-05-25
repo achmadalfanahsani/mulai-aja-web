@@ -45,8 +45,9 @@ class QuestionPackageController extends Controller {
     /**
      * Tampilkan form pembuatan paket soal baru.
      */
-    public function create() {
-        return view('question_packages.create');
+    public function create(Request $request) {
+        $type = $request->query('type');
+        return view('question_packages.create', compact('type'));
     }
 
     /**

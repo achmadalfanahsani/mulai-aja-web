@@ -94,7 +94,7 @@
                                         @endif
                                     </h4>
                                     <div class="block-options">
-                                        <a href="{{ route('questions.edit', $question->id) }}"
+                                        <a href="{{ route('questions.edit', [$question->id, 'type' => request('type')]) }}"
                                             class="btn btn-sm btn-alt-warning me-1" data-toggle="tooltip" title="Edit Soal">
                                             <i class="fa fa-pencil-alt"></i> Edit
                                         </a>
