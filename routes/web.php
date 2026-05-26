@@ -17,7 +17,7 @@ Route::redirect('/', '/dashboard');
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);
 });
@@ -25,14 +25,14 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
 // Dashboard (Protected by Auth)
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile/password', [ProfileController::class, 'showChangePasswordForm'])->name('profile.password');
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });
 
 // Role-Based Routes
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'approved'])->group(function () {
 
     // 1. Superuser Only: User Management
     Route::middleware(['role:superuser'])->prefix('superuser')->name('superuser.')->group(function () {
@@ -61,6 +61,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('exams/attempt/{questionAttempt}', [ExamController::class, 'attempt'])->name('exams.attempt');
         Route::post('exams/attempt/{questionAttempt}/save', [ExamController::class, 'saveResponse'])->name('exams.save-response');
         Route::post('exams/attempt/{questionAttempt}/submit', [ExamController::class, 'submit'])->name('exams.submit');
+    });
+
+    // 4. Exam Results / Cross Check (Student, Teacher, Administrator, Superuser)
+    Route::middleware(['role:student,teacher,administrator,superuser'])->group(function () {
         Route::get('exams/results/{questionAttempt}', [ExamController::class, 'results'])->name('exams.results');
     });
 });

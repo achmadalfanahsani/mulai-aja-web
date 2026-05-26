@@ -35,7 +35,7 @@
                         <option value="student" {{ request('role') == 'student' ? 'selected' : '' }}>Student</option>
                         <option value="teacher" {{ request('role') == 'teacher' ? 'selected' : '' }}>Teacher</option>
                         <option value="administrator" {{ request('role') == 'administrator' ? 'selected' : '' }}>Administrator</option>
-                        <option value="superuser" {{ request('role') == 'superuser' ? 'selected' : '' }}>Superuser</option>
+
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -148,7 +148,7 @@
                                                     <option value="student" {{ $user->role === 'student' ? 'selected' : '' }}>Student</option>
                                                     <option value="teacher" {{ $user->role === 'teacher' ? 'selected' : '' }}>Teacher</option>
                                                     <option value="administrator" {{ $user->role === 'administrator' ? 'selected' : '' }}>Administrator</option>
-                                                    <option value="superuser" {{ $user->role === 'superuser' ? 'selected' : '' }}>Superuser</option>
+
                                                 </select>
                                             </div>
                                         </div>

@@ -46,8 +46,16 @@ class UserController extends Controller
      */
     public function updateRole(Request $request, User $user)
     {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Anda tidak dapat mengubah role diri sendiri.');
+        }
+
+        if ($user->isSuperuser()) {
+            return back()->with('error', 'Tidak dapat mengubah role superuser lain.');
+        }
+
         $request->validate([
-            'role' => 'required|in:student,teacher,administrator,superuser',
+            'role' => 'required|in:student,teacher,administrator',
         ]);
 
         $user->update(['role' => $request->role]);
@@ -80,6 +88,10 @@ class UserController extends Controller
      */
     public function updatePassword(Request $request, User $user)
     {
+        if ($user->isSuperuser() && $user->id !== auth()->id()) {
+            return back()->with('error', 'Tidak dapat mengubah password superuser lain.');
+        }
+
         $request->validate([
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -96,6 +108,14 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Anda tidak dapat menghapus akun sendiri.');
+        }
+
+        if ($user->isSuperuser()) {
+            return back()->with('error', 'Tidak dapat menghapus akun superuser.');
+        }
+
         $userName = $user->name;
         $user->delete();
 

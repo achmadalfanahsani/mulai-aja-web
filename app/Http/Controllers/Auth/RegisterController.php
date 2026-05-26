@@ -31,7 +31,7 @@ class RegisterController extends Controller
             'role' => ['required', 'in:student,teacher,administrator'],
         ]);
 
-        $isApproved = $request->role !== User::ROLE_ADMINISTRATOR;
+        $isApproved = $request->role === User::ROLE_STUDENT;
 
         $user = User::create([
             'name' => $request->name,
@@ -42,7 +42,7 @@ class RegisterController extends Controller
         ]);
 
         if (!$isApproved) {
-            return redirect()->route('login')->with('success', 'Registrasi berhasil! Akun administrator Anda sedang menunggu persetujuan Superuser.');
+            return redirect()->route('login')->with('success', 'Registrasi berhasil! Akun Anda sedang menunggu persetujuan.');
         }
 
         Auth::login($user);

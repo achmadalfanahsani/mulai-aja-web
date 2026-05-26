@@ -18,7 +18,8 @@ class RoleAndPermissionSeeder extends Seeder
             ['email' => 'superuser@example.com'],
             [
                 'name' => 'Super User',
-                'password' => Hash::make('password'),
+                // ⚠️ PERINGATAN: Segera ganti password ini setelah deployment ke production!
+                'password' => Hash::make(env('DEFAULT_USER_PASSWORD', 'password')),
                 'role' => User::ROLE_SUPERUSER,
                 'is_approved' => true,
             ]
@@ -29,7 +30,8 @@ class RoleAndPermissionSeeder extends Seeder
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin Utama',
-                'password' => Hash::make('password'),
+                // ⚠️ PERINGATAN: Segera ganti password ini setelah deployment ke production!
+                'password' => Hash::make(env('DEFAULT_USER_PASSWORD', 'password')),
                 'role' => User::ROLE_ADMINISTRATOR,
                 'is_approved' => true,
             ]
@@ -40,7 +42,8 @@ class RoleAndPermissionSeeder extends Seeder
             ['email' => 'teacher@example.com'],
             [
                 'name' => 'Guru Teladan',
-                'password' => Hash::make('password'),
+                // ⚠️ PERINGATAN: Segera ganti password ini setelah deployment ke production!
+                'password' => Hash::make(env('DEFAULT_USER_PASSWORD', 'password')),
                 'role' => User::ROLE_TEACHER,
                 'is_approved' => true,
             ]
@@ -51,7 +54,8 @@ class RoleAndPermissionSeeder extends Seeder
             ['email' => 'student@example.com'],
             [
                 'name' => 'Siswa Pintar',
-                'password' => Hash::make('password'),
+                // ⚠️ PERINGATAN: Segera ganti password ini setelah deployment ke production!
+                'password' => Hash::make(env('DEFAULT_USER_PASSWORD', 'password')),
                 'role' => User::ROLE_STUDENT,
                 'is_approved' => true,
             ]

@@ -8,12 +8,14 @@ use App\Models\QuestionPackage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class QuestionController extends Controller {
     /**
      * Tampilkan semua soal di dalam suatu paket soal.
      */
     public function index(QuestionPackage $questionPackage) {
+        Gate::authorize('viewAny', [Question::class, $questionPackage]);
         $questions = $questionPackage->questions()->ordered()->get();
         return view('questions.index', compact('questionPackage', 'questions'));
     }
@@ -22,6 +24,7 @@ class QuestionController extends Controller {
      * Tampilkan form pembuatan soal baru.
      */
     public function create(QuestionPackage $questionPackage) {
+        Gate::authorize('create', [Question::class, $questionPackage]);
         return view('questions.create', compact('questionPackage'));
     }
 
@@ -29,6 +32,7 @@ class QuestionController extends Controller {
      * Simpan soal baru beserta 5 opsi jawabannya.
      */
     public function store(Request $request, QuestionPackage $questionPackage) {
+        Gate::authorize('create', [Question::class, $questionPackage]);
         $rules = [
             'question_type' => 'required|in:multiple_choice,essay',
             'question_text' => 'required|string',
@@ -103,6 +107,7 @@ class QuestionController extends Controller {
      * Tampilkan form edit soal.
      */
     public function edit(Question $question) {
+        Gate::authorize('update', $question);
         $questionPackage = $question->questionPackage;
         // Ambil opsi yang ada dipetakan ke key A-E
         $options = $question->options->pluck('option_text', 'option_label')->toArray();
@@ -113,6 +118,7 @@ class QuestionController extends Controller {
      * Perbarui soal beserta opsinya.
      */
     public function update(Request $request, Question $question) {
+        Gate::authorize('update', $question);
         $questionPackage = $question->questionPackage;
         $rules = [
             'question_type' => 'required|in:multiple_choice,essay',
@@ -193,6 +199,7 @@ class QuestionController extends Controller {
      * Hapus soal dari database (soft delete).
      */
     public function destroy(Question $question) {
+        Gate::authorize('delete', $question);
         $questionPackage = $question->questionPackage;
         DB::transaction(function () use ($questionPackage, $question) {
             // Soft delete question

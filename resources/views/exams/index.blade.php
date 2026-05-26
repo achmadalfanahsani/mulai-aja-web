@@ -76,6 +76,9 @@
                             <div class="block-content block-content-full bg-primary-dark text-center py-4">
                                 <i class="fa fa-file-invoice fa-3x text-white-50 mb-3"></i>
                                 <h4 class="font-w700 text-white mb-0 text-truncate px-2">{{ $package->name }}</h4>
+                                <div class="text-white-75 font-size-sm mt-2">
+                                    <i class="fa fa-user-edit me-1"></i> {{ $package->user->name ?? 'Sistem' }}
+                                </div>
                             </div>
                             
                             <div class="block-content flex-grow-1 py-3">
