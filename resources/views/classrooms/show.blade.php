@@ -4,6 +4,9 @@
 @section('page-heading', 'Kelola Kelas: ' . $classroom->name)
 
 @section('content')
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('assets/js/plugins/select2/css/select2.min.css') }}">
+@endpush
 <div class="row">
     <div class="col-md-12">
         <div class="block block-rounded">
@@ -158,8 +161,8 @@
                     <div class="block-content fs-sm">
                         <div class="mb-4">
                             <label class="form-label" for="user_id">Pilih Siswa</label>
-                            <select class="form-select" id="user_id" name="user_id" required>
-                                <option value="">-- Pilih Siswa --</option>
+                            <select class="js-select2 form-select" id="user_id" name="user_id" style="width: 100%;" data-placeholder="Cari nama atau email siswa.." required>
+                                <option></option><!-- Required for data-placeholder -->
                                 @foreach($availableStudents as $student)
                                     <option value="{{ $student->id }}">{{ $student->name }} ({{ $student->email }})</option>
                                 @endforeach
@@ -195,8 +198,8 @@
                     <div class="block-content fs-sm">
                         <div class="mb-4">
                             <label class="form-label" for="question_package_id">Pilih Paket Soal</label>
-                            <select class="form-select" id="question_package_id" name="question_package_id" required>
-                                <option value="">-- Pilih Paket Soal --</option>
+                            <select class="js-select2 form-select" id="question_package_id" name="question_package_id" style="width: 100%;" data-placeholder="Cari paket soal.." required>
+                                <option></option><!-- Required for data-placeholder -->
                                 @foreach($availablePackages as $package)
                                     <option value="{{ $package->id }}">{{ $package->name }} ({{ ucfirst(str_replace('_', ' ', $package->package_type)) }})</option>
                                 @endforeach
@@ -213,4 +216,21 @@
         </div>
     </div>
 </div>
+@push('scripts')
+    <script src="{{ asset('assets/js/lib/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script>
+        jQuery(function() {
+            // Inisialisasi Select2
+            jQuery('.js-select2').each(function() {
+                let el = jQuery(this);
+                el.select2({
+                    dropdownParent: el.closest('.modal'),
+                    placeholder: el.data('placeholder'),
+                    allowClear: true
+                });
+            });
+        });
+    </script>
+@endpush
 @endsection

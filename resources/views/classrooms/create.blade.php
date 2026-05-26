@@ -4,7 +4,7 @@
 @section('page-heading', 'Buat Kelas Baru')
 
 @section('content')
-<div class="row">
+<div class="row justify-content-center">
     <div class="col-md-8">
         <div class="block block-rounded">
             <div class="block-header block-header-default">
