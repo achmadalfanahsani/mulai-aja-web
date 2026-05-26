@@ -16,7 +16,7 @@ class ClassroomController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', Classroom::class);
+        Gate::authorize('viewAny', Classroom::class);
         $user = Auth::user();
         $classrooms = Classroom::withCount('students')
             ->when($user->isTeacher(), function($query) use ($user) {
@@ -33,7 +33,7 @@ class ClassroomController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Classroom::class);
+        Gate::authorize('create', Classroom::class);
         return view('classrooms.create');
     }
 
@@ -42,7 +42,7 @@ class ClassroomController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', Classroom::class);
+        Gate::authorize('create', Classroom::class);
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -63,7 +63,7 @@ class ClassroomController extends Controller
      */
     public function show(Classroom $classroom)
     {
-        $this->authorize('view', $classroom);
+        Gate::authorize('view', $classroom);
 
         $classroom->load(['students', 'questionPackages']);
         
@@ -93,7 +93,7 @@ class ClassroomController extends Controller
      */
     public function edit(Classroom $classroom)
     {
-        $this->authorize('update', $classroom);
+        Gate::authorize('update', $classroom);
 
         return view('classrooms.edit', compact('classroom'));
     }
@@ -103,7 +103,7 @@ class ClassroomController extends Controller
      */
     public function update(Request $request, Classroom $classroom)
     {
-        $this->authorize('update', $classroom);
+        Gate::authorize('update', $classroom);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -121,7 +121,7 @@ class ClassroomController extends Controller
      */
     public function destroy(Classroom $classroom)
     {
-        $this->authorize('delete', $classroom);
+        Gate::authorize('delete', $classroom);
 
         $classroom->delete();
 
@@ -134,7 +134,7 @@ class ClassroomController extends Controller
      */
     public function addStudent(Request $request, Classroom $classroom)
     {
-        $this->authorize('update', $classroom);
+        Gate::authorize('update', $classroom);
 
         $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -150,7 +150,7 @@ class ClassroomController extends Controller
      */
     public function removeStudent(Classroom $classroom, User $user)
     {
-        $this->authorize('update', $classroom);
+        Gate::authorize('update', $classroom);
 
         $classroom->students()->detach($user->id);
 
@@ -162,7 +162,7 @@ class ClassroomController extends Controller
      */
     public function assignPackage(Request $request, Classroom $classroom)
     {
-        $this->authorize('update', $classroom);
+        Gate::authorize('update', $classroom);
 
         $request->validate([
             'question_package_id' => 'required|exists:question_packages,id',
@@ -178,7 +178,7 @@ class ClassroomController extends Controller
      */
     public function removePackage(Classroom $classroom, QuestionPackage $questionPackage)
     {
-        $this->authorize('update', $classroom);
+        Gate::authorize('update', $classroom);
 
         $classroom->questionPackages()->detach($questionPackage->id);
 
