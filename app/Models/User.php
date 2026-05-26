@@ -72,7 +72,7 @@ class User extends Authenticatable {
     // ===== SCOPES =====
 
     public function scopePendingApproval(Builder $query): void {
-        $query->where('role', self::ROLE_ADMINISTRATOR)
+        $query->whereIn('role', [self::ROLE_ADMINISTRATOR, self::ROLE_TEACHER])
               ->where('is_approved', false);
     }
 

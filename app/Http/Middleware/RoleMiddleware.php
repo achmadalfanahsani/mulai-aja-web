@@ -25,13 +25,6 @@ class RoleMiddleware
 
         // Check if user's role is in the allowed roles
         if (in_array($user->role, $roles)) {
-            
-            // Check for administrator approval
-            if ($user->role === 'administrator' && !$user->is_approved) {
-                Auth::logout();
-                return redirect()->route('login')->with('error', 'Akun Administrator Anda belum di-approve oleh Superuser.');
-            }
-
             return $next($request);
         }
 

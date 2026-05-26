@@ -94,6 +94,9 @@
                                                     {{ $package->description }}
                                                 </div>
                                             @endif
+                                            <div class="text-muted font-size-sm mt-1">
+                                                <i class="fa fa-user-edit text-primary-light me-1"></i> {{ $package->user->name ?? 'Sistem' }}
+                                            </div>
                                         </td>
                                         <td class="d-none d-sm-table-cell">
                                             <span class="badge bg-secondary-light text-secondary font-size-sm">

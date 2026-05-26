@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class ExamController extends Controller {
     /**
@@ -17,6 +18,7 @@ class ExamController extends Controller {
      */
     public function index(Request $request) {
         $packageQuery = QuestionPackage::published()
+            ->with('user')
             ->withCount('activeQuestions')
             ->latest();
 
@@ -172,9 +174,7 @@ class ExamController extends Controller {
      */
     public function attempt(QuestionAttempt $questionAttempt, Request $request) {
         // Proteksi akses
-        if ($questionAttempt->user_id !== Auth::id()) {
-            abort(403, 'Akses ditolak.');
-        }
+        Gate::authorize('view', $questionAttempt);
 
         // Cek jika sudah selesai
         if ($questionAttempt->is_completed || $questionAttempt->isFinished()) {
@@ -274,7 +274,7 @@ class ExamController extends Controller {
      * Simpan jawaban draft secara dinamis (via form submit / AJAX).
      */
     public function saveResponse(Request $request, QuestionAttempt $questionAttempt) {
-        if ($questionAttempt->user_id !== Auth::id() || $questionAttempt->is_completed) {
+        if (Auth::user()->cannot('saveResponse', $questionAttempt) || $questionAttempt->is_completed) {
             return response()->json(['error' => 'Akses ditolak.'], 403);
         }
 
@@ -312,9 +312,7 @@ class ExamController extends Controller {
      * Selesai & Submit Ujian.
      */
     public function submit(QuestionAttempt $questionAttempt, Request $request) {
-        if ($questionAttempt->user_id !== Auth::id()) {
-            abort(403);
-        }
+        Gate::authorize('submit', $questionAttempt);
 
         if ($questionAttempt->is_completed) {
             return redirect()->route('exams.results', $questionAttempt->id);
@@ -338,9 +336,7 @@ class ExamController extends Controller {
      * Halaman Hasil Ujian & Review Evaluasi.
      */
     public function results(QuestionAttempt $questionAttempt) {
-        if ($questionAttempt->user_id !== Auth::id()) {
-            abort(403);
-        }
+        Gate::authorize('view', $questionAttempt);
 
         if (!$questionAttempt->is_completed) {
             return redirect()->route('exams.attempt', $questionAttempt->id);

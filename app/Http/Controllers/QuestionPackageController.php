@@ -6,6 +6,7 @@ use App\Models\QuestionPackage;
 use App\Models\QuestionAttempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class QuestionPackageController extends Controller {
     /**
@@ -37,7 +38,7 @@ class QuestionPackageController extends Controller {
             $query->where('package_type', $type);
         }
 
-        $packages = $query->withCount('questions')->latest()->paginate(10)->withQueryString();
+        $packages = $query->with('user')->withCount('questions')->latest()->paginate(10)->withQueryString();
 
         return view('question_packages.index', compact('packages'));
     }
@@ -81,7 +82,7 @@ class QuestionPackageController extends Controller {
      */
     public function edit(QuestionPackage $questionPackage) {
         // Cek otorisasi
-        $this->authorizeAccess($questionPackage);
+        Gate::authorize('update', $questionPackage);
 
         return view('question_packages.edit', compact('questionPackage'));
     }
@@ -90,7 +91,7 @@ class QuestionPackageController extends Controller {
      * Perbarui paket soal di database.
      */
     public function update(Request $request, QuestionPackage $question_package) {
-        $this->authorizeAccess($question_package);
+        Gate::authorize('update', $question_package);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -116,7 +117,7 @@ class QuestionPackageController extends Controller {
      * Hapus paket soal dari database (soft delete).
      */
     public function destroy(QuestionPackage $questionPackage) {
-        $this->authorizeAccess($questionPackage);
+        Gate::authorize('delete', $questionPackage);
 
         $type = $questionPackage->package_type;
         $questionPackage->delete();
@@ -133,7 +134,7 @@ class QuestionPackageController extends Controller {
             $question_package = QuestionPackage::findOrFail($question_package);
         }
 
-        $this->authorizeAccess($question_package);
+        Gate::authorize('togglePublish', $question_package);
 
         // Validasi: Minimal 1 soal sebelum bisa publish
         if (!$question_package->is_published && $question_package->activeQuestions()->count() < 1) {
@@ -153,7 +154,7 @@ class QuestionPackageController extends Controller {
      * Tampilkan hasil pengerjaan siswa untuk paket soal ini.
      */
     public function results(QuestionPackage $questionPackage) {
-        $this->authorizeAccess($questionPackage);
+        Gate::authorize('viewResults', $questionPackage);
 
         $attempts = $questionPackage->attempts()
             ->with('user')
@@ -164,13 +165,5 @@ class QuestionPackageController extends Controller {
         return view('question_packages.results', compact('questionPackage', 'attempts'));
     }
 
-    /**
-     * Helper: Cek hak akses user terhadap paket soal.
-     */
-    private function authorizeAccess(QuestionPackage $package) {
-        $user = Auth::user();
-        if (!$user->isAdministrator() && !$user->isSuperuser() && $package->user_id !== $user->id) {
-            abort(403, 'Anda tidak memiliki hak akses untuk paket soal ini.');
-        }
-    }
+
 }
