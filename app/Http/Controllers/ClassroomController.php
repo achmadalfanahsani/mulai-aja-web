@@ -83,7 +83,16 @@ class ClassroomController extends Controller
             ->when(Auth::user()->isTeacher(), function($q) {
                 return $q->where('user_id', Auth::id());
             })
-            ->get();
+            ->get()
+            ->map(function($package) {
+                $typeLabels = [
+                    'multiple_choice' => 'Pilihan Ganda',
+                    'essay' => 'Isian',
+                    'mixed' => 'Campuran'
+                ];
+                $package->type_label = $typeLabels[$package->package_type] ?? $package->package_type;
+                return $package;
+            });
 
         return view('classrooms.show', compact('classroom', 'availableStudents', 'availablePackages'));
     }

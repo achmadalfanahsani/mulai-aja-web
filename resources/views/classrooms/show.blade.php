@@ -198,10 +198,12 @@
                     <div class="block-content fs-sm">
                         <div class="mb-4">
                             <label class="form-label" for="question_package_id">Pilih Paket Soal</label>
-                            <select class="js-select2 form-select" id="question_package_id" name="question_package_id" style="width: 100%;" data-placeholder="Cari paket soal.." required>
+                            <select class="js-select2-package form-select" id="question_package_id" name="question_package_id" style="width: 100%;" data-placeholder="Cari paket soal.." required>
                                 <option></option><!-- Required for data-placeholder -->
                                 @foreach($availablePackages as $package)
-                                    <option value="{{ $package->id }}">{{ $package->name }} ({{ ucfirst(str_replace('_', ' ', $package->package_type)) }})</option>
+                                    <option value="{{ $package->id }}" data-type="{{ $package->type_label }}">
+                                        {{ $package->name }}
+                                    </option>
                                 @endforeach
                             </select>
                             <div class="form-text text-muted">Hanya menampilkan paket soal yang sudah dipublikasi.</div>
@@ -221,7 +223,7 @@
     <script src="{{ asset('assets/js/plugins/select2/js/select2.full.min.js') }}"></script>
     <script>
         jQuery(function() {
-            // Inisialisasi Select2
+            // Inisialisasi Select2 untuk Siswa
             jQuery('.js-select2').each(function() {
                 let el = jQuery(this);
                 el.select2({
@@ -229,6 +231,36 @@
                     placeholder: el.data('placeholder'),
                     allowClear: true
                 });
+            });
+
+            // Inisialisasi Select2 untuk Paket Soal dengan Custom Template
+            function formatPackage(package) {
+                if (!package.id) {
+                    return package.text;
+                }
+
+                let type = jQuery(package.element).data('type');
+                let badgeClass = 'bg-secondary';
+                
+                if (type === 'Pilihan Ganda') badgeClass = 'bg-info';
+                if (type === 'Isian') badgeClass = 'bg-warning';
+                if (type === 'Campuran') badgeClass = 'bg-primary';
+
+                let $package = jQuery(
+                    '<div class="d-flex justify-content-between align-items-center">' +
+                        '<span>' + package.text + '</span>' +
+                        '<span class="badge ' + badgeClass + ' ml-2">' + type + '</span>' +
+                    '</div>'
+                );
+                return $package;
+            }
+
+            jQuery('.js-select2-package').select2({
+                dropdownParent: jQuery('#modal-assign-package'),
+                placeholder: 'Cari paket soal..',
+                allowClear: true,
+                templateResult: formatPackage,
+                templateSelection: formatPackage
             });
         });
     </script>
