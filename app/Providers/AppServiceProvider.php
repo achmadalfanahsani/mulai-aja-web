@@ -8,9 +8,11 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\QuestionPackage;
 use App\Models\Question;
 use App\Models\QuestionAttempt;
+use App\Models\Classroom;
 use App\Policies\QuestionPackagePolicy;
 use App\Policies\QuestionPolicy;
 use App\Policies\QuestionAttemptPolicy;
+use App\Policies\ClassroomPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,5 +34,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(QuestionPackage::class, QuestionPackagePolicy::class);
         Gate::policy(Question::class, QuestionPolicy::class);
         Gate::policy(QuestionAttempt::class, QuestionAttemptPolicy::class);
+        Gate::policy(Classroom::class, ClassroomPolicy::class);
     }
 }
