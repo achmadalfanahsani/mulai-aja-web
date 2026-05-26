@@ -42,10 +42,18 @@
                         <input type="hidden" name="type" value="{{ request('type') }}">
                     @endif
                     <div class="row g-3">
-                        <div class="col-md-5">
+                        <div class="col-md-4">
                             <input type="text" name="q" class="form-control" placeholder="Cari Nama Paket..." value="{{ request('q') }}">
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-3">
+                            <select name="package_type" class="form-select">
+                                <option value="">Semua Tipe</option>
+                                <option value="multiple_choice" {{ request('package_type') == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
+                                <option value="essay" {{ request('package_type') == 'essay' ? 'selected' : '' }}>Isian</option>
+                                <option value="mixed" {{ request('package_type') == 'mixed' ? 'selected' : '' }}>Campuran</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <select name="status" class="form-select">
                                 <option value="">Semua Status</option>
                                 <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Published</option>
@@ -96,6 +104,7 @@
                                             @endif
                                             <div class="text-muted font-size-sm mt-1">
                                                 <i class="fa fa-user-edit text-primary-light me-1"></i> {{ $package->user->name ?? 'Sistem' }}
+                                                <span class="ms-2 badge {{ $package->type_badge_class }}">{{ $package->type_label }}</span>
                                             </div>
                                         </td>
                                         <td class="d-none d-sm-table-cell">

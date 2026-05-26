@@ -32,10 +32,10 @@ class QuestionPackageController extends Controller {
             $query->where('is_published', $isPublished);
         }
 
-        // Filter by question type
-        if ($request->filled('type')) {
-            $type = $request->query('type');
-            $query->where('package_type', $type);
+        // Filter by package type (from form or legacy URL param)
+        $packageType = $request->input('package_type') ?? $request->input('type');
+        if ($packageType) {
+            $query->where('package_type', $packageType);
         }
 
         $packages = $query->with('user')->withCount('questions')->latest()->paginate(10)->withQueryString();

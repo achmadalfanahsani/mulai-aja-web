@@ -66,13 +66,38 @@
                                     <td>{{ $student->email }}</td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-sm btn-alt-danger" title="Keluarkan dari kelas"
-                                            onclick="if(confirm('Apakah Anda yakin ingin mengeluarkan siswa ini dari kelas?')) { document.getElementById('remove-student-{{ $student->id }}').submit(); }">
+                                            data-bs-toggle="modal" data-bs-target="#modal-remove-student-{{ $student->id }}">
                                             <i class="fa fa-times"></i>
                                         </button>
-                                        <form id="remove-student-{{ $student->id }}" action="{{ route('classrooms.students.remove', [$classroom->id, $student->id]) }}" method="POST" style="display: none;">
-                                            @csrf
-                                            @method('DELETE')
-                                        </form>
+
+                                        <!-- Modal: Remove Student -->
+                                        <div class="modal fade" id="modal-remove-student-{{ $student->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-remove-student-{{ $student->id }}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <form action="{{ route('classrooms.students.remove', [$classroom->id, $student->id]) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <div class="block block-rounded block-transparent mb-0">
+                                                            <div class="block-header block-header-default">
+                                                                <h3 class="block-title">Keluarkan Siswa</h3>
+                                                                <div class="block-options">
+                                                                    <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                                                                        <i class="fa fa-fw fa-times"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="block-content fs-sm text-start">
+                                                                <p>Apakah Anda yakin ingin mengeluarkan <strong>{{ $student->name }}</strong> dari kelas ini?</p>
+                                                            </div>
+                                                            <div class="block-content block-content-full text-end bg-body">
+                                                                <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Batal</button>
+                                                                <button type="submit" class="btn btn-sm btn-danger">Ya, Keluarkan</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                                 @empty
@@ -114,17 +139,47 @@
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td class="fw-semibold">{{ $package->name }}</td>
                                     <td class="text-center">
-                                        <span class="badge bg-secondary">{{ ucfirst(str_replace('_', ' ', $package->package_type)) }}</span>
+                                        <span class="badge {{ $package->type_badge_class }}">{{ $package->type_label }}</span>
                                     </td>
                                     <td class="text-center">
-                                        <button type="button" class="btn btn-sm btn-alt-danger" title="Tarik dari kelas"
-                                            onclick="if(confirm('Apakah Anda yakin ingin menarik paket soal ini dari kelas?')) { document.getElementById('remove-package-{{ $package->id }}').submit(); }">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                        <form id="remove-package-{{ $package->id }}" action="{{ route('classrooms.packages.remove', [$classroom->id, $package->id]) }}" method="POST" style="display: none;">
-                                            @csrf
-                                            @method('DELETE')
-                                        </form>
+                                        <div class="btn-group">
+                                            <a href="{{ route('question-packages.results', [$package->id, 'type' => $package->package_type]) }}" class="btn btn-sm btn-alt-success" title="Lihat Hasil Pengerjaan">
+                                                <i class="fa fa-chart-line"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-alt-danger" title="Tarik dari kelas"
+                                                data-bs-toggle="modal" data-bs-target="#modal-remove-package-{{ $package->id }}">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </div>
+
+                                        <!-- Modal: Remove Package -->
+                                        <div class="modal fade" id="modal-remove-package-{{ $package->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-remove-package-{{ $package->id }}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <form action="{{ route('classrooms.packages.remove', [$classroom->id, $package->id]) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <div class="block block-rounded block-transparent mb-0">
+                                                            <div class="block-header block-header-default">
+                                                                <h3 class="block-title">Tarik Paket Soal</h3>
+                                                                <div class="block-options">
+                                                                    <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                                                                        <i class="fa fa-fw fa-times"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="block-content fs-sm text-start">
+                                                                <p>Apakah Anda yakin ingin menarik paket soal <strong>{{ $package->name }}</strong> dari kelas ini?</p>
+                                                            </div>
+                                                            <div class="block-content block-content-full text-end bg-body">
+                                                                <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Batal</button>
+                                                                <button type="submit" class="btn btn-sm btn-danger">Ya, Tarik</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                                 @empty
@@ -201,7 +256,9 @@
                             <select class="js-select2-package form-select" id="question_package_id" name="question_package_id" style="width: 100%;" data-placeholder="Cari paket soal.." required>
                                 <option></option><!-- Required for data-placeholder -->
                                 @foreach($availablePackages as $package)
-                                    <option value="{{ $package->id }}" data-type="{{ $package->type_label }}">
+                                    <option value="{{ $package->id }}" 
+                                        data-type="{{ $package->type_label }}"
+                                        data-badge-class="{{ $package->type_badge_class }}">
                                         {{ $package->name }}
                                     </option>
                                 @endforeach
@@ -240,12 +297,8 @@
                 }
 
                 let type = jQuery(package.element).data('type');
-                let badgeClass = 'bg-secondary';
+                let badgeClass = jQuery(package.element).data('badge-class') || 'bg-secondary';
                 
-                if (type === 'Pilihan Ganda') badgeClass = 'bg-info';
-                if (type === 'Isian') badgeClass = 'bg-warning';
-                if (type === 'Campuran') badgeClass = 'bg-primary';
-
                 let $package = jQuery(
                     '<div class="d-flex justify-content-between align-items-center">' +
                         '<span>' + package.text + '</span>' +

@@ -87,6 +87,32 @@ class QuestionPackage extends Model {
     // ===== HELPER METHODS =====
 
     /**
+     * Dapatkan label tipe paket soal
+     */
+    public function getTypeLabelAttribute(): string {
+        $labels = [
+            'multiple_choice' => 'Pilihan Ganda',
+            'essay' => 'Isian',
+            'mixed' => 'Campuran',
+        ];
+
+        return $labels[$this->package_type] ?? $this->package_type;
+    }
+
+    /**
+     * Dapatkan class badge untuk tipe paket soal
+     */
+    public function getTypeBadgeClassAttribute(): string {
+        $classes = [
+            'multiple_choice' => 'bg-success',
+            'essay' => 'bg-info',
+            'mixed' => 'bg-warning',
+        ];
+
+        return $classes[$this->package_type] ?? 'bg-secondary';
+    }
+
+    /**
      * Dapatkan jumlah soal aktif
      */
     public function getActiveQuestionsCount(): int {

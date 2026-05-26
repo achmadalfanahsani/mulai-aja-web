@@ -43,17 +43,11 @@
                     </div>
 
                     {{-- Tipe Paket --}}
-                    <div class="form-group mb-4">
+                    <div class="mb-4">
                         <label class="form-label" for="package_type">Tipe Paket Soal <span class="text-danger">*</span></label>
-                        <select class="form-select @error('package_type') is-invalid @enderror" id="package_type" name="package_type" required>
-                            <option value="multiple_choice" {{ old('package_type', $questionPackage->package_type) == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
-                            <option value="essay" {{ old('package_type', $questionPackage->package_type) == 'essay' ? 'selected' : '' }}>Isian Singkat (Essay)</option>
-                            <option value="mixed" {{ old('package_type', $questionPackage->package_type) == 'mixed' ? 'selected' : '' }}>Campuran</option>
-                        </select>
-                        <small class="text-muted">Pilih tipe soal yang ada di dalam paket ini.</small>
-                        @error('package_type')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <input type="text" class="form-control bg-body-light" id="package_type_display" value="{{ $questionPackage->type_label }}" readonly>
+                        <input type="hidden" name="package_type" value="{{ $questionPackage->package_type }}">
+                        <div class="form-text text-muted">Tipe paket soal tidak dapat diubah setelah dibuat.</div>
                     </div>
 
                     <div class="row">
@@ -117,7 +111,7 @@
                             <div class="text-muted font-size-sm">Setiap siswa akan mendapatkan urutan soal yang berbeda-beda saat ujian dimulai.</div>
                         </div>
 
-                        <div class="form-check form-switch mt-3">
+                        <div class="form-check form-switch mt-3" id="shuffle_answers_container">
                             <input class="form-check-input" type="checkbox" id="shuffle_answers" name="shuffle_answers" value="1" 
                                 {{ $questionPackage->shuffle_answers ? 'checked' : '' }}>
                             <label class="form-check-label font-w600" for="shuffle_answers">Acak Urutan Opsi Jawaban (Shuffle Options)</label>
@@ -138,3 +132,25 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+    <script>
+        function toggleShuffleOptions() {
+            const packageTypeHidden = document.querySelector('input[name="package_type"]');
+            const container = document.getElementById('shuffle_answers_container');
+
+            if (packageTypeHidden && container) {
+                const type = packageTypeHidden.value;
+                if (type === 'essay') {
+                    container.style.display = 'none';
+                } else {
+                    container.style.display = 'block';
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleShuffleOptions();
+        });
+    </script>
+@endpush
