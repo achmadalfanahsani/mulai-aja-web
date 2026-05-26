@@ -17,10 +17,18 @@ class ExamController extends Controller {
      * Tampilkan semua paket soal yang aktif/published untuk dikerjakan siswa.
      */
     public function index(Request $request) {
+        $user = Auth::user();
         $packageQuery = QuestionPackage::published()
             ->with('user')
             ->withCount('activeQuestions')
             ->latest();
+
+        // Jika user adalah student, filter berdasarkan kelas
+        if ($user->isStudent()) {
+            $packageQuery->whereHas('classrooms', function($q) use ($user) {
+                $q->whereIn('classrooms.id', $user->classrooms->pluck('id'));
+            });
+        }
 
         // Search by name
         if ($request->filled('q')) {

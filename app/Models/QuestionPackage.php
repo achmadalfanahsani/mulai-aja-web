@@ -62,6 +62,14 @@ class QuestionPackage extends Model {
         return $this->hasMany(QuestionAttempt::class);
     }
 
+    /**
+     * Kelas yang ditugaskan paket soal ini
+     */
+    public function classrooms() {
+        return $this->belongsToMany(Classroom::class, 'classroom_question_package')
+                    ->withTimestamps();
+    }
+
     // ===== SCOPES =====
 
     public function scopePublished($query) {

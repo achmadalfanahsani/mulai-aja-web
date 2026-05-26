@@ -91,4 +91,19 @@ class User extends Authenticatable {
     public function questionAttempts() {
         return $this->hasMany(QuestionAttempt::class);
     }
+
+    /**
+     * Kelas di mana user ini menjadi anggotanya (untuk Student)
+     */
+    public function classrooms() {
+        return $this->belongsToMany(Classroom::class, 'classroom_user')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Kelas yang dikelola oleh user ini (untuk Teacher)
+     */
+    public function managedClassrooms() {
+        return $this->hasMany(Classroom::class, 'teacher_id');
+    }
 }

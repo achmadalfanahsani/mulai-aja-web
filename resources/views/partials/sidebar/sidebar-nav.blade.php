@@ -37,6 +37,14 @@
                 <span class="nav-main-link-name">Semua Paket Soal</span>
             </a>
         </li>
+
+        <li class="nav-main-item">
+            <a class="nav-main-link {{ request()->routeIs('classrooms.*') ? 'active' : '' }}"
+                href="{{ route('classrooms.index') }}">
+                <i class="nav-main-link-icon fa fa-school"></i>
+                <span class="nav-main-link-name">Manajemen Kelas</span>
+            </a>
+        </li>
         @endif
 
         {{-- Heading: CBT & Ujian --}}

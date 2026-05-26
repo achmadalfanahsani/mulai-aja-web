@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Superuser\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ClassroomController;
 use Illuminate\Support\Facades\Auth;
 
 // Root redirect
@@ -52,6 +53,13 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::get('question-packages/{questionPackage}/results', [QuestionPackageController::class, 'results'])
             ->name('question-packages.results');
         Route::resource('question-packages.questions', QuestionController::class)->shallow();
+
+        // Classroom Management
+        Route::resource('classrooms', ClassroomController::class);
+        Route::post('classrooms/{classroom}/students', [ClassroomController::class, 'addStudent'])->name('classrooms.students.add');
+        Route::delete('classrooms/{classroom}/students/{user}', [ClassroomController::class, 'removeStudent'])->name('classrooms.students.remove');
+        Route::post('classrooms/{classroom}/packages', [ClassroomController::class, 'assignPackage'])->name('classrooms.packages.assign');
+        Route::delete('classrooms/{classroom}/packages/{questionPackage}', [ClassroomController::class, 'removePackage'])->name('classrooms.packages.remove');
     });
 
     // 3. Exam / CBT (Student & Administrator & Superuser)
