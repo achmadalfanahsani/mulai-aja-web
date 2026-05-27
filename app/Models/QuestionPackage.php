@@ -92,7 +92,7 @@ class QuestionPackage extends Model {
     public function getTypeLabelAttribute(): string {
         $labels = [
             'multiple_choice' => 'Pilihan Ganda',
-            'essay' => 'Isian',
+            'essay' => 'Isian Singkat',
             'mixed' => 'Campuran',
         ];
 

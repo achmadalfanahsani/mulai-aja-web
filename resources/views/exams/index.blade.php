@@ -78,6 +78,9 @@
                                 <h4 class="font-w700 text-white mb-0 text-truncate px-2">{{ $package->name }}</h4>
                                 <div class="text-white-75 font-size-sm mt-2">
                                     <i class="fa fa-user-edit me-1"></i> {{ $package->user->name ?? 'Sistem' }}
+                                    <span class="badge {{ $package->type_badge_class }} ms-1">
+                                        {{ $package->type_label }}
+                                    </span>
                                 </div>
                             </div>
                             
