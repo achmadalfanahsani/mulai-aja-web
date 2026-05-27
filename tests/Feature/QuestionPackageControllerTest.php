@@ -48,7 +48,6 @@ class QuestionPackageControllerTest extends TestCase
 
     public function test_index_filter_preserves_type_parameter()
     {
-        $this->withoutMiddleware();
         $user = User::factory()->create([
             'role' => 'administrator',
             'is_approved' => true

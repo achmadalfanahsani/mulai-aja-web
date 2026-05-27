@@ -42,18 +42,21 @@ class QuestionController extends Controller {
         ];
 
         if ($request->question_type === 'multiple_choice') {
-            $rules['correct_answer'] = 'required|in:A,B,C,D,E';
-            $rules['options'] = 'required|array|size:5';
-            $rules['options.A'] = 'required|string';
-            $rules['options.B'] = 'required|string';
-            $rules['options.C'] = 'required|string';
-            $rules['options.D'] = 'required|string';
-            $rules['options.E'] = 'required|string';
+            $rules['correct_answer'] = 'required|string';
+            $rules['options'] = 'required|array|min:2|max:5';
+            $rules['options.*'] = 'required|string';
         } else {
             $rules['correct_answer_essay'] = 'required|string';
         }
 
         $request->validate($rules);
+
+        // Validasi tambahan: correct_answer harus ada di list label options
+        if ($request->question_type === 'multiple_choice') {
+            if (!array_key_exists($request->correct_answer, $request->options)) {
+                return redirect()->back()->withErrors(['correct_answer' => 'Kunci jawaban harus merupakan salah satu dari opsi yang diisi.'])->withInput();
+            }
+        }
 
         DB::transaction(function () use ($request, $questionPackage) {
             $imagePath = null;
@@ -129,18 +132,21 @@ class QuestionController extends Controller {
         ];
 
         if ($request->question_type === 'multiple_choice') {
-            $rules['correct_answer'] = 'required|in:A,B,C,D,E';
-            $rules['options'] = 'required|array|size:5';
-            $rules['options.A'] = 'required|string';
-            $rules['options.B'] = 'required|string';
-            $rules['options.C'] = 'required|string';
-            $rules['options.D'] = 'required|string';
-            $rules['options.E'] = 'required|string';
+            $rules['correct_answer'] = 'required|string';
+            $rules['options'] = 'required|array|min:2|max:5';
+            $rules['options.*'] = 'required|string';
         } else {
             $rules['correct_answer_essay'] = 'required|string';
         }
 
         $request->validate($rules);
+
+        // Validasi tambahan: correct_answer harus ada di list label options
+        if ($request->question_type === 'multiple_choice') {
+            if (!array_key_exists($request->correct_answer, $request->options)) {
+                return redirect()->back()->withErrors(['correct_answer' => 'Kunci jawaban harus merupakan salah satu dari opsi yang diisi.'])->withInput();
+            }
+        }
 
         DB::transaction(function () use ($request, $questionPackage, $question) {
             $imagePath = $question->question_image_path;
@@ -172,8 +178,11 @@ class QuestionController extends Controller {
                 'difficulty_level' => $request->difficulty_level ?? 'medium',
             ]);
 
-            // Update 5 opsi jika pilihan ganda
+            // Update opsi jika pilihan ganda
             if ($request->question_type === 'multiple_choice') {
+                // Hapus opsi yang tidak ada di request (jika jumlah opsi berkurang)
+                $question->options()->whereNotIn('option_label', array_keys($request->options))->delete();
+
                 foreach ($request->options as $label => $text) {
                     QuestionOption::updateOrCreate(
                         [

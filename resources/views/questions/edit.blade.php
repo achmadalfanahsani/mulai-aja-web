@@ -96,30 +96,49 @@
                     <div id="options-container">
                         <hr class="my-4">
 
-                        {{-- 5 Opsi Jawaban --}}
-                        <h4 class="font-size-md font-w700 text-uppercase text-muted mb-4"><i class="fa fa-list me-1"></i> Opsi Jawaban & Kunci Jawaban</h4>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="font-size-md font-w700 text-uppercase text-muted mb-0">
+                                <i class="fa fa-list me-1"></i> Opsi Jawaban & Kunci Jawaban
+                            </h4>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-alt-danger" id="btn-remove-option" onclick="removeOption()" title="Hapus Opsi Terakhir">
+                                    <i class="fa fa-minus me-1"></i> Hapus
+                                </button>
+                                <button type="button" class="btn btn-sm btn-alt-success" id="btn-add-option" onclick="addOption()" title="Tambah Opsi Baru">
+                                    <i class="fa fa-plus me-1"></i> Tambah
+                                </button>
+                            </div>
+                        </div>
                         
-                        @foreach (['A' => 1, 'B' => 2, 'C' => 3, 'D' => 4, 'E' => 5] as $label => $index)
-                            <div class="row mb-3 align-items-center">
-                                <div class="col-auto">
-                                    <div class="form-check">
-                                        <input class="form-check-input multiple-choice-input" type="radio" name="correct_answer" id="correct_{{ $label }}" value="{{ $label }}" 
-                                            {{ old('correct_answer', $question->correct_answer) == $label ? 'checked' : '' }}>
-                                        <label class="form-check-label font-w700 text-primary font-size-lg" for="correct_{{ $label }}" data-toggle="tooltip" title="Pilih sebagai kunci jawaban yang benar">
-                                        </label>
+                        <div id="dynamic-options">
+                            @php
+                                $oldOptions = old('options', $options);
+                                $labels = array_keys($oldOptions);
+                            @endphp
+                            
+                            @foreach ($labels as $index => $label)
+                                <div class="row mb-3 align-items-center option-row" data-label="{{ $label }}">
+                                    <div class="col-auto">
+                                        <div class="form-check">
+                                            <input class="form-check-input multiple-choice-input" type="radio" name="correct_answer" id="correct_{{ $label }}" value="{{ $label }}" 
+                                                {{ old('correct_answer', $question->correct_answer) == $label ? 'checked' : '' }}>
+                                            <label class="form-check-label font-w700 text-primary font-size-lg" for="correct_{{ $label }}" data-toggle="tooltip" title="Pilih sebagai kunci jawaban yang benar">
+                                                {{ $label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" class="form-control multiple-choice-input @error('options.' . $label) is-invalid @enderror" 
+                                               name="options[{{ $label }}]" value="{{ old('options.' . $label, $oldOptions[$label] ?? '') }}" 
+                                               placeholder="Ketikkan teks untuk Opsi {{ $label }}..." required>
+                                        @error('options.' . $label)
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
-                                <div class="col">
-                                    <input type="text" class="form-control multiple-choice-input @error('options.' . $label) is-invalid @enderror" 
-                                           name="options[{{ $label }}]" value="{{ old('options.' . $label, $options[$label] ?? '') }}" 
-                                           placeholder="Ketikkan teks untuk Opsi {{ $index }}...">
-                                    @error('options.' . $label)
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        @endforeach
-                        <small class="text-muted d-block mb-4"><i class="fa fa-info-circle me-1"></i> Centang *Radio Button* di sebelah kiri opsi untuk memilih **kunci jawaban yang benar**.</small>
+                            @endforeach
+                        </div>
+                        <small class="text-muted d-block mb-4"><i class="fa fa-info-circle me-1"></i> Klik tombol **Tambah** atau **Hapus** untuk menyesuaikan jumlah opsi (Min 2, Max 5). Centang *Radio Button* untuk memilih **kunci jawaban**.</small>
                     </div>
 
                     <div id="essay-container" style="display: none;">
@@ -167,6 +186,58 @@
 
 @push('scripts')
 <script>
+    const labels = ['A', 'B', 'C', 'D', 'E'];
+    
+    function addOption() {
+        const container = document.getElementById('dynamic-options');
+        const rows = container.getElementsByClassName('option-row');
+        if (rows.length >= 5) return;
+        
+        const nextLabel = labels[rows.length];
+        const newRow = document.createElement('div');
+        newRow.className = 'row mb-3 align-items-center option-row';
+        newRow.setAttribute('data-label', nextLabel);
+        newRow.innerHTML = `
+            <div class="col-auto">
+                <div class="form-check">
+                    <input class="form-check-input multiple-choice-input" type="radio" name="correct_answer" id="correct_${nextLabel}" value="${nextLabel}">
+                    <label class="form-check-label font-w700 text-primary font-size-lg" for="correct_${nextLabel}" data-toggle="tooltip" title="Pilih sebagai kunci jawaban yang benar">
+                        ${nextLabel}
+                    </label>
+                </div>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control multiple-choice-input" 
+                       name="options[${nextLabel}]" 
+                       placeholder="Ketikkan teks untuk Opsi ${nextLabel}..." required>
+            </div>
+        `;
+        container.appendChild(newRow);
+        updateButtons();
+    }
+
+    function removeOption() {
+        const container = document.getElementById('dynamic-options');
+        const rows = container.getElementsByClassName('option-row');
+        if (rows.length <= 2) return;
+        
+        container.removeChild(rows[rows.length - 1]);
+        
+        // Ensure a correct answer is still selected
+        const checked = container.querySelector('input[name="correct_answer"]:checked');
+        if (!checked) {
+            container.querySelector('input[name="correct_answer"]').checked = true;
+        }
+        
+        updateButtons();
+    }
+
+    function updateButtons() {
+        const rows = document.getElementById('dynamic-options').getElementsByClassName('option-row').length;
+        document.getElementById('btn-add-option').disabled = (rows >= 5);
+        document.getElementById('btn-remove-option').disabled = (rows <= 2);
+    }
+
     function toggleOptions() {
         const type = document.getElementById('question_type').value;
         const optionsContainer = document.getElementById('options-container');
@@ -194,6 +265,7 @@
     // Inisialisasi tooltips bootstrap
     document.addEventListener("DOMContentLoaded", function() {
         toggleOptions(); // Run on load to set initial state
+        updateButtons();
         
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
