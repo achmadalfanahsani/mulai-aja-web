@@ -143,7 +143,7 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <a href="{{ route('question-packages.results', [$package->id, 'type' => $package->package_type]) }}" class="btn btn-sm btn-alt-success" title="Lihat Hasil Pengerjaan">
+                                            <a href="{{ route('question-packages.results', [$package->id, 'type' => $package->package_type, 'from_classroom' => $classroom->id]) }}" class="btn btn-sm btn-alt-success" title="Lihat Hasil Pengerjaan">
                                                 <i class="fa fa-chart-line"></i>
                                             </a>
                                             <button type="button" class="btn btn-sm btn-alt-danger" title="Tarik dari kelas"

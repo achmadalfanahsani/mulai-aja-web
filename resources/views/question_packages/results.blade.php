@@ -9,9 +9,15 @@
             <div class="block-header block-header-default bg-primary-dark">
                 <h3 class="block-title">Hasil Pengerjaan: {{ $questionPackage->name }}</h3>
                 <div class="block-options">
-                    <a href="{{ route('question-packages.index', ['type' => request('type')]) }}" class="btn btn-sm btn-alt-secondary">
-                        <i class="fa fa-arrow-left mr-1"></i> Kembali
-                    </a>
+                    @if(request('from_classroom'))
+                        <a href="{{ route('classrooms.show', request('from_classroom')) }}" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-arrow-left mr-1"></i> Kembali ke Kelas
+                        </a>
+                    @else
+                        <a href="{{ route('question-packages.index', ['type' => request('type')]) }}" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-arrow-left mr-1"></i> Kembali
+                        </a>
+                    @endif
                 </div>
             </div>
             
