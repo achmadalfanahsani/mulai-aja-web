@@ -13,8 +13,6 @@ class ExamViewTest extends TestCase
 
     public function test_exams_index_shows_package_type_labels()
     {
-        $this->withoutMiddleware();
-        
         $user = User::factory()->create([
             'role' => 'administrator',
             'is_approved' => true

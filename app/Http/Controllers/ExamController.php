@@ -153,7 +153,9 @@ class ExamController extends Controller {
         // 2. Logika Pengacakan Jawaban per Soal
         $optionsOrder = [];
         foreach ($questions as $question) {
-            $labels = ['A', 'B', 'C', 'D', 'E'];
+            // Dapatkan label opsi yang tersedia (misal: A, B, C, D)
+            $labels = $question->options->pluck('option_label')->toArray();
+            
             if ($questionPackage->shuffle_answers) {
                 shuffle($labels);
             }
@@ -205,8 +207,13 @@ class ExamController extends Controller {
             // Re-generate urutan default (tanpa acak untuk penyelamatan data)
             $questionIds = $questionAttempt->responses()->pluck('question_id')->toArray();
             $optionsOrder = [];
+            
+            // Ambil semua soal untuk mendapatkan label opsinya
+            $questionsInAttempt = Question::with('options')->whereIn('id', $questionIds)->get()->keyBy('id');
+            
             foreach ($questionIds as $qId) {
-                $optionsOrder[$qId] = ['A', 'B', 'C', 'D', 'E'];
+                $q = $questionsInAttempt[$qId] ?? null;
+                $optionsOrder[$qId] = $q ? $q->options->pluck('option_label')->toArray() : ['A', 'B', 'C', 'D', 'E'];
             }
             Session::put("attempt_{$questionAttempt->id}_questions", $questionIds);
             Session::put("attempt_{$questionAttempt->id}_options", $optionsOrder);
@@ -224,7 +231,7 @@ class ExamController extends Controller {
         $question = Question::with('options')->find($activeQuestionId);
 
         // Susun opsi jawaban sesuai urutan acak yang disimpan di session
-        $shuffledLabels = $optionsOrder[$question->id] ?? ['A', 'B', 'C', 'D', 'E'];
+        $shuffledLabels = $optionsOrder[$question->id] ?? $question->options->pluck('option_label')->toArray();
         $options = [];
         foreach ($shuffledLabels as $label) {
             $opt = $question->options->where('option_label', $label)->first();
@@ -282,8 +289,14 @@ class ExamController extends Controller {
      * Simpan jawaban draft secara dinamis (via form submit / AJAX).
      */
     public function saveResponse(Request $request, QuestionAttempt $questionAttempt) {
+        // Proteksi: Cek otorisasi, status selesai, dan durasi waktu
         if (Auth::user()->cannot('saveResponse', $questionAttempt) || $questionAttempt->is_completed) {
             return response()->json(['error' => 'Akses ditolak.'], 403);
+        }
+
+        if ($questionAttempt->isExpired()) {
+            $this->gradeAttempt($questionAttempt, true);
+            return response()->json(['error' => 'Waktu ujian telah berakhir.'], 403);
         }
 
         $request->validate([
@@ -382,10 +395,10 @@ class ExamController extends Controller {
                     }
                 } elseif ($question->isEssay()) {
                     if (!is_null($response->essay_answer)) {
-                        // Mekanisme isian kaku: trim dan case-insensitive
-                        $userAnswer = trim($response->essay_answer);
-                        $correctAnswer = trim($question->correct_answer);
-                        $isCorrect = strtolower($userAnswer) === strtolower($correctAnswer);
+                        // Mekanisme isian lebih fleksibel: normalize whitespace, trim, dan case-insensitive
+                        $userAnswer = preg_replace('/\s+/', ' ', trim($response->essay_answer));
+                        $correctAnswer = preg_replace('/\s+/', ' ', trim($question->correct_answer));
+                        $isCorrect = mb_strtolower($userAnswer) === mb_strtolower($correctAnswer);
                     }
                 }
                 
