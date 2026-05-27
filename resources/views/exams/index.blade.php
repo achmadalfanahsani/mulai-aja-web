@@ -108,12 +108,17 @@
                             </div>
 
                             <div class="block-content block-content-full block-content-sm bg-body-light border-top">
-                                <form action="{{ route('exams.start', $package->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-primary w-100 font-w600">
-                                        <i class="fa fa-play-circle mr-1"></i> Mulai Ujian
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-primary w-100 font-w600" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modal-start-exam"
+                                        data-package-id="{{ $package->id }}"
+                                        data-package-name="{{ $package->name }}"
+                                        data-package-duration="{{ $package->duration_minutes }}"
+                                        data-package-questions="{{ $package->active_questions_count }}"
+                                        data-package-type="{{ $package->type_label }}"
+                                        data-package-type-class="{{ $package->type_badge_class }}">
+                                    <i class="fa fa-play-circle mr-1"></i> Mulai Ujian
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -121,6 +126,57 @@
             </div>
             <div class="d-flex justify-content-end mt-2 mb-4">
                 {{ $packages->links() }}
+            </div>
+
+            <!-- Modal Konfirmasi Mulai Ujian -->
+            <div class="modal fade" id="modal-start-exam" tabindex="-1" role="dialog" aria-labelledby="modal-start-exam" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <form id="form-start-exam" action="" method="POST">
+                            @csrf
+                            <div class="block block-rounded shadow-none mb-0">
+                                <div class="block-header block-header-default bg-primary">
+                                    <h3 class="block-title text-white">Konfirmasi Mulai Ujian</h3>
+                                    <div class="block-options">
+                                        <button type="button" class="btn-block-option text-white" data-bs-dismiss="modal" aria-label="Close">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="block-content fs-sm py-4">
+                                    <div class="text-center mb-4">
+                                        <i class="fa fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                                        <h4 class="mb-2">Anda yakin ingin memulai ujian ini?</h4>
+                                        <p class="text-muted mb-1" id="modal-package-name-display"></p>
+                                        <span class="badge" id="modal-package-type"></span>
+                                    </div>
+                                    <div class="row g-2 text-center bg-body-light p-3 rounded">
+                                        <div class="col-6">
+                                            <div class="font-size-h5 font-w700 text-dark" id="modal-package-questions">0</div>
+                                            <div class="text-muted text-uppercase font-size-xs font-w600">Pertanyaan</div>
+                                        </div>
+                                        <div class="col-6 border-start">
+                                            <div class="font-size-h5 font-w700 text-dark" id="modal-package-duration">0</div>
+                                            <div class="text-muted text-uppercase font-size-xs font-w600">Menit</div>
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-info d-flex align-items-center mt-4 mb-0" role="alert">
+                                        <i class="fa fa-info-circle me-2"></i>
+                                        <p class="mb-0 fs-xs">
+                                            Waktu pengerjaan akan dimulai setelah Anda menekan tombol "Ya, Mulai Sekarang". Pastikan koneksi internet Anda stabil.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="block-content block-content-full block-content-sm text-end border-top">
+                                    <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-play-circle me-1"></i> Ya, Mulai Sekarang
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         @endif
 
@@ -146,6 +202,33 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('history-container');
+        const startExamModal = document.getElementById('modal-start-exam');
+
+        if (startExamModal) {
+            startExamModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const packageId = button.getAttribute('data-package-id');
+                const packageName = button.getAttribute('data-package-name');
+                const packageDuration = button.getAttribute('data-package-duration');
+                const packageQuestions = button.getAttribute('data-package-questions');
+                const packageType = button.getAttribute('data-package-type');
+                const packageTypeClass = button.getAttribute('data-package-type-class');
+
+                const form = document.getElementById('form-start-exam');
+                const nameDisplay = document.getElementById('modal-package-name-display');
+                const questionsDisplay = document.getElementById('modal-package-questions');
+                const durationDisplay = document.getElementById('modal-package-duration');
+                const typeDisplay = document.getElementById('modal-package-type');
+
+                form.action = `{{ url('exams/packages') }}/${packageId}/start`;
+                nameDisplay.textContent = packageName;
+                questionsDisplay.textContent = packageQuestions;
+                durationDisplay.textContent = packageDuration;
+                
+                typeDisplay.textContent = packageType;
+                typeDisplay.className = `badge ${packageTypeClass}`;
+            });
+        }
 
         container.addEventListener('click', function(e) {
             // Find the closest link inside pagination-ajax
