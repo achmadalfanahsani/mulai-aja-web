@@ -13,12 +13,14 @@ class QuestionAttemptFactory extends Factory {
     public function definition(): array {
         $startedAt = $this->faker->dateTimeThisMonth();
         $duration = $this->faker->numberBetween(300, 3600); // 5 min - 60 min
+        $finishedAt = clone $startedAt;
+        $finishedAt->modify("+$duration seconds");
         
         return [
             'user_id' => User::factory(),
             'question_package_id' => QuestionPackage::factory(),
             'started_at' => $startedAt,
-            'finished_at' => now($startedAt)->addSeconds($duration),
+            'finished_at' => $finishedAt,
             'time_spent_seconds' => $duration,
             'total_score' => $this->faker->numberBetween(0, 100),
             'is_auto_submitted' => $this->faker->boolean(20), // 20% auto-submitted
