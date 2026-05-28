@@ -28,25 +28,18 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:student,administrator'],
+            'role' => ['required', 'in:administrator'],
+            'terms' => ['accepted'],
         ]);
-
-        $isApproved = $request->role === User::ROLE_STUDENT;
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            'is_approved' => $isApproved,
+            'is_approved' => false, // Registration is only for Administrator which requires manual approval
         ]);
 
-        if (!$isApproved) {
-            return redirect()->route('login')->with('success', 'Registrasi berhasil! Akun Anda sedang menunggu persetujuan.');
-        }
-
-        Auth::login($user);
-
-        return redirect()->route('dashboard')->with('success', 'Registrasi berhasil!');
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Akun Anda sedang menunggu persetujuan dari Superuser.');
     }
 }

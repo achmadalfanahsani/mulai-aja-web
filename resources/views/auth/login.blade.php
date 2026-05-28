@@ -87,3 +87,12 @@
     </div>
 </div>
 @endsection
+
+@push('js')
+    <script>
+        $(document).ready(function() {
+            // Clear any lingering registration data when reaching the login page
+            sessionStorage.removeItem('mulai_aja_reg_data');
+        });
+    </script>
+@endpush
