@@ -85,6 +85,16 @@
                             </div>
                             
                             <div class="block-content flex-grow-1 py-3">
+                                @if($package->classrooms->isNotEmpty())
+                                    <div class="mb-3">
+                                        @foreach($package->classrooms as $classroom)
+                                            <span class="badge bg-info-light text-info border border-info-lighter mb-1">
+                                                <i class="fa fa-users me-1"></i> {{ $classroom->name }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @endif
+
                                 <p class="text-muted font-size-sm mb-3 text-break-word">
                                     {{ $package->description ?? 'Tidak ada deskripsi rincian paket soal.' }}
                                 </p>
@@ -116,7 +126,8 @@
                                         data-package-duration="{{ $package->duration_minutes }}"
                                         data-package-questions="{{ $package->active_questions_count }}"
                                         data-package-type="{{ $package->type_label }}"
-                                        data-package-type-class="{{ $package->type_badge_class }}">
+                                        data-package-type-class="{{ $package->type_badge_class }}"
+                                        data-package-classrooms="{{ $package->classrooms->pluck('name')->join(', ') }}">
                                     <i class="fa fa-play-circle mr-1"></i> Mulai Ujian
                                 </button>
                             </div>
@@ -148,6 +159,7 @@
                                         <i class="fa fa-exclamation-triangle fa-3x text-warning mb-3"></i>
                                         <h4 class="mb-2">Anda yakin ingin memulai ujian ini?</h4>
                                         <p class="text-muted mb-1" id="modal-package-name-display"></p>
+                                        <div id="modal-package-classrooms" class="mb-2"></div>
                                         <span class="badge" id="modal-package-type"></span>
                                     </div>
                                     <div class="row g-2 text-center bg-body-light p-3 rounded">
@@ -213,12 +225,14 @@
                 const packageQuestions = button.getAttribute('data-package-questions');
                 const packageType = button.getAttribute('data-package-type');
                 const packageTypeClass = button.getAttribute('data-package-type-class');
+                const packageClassrooms = button.getAttribute('data-package-classrooms');
 
                 const form = document.getElementById('form-start-exam');
                 const nameDisplay = document.getElementById('modal-package-name-display');
                 const questionsDisplay = document.getElementById('modal-package-questions');
                 const durationDisplay = document.getElementById('modal-package-duration');
                 const typeDisplay = document.getElementById('modal-package-type');
+                const classroomsDisplay = document.getElementById('modal-package-classrooms');
 
                 form.action = `{{ url('exams/packages') }}/${packageId}/start`;
                 nameDisplay.textContent = packageName;
@@ -227,6 +241,16 @@
                 
                 typeDisplay.textContent = packageType;
                 typeDisplay.className = `badge ${packageTypeClass}`;
+
+                classroomsDisplay.innerHTML = '';
+                if (packageClassrooms) {
+                    packageClassrooms.split(', ').forEach(cls => {
+                        const span = document.createElement('span');
+                        span.className = 'badge bg-info-light text-info border border-info-lighter me-1';
+                        span.innerHTML = `<i class="fa fa-users me-1"></i> ${cls}`;
+                        classroomsDisplay.appendChild(span);
+                    });
+                }
             });
         }
 
