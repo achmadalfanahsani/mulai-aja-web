@@ -10,15 +10,63 @@ class DatabaseSeeder extends Seeder {
         // Run Role and Permission Seeder
         $this->call(RoleAndPermissionSeeder::class);
 
-        // Create additional student users for testing
-        User::factory()
-            ->count(5)
-            ->state(fn () => ['role' => 'student', 'is_approved' => true])
+        // Run question package seeder (creates teachers and packages)
+        $this->call(QuestionPackageSeeder::class);
+
+        $teachers = \App\Models\User::where('role', \App\Models\User::ROLE_TEACHER)->get();
+        $packages = \App\Models\QuestionPackage::all();
+
+        // Create classrooms for each teacher
+        foreach ($teachers as $teacher) {
+            $classrooms = \App\Models\Classroom::factory()
+                ->count(2)
+                ->create(['teacher_id' => $teacher->id]);
+
+            foreach ($classrooms as $classroom) {
+                // Assign 3-5 random packages to each classroom
+                $classroom->questionPackages()->attach(
+                    $packages->random(rand(3, 5))->pluck('id')->toArray()
+                );
+
+                // Create 10-15 students for each classroom
+                $students = \App\Models\User::factory()
+                    ->student()
+                    ->count(rand(10, 15))
+                    ->create();
+
+                $classroom->students()->attach($students->pluck('id')->toArray());
+
+                // Generate some attempts for students in this classroom
+                foreach ($students->take(5) as $student) {
+                    $assignedPackages = $classroom->questionPackages;
+                    if ($assignedPackages->isNotEmpty()) {
+                        $packageToAttempt = $assignedPackages->random();
+                        
+                        \App\Models\QuestionAttempt::factory()
+                            ->create([
+                                'user_id' => $student->id,
+                                'question_package_id' => $packageToAttempt->id,
+                                'total_score' => rand(60, 100),
+                                'is_completed' => true,
+                            ]);
+                    }
+                }
+            }
+        }
+
+        // Create some unapproved users for the dashboard
+        \App\Models\User::factory()
+            ->count(3)
+            ->teacher()
+            ->unapproved()
             ->create();
 
-        echo "✅ Database seeded successfully!\n";
+        \App\Models\User::factory()
+            ->count(2)
+            ->administrator()
+            ->unapproved()
+            ->create();
 
-        // Run question package seeder
-        $this->call(QuestionPackageSeeder::class);
+        echo "✅ Database seeded with a complete realistic ecosystem!\n";
     }
 }

@@ -24,6 +24,7 @@ class User extends Authenticatable {
         'password',
         'role',
         'is_approved',
+        'created_by_id',
     ];
 
     protected $hidden = [
@@ -77,6 +78,20 @@ class User extends Authenticatable {
     }
 
     // ===== RELATIONSHIPS =====
+
+    /**
+     * User yang membuat user ini (Administrator/Superuser)
+     */
+    public function creator() {
+        return $this->belongsTo(User::class, 'created_by_id');
+    }
+
+    /**
+     * User yang dibuat oleh user ini
+     */
+    public function createdUsers() {
+        return $this->hasMany(User::class, 'created_by_id');
+    }
     
     /**
      * Question packages yang dibuat oleh user ini

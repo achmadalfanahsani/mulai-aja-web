@@ -56,9 +56,9 @@
             </a>
             
             @auth
-                @if(auth()->user()->isSuperuser())
+                @if(auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
                 <a class="dropdown-item d-flex align-items-center justify-content-between"
-                    href="{{ route('superuser.users.index') }}">
+                    href="{{ route('admin.users.index') }}">
                     <span>Manajemen User</span>
                     <i class="fa fa-fw fa-users-cog opacity-25"></i>
                 </a>

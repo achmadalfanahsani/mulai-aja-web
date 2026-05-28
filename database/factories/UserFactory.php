@@ -46,13 +46,71 @@ class UserFactory extends Factory
     }
 
     /**
-     * State for administrator pending approval
+     * State for student role
      */
-    public function pendingAdministrator(): static
+    public function student(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => User::ROLE_STUDENT,
+        ]);
+    }
+
+    /**
+     * State for teacher role
+     */
+    public function teacher(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => User::ROLE_TEACHER,
+        ]);
+    }
+
+    /**
+     * State for administrator role
+     */
+    public function administrator(): static
     {
         return $this->state(fn (array $attributes) => [
             'role' => User::ROLE_ADMINISTRATOR,
+        ]);
+    }
+
+    /**
+     * State for superuser role
+     */
+    public function superuser(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => User::ROLE_SUPERUSER,
+        ]);
+    }
+
+    /**
+     * State for pending approval
+     */
+    public function unapproved(): static
+    {
+        return $this->state(fn (array $attributes) => [
             'is_approved' => false,
         ]);
+    }
+
+    /**
+     * State for approved
+     */
+    public function approved(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_approved' => true,
+        ]);
+    }
+
+    /**
+     * State for administrator pending approval
+     * @deprecated Use administrator()->unapproved() instead
+     */
+    public function pendingAdministrator(): static
+    {
+        return $this->administrator()->unapproved();
     }
 }

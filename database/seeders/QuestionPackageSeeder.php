@@ -10,20 +10,31 @@ use Illuminate\Database\Seeder;
 
 class QuestionPackageSeeder extends Seeder {
     public function run(): void {
-        // Hapus data lama (opsional jika sudah ada mekanisme migrate:fresh)
-        // QuestionOption::truncate();
-        // Question::truncate();
-        // QuestionPackage::truncate();
+        // Ambil teacher dari database, atau buat beberapa jika belum ada atau kurang dari 3
+        $teachers = User::where('role', 'teacher')->get();
+        
+        if ($teachers->count() < 3) {
+            $teacherData = [
+                ['name' => 'Budi Santoso, S.Pd.', 'email' => 'budi@example.com'],
+                ['name' => 'Siti Aminah, M.Pd.', 'email' => 'siti@example.com'],
+                ['name' => 'Dr. Ahmad Hidayat', 'email' => 'ahmad@example.com'],
+            ];
 
-        // Ambil teacher dari database, atau buat jika belum ada
-        $teacher = User::where('role', 'teacher')->first();
-        if (!$teacher) {
-            $teacher = User::factory()->create([
-                'name' => 'Guru Teladan',
-                'email' => 'teacher@example.com',
-                'role' => 'teacher',
-                'is_approved' => true
-            ]);
+            foreach ($teacherData as $data) {
+                // Gunakan updateOrCreate agar tidak duplikat jika email sudah ada (misal dari RoleAndPermissionSeeder)
+                $teachers->push(User::updateOrCreate(
+                    ['email' => $data['email']],
+                    [
+                        'name' => $data['name'],
+                        'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                        'role' => User::ROLE_TEACHER,
+                        'is_approved' => true
+                    ]
+                ));
+            }
+            
+            // Refresh collection to remove duplicates (if any) and ensure uniqueness by ID
+            $teachers = $teachers->unique('id');
         }
 
         $topics = [
@@ -113,7 +124,7 @@ class QuestionPackageSeeder extends Seeder {
             ],
             [
                 'name' => 'Fisika Dasar',
-                'desc' => 'Hukum alam, mekanika, dan dasar ilmu fisika.',
+                'desc' => 'Hukum alam, mekanika, and dasar ilmu fisika.',
                 'mc' => [
                     ['text' => 'Satuan standar internasional untuk gaya adalah?', 'options' => ['A' => 'Joule', 'B' => 'Watt', 'C' => 'Newton', 'D' => 'Pascal', 'E' => 'Volt'], 'correct' => 'C'],
                     ['text' => 'Penemu gaya gravitasi adalah?', 'options' => ['A' => 'Albert Einstein', 'B' => 'Isaac Newton', 'C' => 'Nikola Tesla', 'D' => 'Galileo Galilei', 'E' => 'Thomas Edison'], 'correct' => 'B']
@@ -149,16 +160,13 @@ class QuestionPackageSeeder extends Seeder {
             ]
         ];
 
-        // Kita punya 10 Topik
-        // Kita butuh 10 paket Multiple Choice, 10 paket Essay, dan 10 paket Mixed
-        // Jadi kita akan membuat paket MC dari semua 10 topik, paket Essay dari 10 topik, dan Mixed dari 10 topik
-        
         $types = ['multiple_choice', 'essay', 'mixed'];
         
         foreach ($types as $type) {
             foreach ($topics as $index => $topic) {
+                // Assign teacher randomly or by index
+                $teacher = $teachers[$index % $teachers->count()];
                 
-                // Judul paket contoh: "Paket Ganda: Matematika Dasar"
                 $typeName = '';
                 if ($type === 'multiple_choice') $typeName = 'Pilihan Ganda';
                 if ($type === 'essay') $typeName = 'Esai';
@@ -175,13 +183,12 @@ class QuestionPackageSeeder extends Seeder {
                     'shuffle_questions' => true,
                     'shuffle_answers' => true,
                     'is_published' => true,
-                    'total_questions_count' => 0 // diupdate nanti
+                    'total_questions_count' => 0
                 ]);
 
                 $questionsCount = 0;
                 $order = 1;
 
-                // Tambahkan soal Pilihan Ganda jika type = multiple_choice atau mixed
                 if (in_array($type, ['multiple_choice', 'mixed'])) {
                     foreach ($topic['mc'] as $mc) {
                         $question = Question::create([
@@ -205,7 +212,6 @@ class QuestionPackageSeeder extends Seeder {
                     }
                 }
 
-                // Tambahkan soal Esai jika type = essay atau mixed
                 if (in_array($type, ['essay', 'mixed'])) {
                     foreach ($topic['essay'] as $es) {
                         Question::create([
@@ -221,15 +227,10 @@ class QuestionPackageSeeder extends Seeder {
                     }
                 }
 
-                // Update total_questions_count
                 $package->update(['total_questions_count' => $questionsCount]);
             }
         }
 
         echo "✅ QuestionPackageSeeder berhasil dijalankan!\n";
-        echo "   - 10 Paket Multiple Choice dengan konten riil dibuat.\n";
-        echo "   - 10 Paket Essay dengan konten riil dibuat.\n";
-        echo "   - 10 Paket Mixed dengan konten riil dibuat.\n";
-        echo "   Total 30 Paket Soal!\n";
     }
 }
