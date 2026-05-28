@@ -68,6 +68,9 @@
                         <th>Nama</th>
                         <th>Email</th>
                         <th style="width: 15%;">Role</th>
+                        @if(auth()->user()->isSuperuser())
+                            <th>Dibuat Oleh</th>
+                        @endif
                         <th class="text-center" style="width: 15%;">Status</th>
                         <th class="text-center" style="width: 150px;">Aksi</th>
                     </tr>
@@ -87,6 +90,16 @@
                                 {{ ucfirst($user->role) }}
                             </span>
                         </td>
+                        @if(auth()->user()->isSuperuser())
+                            <td>
+                                @if($user->creator)
+                                    <span class="fw-medium">{{ $user->creator->name }}</span>
+                                    <div class="fs-xs text-muted">{{ ucfirst($user->creator->role) }}</div>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                        @endif
                         <td class="text-center">
                             @if($user->is_approved)
                                 <span class="badge bg-success">Approved</span>

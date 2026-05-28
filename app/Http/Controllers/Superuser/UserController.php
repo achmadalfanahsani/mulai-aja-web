@@ -15,7 +15,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::where('id', '!=', auth()->id());
+        $query = User::with('creator')->where('id', '!=', auth()->id());
 
         // Administrator isolation logic
         if (auth()->user()->isAdministrator()) {
