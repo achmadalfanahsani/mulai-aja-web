@@ -17,6 +17,13 @@ class UserController extends Controller
     {
         $query = User::where('id', '!=', auth()->id());
 
+        // Administrator isolation logic
+        if (auth()->user()->isAdministrator()) {
+            // Only see users created by this administrator
+            $query->where('created_by_id', auth()->id())
+                  ->whereNotIn('role', [User::ROLE_SUPERUSER, User::ROLE_ADMINISTRATOR]);
+        }
+
         // Filter by name or email
         if ($request->filled('q')) {
             $query->where(function($q) use ($request) {
@@ -38,7 +45,63 @@ class UserController extends Controller
 
         $users = $query->latest()->paginate(10)->withQueryString();
 
-        return view('superuser.users.index', compact('users'));
+        return view('admin.users.index', compact('users'));
+    }
+
+    /**
+     * Show the form for creating a new user.
+     */
+    public function create()
+    {
+        return view('admin.users.create');
+    }
+
+    /**
+     * Store a newly created user in storage.
+     */
+    public function store(Request $request)
+    {
+        $roles = [User::ROLE_STUDENT, User::ROLE_TEACHER];
+        if (auth()->user()->isSuperuser()) {
+            $roles[] = User::ROLE_ADMINISTRATOR;
+        }
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:' . implode(',', $roles)],
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'is_approved' => true, // Created by admin = approved
+            'created_by_id' => auth()->id(),
+        ]);
+
+        return redirect()->route('admin.users.index')->with('success', "User {$request->name} berhasil dibuat.");
+    }
+
+    /**
+     * Check if the current user can manage the given user.
+     */
+    protected function authorizeUserManagement(User $user)
+    {
+        $currentUser = auth()->user();
+
+        if ($currentUser->isSuperuser()) {
+            return true;
+        }
+
+        if ($currentUser->isAdministrator()) {
+            // Administrator can only manage users they created
+            return $user->created_by_id === $currentUser->id;
+        }
+
+        return false;
     }
 
     /**
@@ -50,12 +113,17 @@ class UserController extends Controller
             return back()->with('error', 'Anda tidak dapat mengubah role diri sendiri.');
         }
 
-        if ($user->isSuperuser()) {
-            return back()->with('error', 'Tidak dapat mengubah role superuser lain.');
+        if (!$this->authorizeUserManagement($user)) {
+            return back()->with('error', 'Anda tidak memiliki wewenang untuk mengelola user ini.');
+        }
+
+        $roles = [User::ROLE_STUDENT, User::ROLE_TEACHER];
+        if (auth()->user()->isSuperuser()) {
+            $roles[] = User::ROLE_ADMINISTRATOR;
         }
 
         $request->validate([
-            'role' => 'required|in:student,teacher,administrator',
+            'role' => 'required|in:' . implode(',', $roles),
         ]);
 
         $user->update(['role' => $request->role]);
@@ -68,6 +136,10 @@ class UserController extends Controller
      */
     public function approve(User $user)
     {
+        if (!$this->authorizeUserManagement($user)) {
+            return back()->with('error', 'Anda tidak memiliki wewenang untuk mengelola user ini.');
+        }
+
         $user->update(['is_approved' => true]);
 
         return back()->with('success', "Akun {$user->name} telah di-approve.");
@@ -78,6 +150,10 @@ class UserController extends Controller
      */
     public function reject(User $user)
     {
+        if (!$this->authorizeUserManagement($user)) {
+            return back()->with('error', 'Anda tidak memiliki wewenang untuk mengelola user ini.');
+        }
+
         $user->update(['is_approved' => false]);
 
         return back()->with('success', "Status approval {$user->name} telah dicabut.");
@@ -88,8 +164,12 @@ class UserController extends Controller
      */
     public function updatePassword(Request $request, User $user)
     {
-        if ($user->isSuperuser() && $user->id !== auth()->id()) {
-            return back()->with('error', 'Tidak dapat mengubah password superuser lain.');
+        if ($user->id === auth()->id()) {
+            // Self password update handled in ProfileController
+        } else {
+            if (!$this->authorizeUserManagement($user)) {
+                return back()->with('error', 'Anda tidak memiliki wewenang untuk mengelola user ini.');
+            }
         }
 
         $request->validate([
@@ -112,8 +192,8 @@ class UserController extends Controller
             return back()->with('error', 'Anda tidak dapat menghapus akun sendiri.');
         }
 
-        if ($user->isSuperuser()) {
-            return back()->with('error', 'Tidak dapat menghapus akun superuser.');
+        if (!$this->authorizeUserManagement($user)) {
+            return back()->with('error', 'Anda tidak memiliki wewenang untuk mengelola user ini.');
         }
 
         $userName = $user->name;

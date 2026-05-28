@@ -20,10 +20,10 @@
         @if(auth()->user()->isTeacher() || auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
         <li class="nav-main-heading">Management</li>
         
-        @if(auth()->user()->isSuperuser())
+        @if(auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
         <li class="nav-main-item">
-            <a class="nav-main-link {{ request()->routeIs('superuser.users.*') ? 'active' : '' }}"
-                href="{{ route('superuser.users.index') }}">
+            <a class="nav-main-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                href="{{ route('admin.users.index') }}">
                 <i class="nav-main-link-icon fa fa-users-cog"></i>
                 <span class="nav-main-link-name">Manajemen User</span>
             </a>

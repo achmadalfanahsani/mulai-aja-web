@@ -35,9 +35,11 @@ Route::middleware(['auth', 'approved'])->group(function () {
 // Role-Based Routes
 Route::middleware(['auth', 'approved'])->group(function () {
 
-    // 1. Superuser Only: User Management
-    Route::middleware(['role:superuser'])->prefix('superuser')->name('superuser.')->group(function () {
+    // 1. User Management (Administrator & Superuser)
+    Route::middleware(['role:administrator,superuser'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.update-role');
         Route::post('/users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
         Route::post('/users/{user}/reject', [UserController::class, 'reject'])->name('users.reject');

@@ -55,7 +55,6 @@
                                     <select class="form-select form-select-lg @error('role') is-invalid @enderror" id="register-role" name="role" required style="font-size: 1rem;">
                                         <option value="" disabled selected>Pilih Peran Anda</option>
                                         <option value="student" {{ old('role') == 'student' ? 'selected' : '' }}>Student (Siswa)</option>
-                                        <option value="teacher" {{ old('role') == 'teacher' ? 'selected' : '' }}>Teacher (Guru)</option>
                                         <option value="administrator" {{ old('role') == 'administrator' ? 'selected' : '' }}>Administrator (Admin Lembaga)</option>
                                     </select>
                                     @error('role')

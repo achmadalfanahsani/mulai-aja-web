@@ -34,11 +34,11 @@
         <span>Statistik Overview</span>
     </h2>
 
-    @if(Auth::user()->isSuperuser())
-        {{-- Superuser Stats - Row 1 (Priority) --}}
+    @if(Auth::user()->isSuperuser() || Auth::user()->isAdministrator())
+        {{-- Management Stats - Row 1 (Priority) --}}
         <div class="row items-push">
             <div class="col-6 col-lg-6">
-                <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('superuser.users.index') }}">
+                <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('admin.users.index') }}">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
                             <div class="font-size-h2 font-w700 text-primary">{{ $stats['total_users'] }}</div>
@@ -51,7 +51,7 @@
                 </a>
             </div>
             <div class="col-6 col-lg-6">
-                <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('superuser.users.index', ['role' => 'administrator', 'status' => 'pending']) }}">
+                <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('admin.users.index', ['role' => 'administrator', 'status' => 'pending']) }}">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
                             <div class="font-size-h2 font-w700 text-warning">{{ $stats['pending_approvals'] }}</div>
@@ -65,7 +65,7 @@
             </div>
         </div>
 
-        {{-- Superuser Stats - Row 2 (Details) --}}
+        {{-- Management Stats - Row 2 (Details) --}}
         <div class="row items-push">
             <div class="col-4">
                 <div class="block block-rounded h-100 mb-0">
@@ -107,7 +107,7 @@
                 </div>
             </div>
         </div>
-    @elseif(Auth::user()->isAdministrator() || Auth::user()->isTeacher())
+    @elseif(Auth::user()->isTeacher())
         {{-- Admin/Teacher Stats --}}
         <div class="row items-push">
             <div class="col-6">
@@ -185,9 +185,9 @@
     {{-- Quick Actions --}}
     <h2 class="content-heading">Aksi Cepat</h2>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 items-push">
-        @if(Auth::user()->isSuperuser())
+        @if(Auth::user()->isSuperuser() || Auth::user()->isAdministrator())
             <div class="col">
-                <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('superuser.users.index') }}">
+                <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('admin.users.index') }}">
                     <div class="block-content block-content-full text-center">
                         <div class="item item-circle bg-primary-lighter mx-auto mb-3">
                             <i class="fa fa-users-cog text-primary"></i>

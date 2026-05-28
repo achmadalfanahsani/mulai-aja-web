@@ -26,15 +26,19 @@ class DashboardController extends Controller
                 'total_administrators' => User::where('role', User::ROLE_ADMINISTRATOR)->count(),
                 'pending_approvals' => User::pendingApproval()->count(),
             ];
-        } elseif ($user->isAdministrator() || $user->isTeacher()) {
+        } elseif ($user->isAdministrator()) {
             $stats = [
-                'total_packages' => QuestionPackage::when($user->isTeacher(), function($q) use ($user) {
-                    return $q->where('user_id', $user->id);
-                })->count(),
+                'total_users' => User::where('created_by_id', $user->id)->count(),
+                'total_students' => User::where('role', User::ROLE_STUDENT)->where('created_by_id', $user->id)->count(),
+                'total_teachers' => User::where('role', User::ROLE_TEACHER)->where('created_by_id', $user->id)->count(),
+                'total_administrators' => 0, // Admin cannot create/see other admins
+                'pending_approvals' => User::where('created_by_id', $user->id)->where('is_approved', false)->count(),
+            ];
+        } elseif ($user->isTeacher()) {
+            $stats = [
+                'total_packages' => QuestionPackage::where('user_id', $user->id)->count(),
                 'total_attempts' => QuestionAttempt::whereHas('questionPackage', function($q) use ($user) {
-                    if ($user->isTeacher()) {
-                        $q->where('user_id', $user->id);
-                    }
+                    $q->where('user_id', $user->id);
                 })->count(),
             ];
         } elseif ($user->isStudent()) {

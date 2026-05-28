@@ -104,7 +104,7 @@ class EssayEvaluationTest extends TestCase
 
         // No response created yet
         $stats = $attempt->getAnswerStatistics();
-        $this->assertEquals(0, $stats['total_questions']); // Because it counts responses()
+        $this->assertEquals(1, $stats['total_questions']); // Counts active questions in package
 
         // Create empty response
         QuestionResponse::create([
