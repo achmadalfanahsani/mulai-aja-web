@@ -22,8 +22,8 @@
         
         @if(auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
         <li class="nav-main-item">
-            <a class="nav-main-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
-                href="{{ route('admin.users.index') }}">
+            <a class="nav-main-link {{ request()->routeIs('admin.users.*') || request()->routeIs('superuser.users.*') ? 'active' : '' }}"
+                href="{{ auth()->user()->isSuperuser() ? route('superuser.users.index') : route('admin.users.index') }}">
                 <i class="nav-main-link-icon fa fa-users-cog"></i>
                 <span class="nav-main-link-name">Manajemen User</span>
             </a>

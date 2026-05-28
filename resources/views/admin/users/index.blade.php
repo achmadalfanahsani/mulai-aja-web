@@ -8,7 +8,7 @@
     <div class="block-header block-header-default">
         <h3 class="block-title">Daftar Pengguna</h3>
         <div class="block-options">
-            <a href="{{ route('admin.users.create') }}" class="btn btn-sm btn-primary">
+            <a href="{{ route(auth()->user()->getRoutePrefix() . '.users.create') }}" class="btn btn-sm btn-primary">
                 <i class="fa fa-plus me-1"></i> Tambah User Baru
             </a>
         </div>
@@ -29,7 +29,7 @@
         @endif
 
         <!-- Filter Form -->
-        <form action="{{ route('admin.users.index') }}" method="GET" class="mb-4">
+        <form action="{{ route(auth()->user()->getRoutePrefix() . '.users.index') }}" method="GET" class="mb-4">
             <div class="row g-3">
                 <div class="col-md-4">
                     <input type="text" name="q" class="form-control" placeholder="Cari Nama atau Email..." value="{{ request('q') }}">
@@ -121,11 +121,11 @@
 
                             {{-- Hidden Forms for Approval --}}
                             @if(!$user->is_approved)
-                                <form id="approve-form-{{ $user->id }}" action="{{ route('admin.users.approve', $user) }}" method="POST" class="d-none">
+                                <form id="approve-form-{{ $user->id }}" action="{{ route(auth()->user()->getRoutePrefix() . '.users.approve', $user) }}" method="POST" class="d-none">
                                     @csrf
                                 </form>
                             @else
-                                <form id="reject-form-{{ $user->id }}" action="{{ route('admin.users.reject', $user) }}" method="POST" class="d-none">
+                                <form id="reject-form-{{ $user->id }}" action="{{ route(auth()->user()->getRoutePrefix() . '.users.reject', $user) }}" method="POST" class="d-none">
                                     @csrf
                                 </form>
                             @endif
@@ -136,7 +136,7 @@
                     <div class="modal fade" id="modal-role-{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-role-{{ $user->id }}" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
-                                <form action="{{ route('admin.users.update-role', $user) }}" method="POST">
+                                <form action="{{ route(auth()->user()->getRoutePrefix() . '.users.update-role', $user) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
                                     <div class="block block-rounded shadow-none mb-0">
@@ -175,7 +175,7 @@
                     <div class="modal fade" id="modal-password-{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-password-{{ $user->id }}" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
-                                <form action="{{ route('admin.users.update-password', $user) }}" method="POST">
+                                <form action="{{ route(auth()->user()->getRoutePrefix() . '.users.update-password', $user) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
                                     <div class="block block-rounded shadow-none mb-0">
@@ -211,7 +211,7 @@
                     <div class="modal fade" id="modal-delete-{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-delete-{{ $user->id }}" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
-                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST">
+                                <form action="{{ route(auth()->user()->getRoutePrefix() . '.users.destroy', $user) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <div class="block block-rounded shadow-none mb-0">

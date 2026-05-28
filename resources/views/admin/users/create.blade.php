@@ -8,13 +8,13 @@
         <div class="block-header block-header-default">
             <h3 class="block-title">Tambah User Baru</h3>
             <div class="block-options">
-                <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-alt-secondary">
+                <a href="{{ route(auth()->user()->getRoutePrefix() . '.users.index') }}" class="btn btn-sm btn-alt-secondary">
                     <i class="fa fa-arrow-left me-1"></i> Kembali
                 </a>
             </div>
         </div>
         <div class="block-content block-content-full">
-            <form action="{{ route('admin.users.store') }}" method="POST">
+            <form action="{{ route(auth()->user()->getRoutePrefix() . '.users.store') }}" method="POST">
                 @csrf
                 <div class="row items-push">
                     <div class="col-lg-4">
