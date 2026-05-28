@@ -29,6 +29,21 @@
     <!-- Scripts -->
     <script src="{{ asset('assets/js/codebase.app.min.js') }}"></script>
     <script src="{{ asset('assets/js/lib/jquery.min.js') }}"></script>
+
+    {{-- Global Alert Auto-Close --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    alert.style.transition = 'opacity 0.5s ease';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                }, 3000);
+            });
+        });
+    </script>
+
     @stack('js')
 </body>
 </html>

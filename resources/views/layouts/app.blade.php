@@ -68,7 +68,7 @@
                             setTimeout(() => alert.remove(), 500);
                         }
                     }
-                }, 4000); // 4 seconds delay
+                }, 3000); // 3 seconds delay
             });
         });
     </script>

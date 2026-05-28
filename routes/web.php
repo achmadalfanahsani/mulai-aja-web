@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Auth;
 // Root redirect
 Route::redirect('/', '/dashboard');
 
+// Public Pages
+Route::view('/terms', 'pages.terms')->name('terms');
+
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
