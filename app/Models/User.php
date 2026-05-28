@@ -58,6 +58,13 @@ class User extends Authenticatable {
         return $this->role === self::ROLE_SUPERUSER;
     }
 
+    /**
+     * Get route prefix for user management
+     */
+    public function getRoutePrefix(): string {
+        return $this->isSuperuser() ? 'superuser' : 'admin';
+    }
+
     public function setRole(string $role): void {
         $this->role = $role;
         $this->save();

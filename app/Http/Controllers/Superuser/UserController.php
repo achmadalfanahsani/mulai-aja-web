@@ -15,7 +15,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::where('id', '!=', auth()->id());
+        $query = User::with('creator')->where('id', '!=', auth()->id());
 
         // Administrator isolation logic
         if (auth()->user()->isAdministrator()) {
@@ -57,6 +57,14 @@ class UserController extends Controller
     }
 
     /**
+     * Get the index route based on user role.
+     */
+    protected function getIndexRoute()
+    {
+        return auth()->user()->isSuperuser() ? 'superuser.users.index' : 'admin.users.index';
+    }
+
+    /**
      * Store a newly created user in storage.
      */
     public function store(Request $request)
@@ -82,7 +90,7 @@ class UserController extends Controller
             'created_by_id' => auth()->id(),
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', "User {$request->name} berhasil dibuat.");
+        return redirect()->route($this->getIndexRoute())->with('success', "User {$request->name} berhasil dibuat.");
     }
 
     /**

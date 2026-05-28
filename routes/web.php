@@ -38,8 +38,21 @@ Route::middleware(['auth', 'approved'])->group(function () {
 // Role-Based Routes
 Route::middleware(['auth', 'approved'])->group(function () {
 
-    // 1. User Management (Administrator & Superuser)
-    Route::middleware(['role:administrator,superuser'])->prefix('admin')->name('admin.')->group(function () {
+    // 1. User Management
+    // Superuser routes
+    Route::middleware(['role:superuser'])->prefix('superuser')->name('superuser.')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.update-role');
+        Route::post('/users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
+        Route::post('/users/{user}/reject', [UserController::class, 'reject'])->name('users.reject');
+        Route::patch('/users/{user}/password', [UserController::class, 'updatePassword'])->name('users.update-password');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    });
+
+    // Administrator routes
+    Route::middleware(['role:administrator'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
