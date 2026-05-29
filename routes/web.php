@@ -80,8 +80,8 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::delete('classrooms/{classroom}/packages/{questionPackage}', [ClassroomController::class, 'removePackage'])->name('classrooms.packages.remove');
     });
 
-    // 3. Exam / CBT (Student & Administrator & Superuser)
-    Route::middleware(['role:student,administrator,superuser'])->group(function () {
+    // 3. Exam / CBT (Student & Superuser)
+    Route::middleware(['role:student,superuser'])->group(function () {
         Route::get('exams', [ExamController::class, 'index'])->name('exams.index');
         Route::post('exams/packages/{questionPackage}/start', [ExamController::class, 'start'])->name('exams.start');
         Route::get('exams/attempt/{questionAttempt}', [ExamController::class, 'attempt'])->name('exams.attempt');

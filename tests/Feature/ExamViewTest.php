@@ -13,7 +13,7 @@ class ExamViewTest extends TestCase
 
     public function test_exams_index_shows_package_type_labels()
     {
-        $user = User::factory()->administrator()->create();
+        $user = User::factory()->superuser()->create();
         $this->actingAs($user);
 
         // Create packages of different types
@@ -41,6 +41,17 @@ class ExamViewTest extends TestCase
         $response->assertSee('Paket Isian');
         $response->assertSee('Isian Singkat'); // Label
         $response->assertSee('bg-info'); // Badge class
+    }
+
+    public function test_teacher_and_administrator_cannot_access_exams_index()
+    {
+        $teacher = User::factory()->teacher()->create();
+        $this->actingAs($teacher);
+        $this->get(route('exams.index'))->assertStatus(403);
+
+        $admin = User::factory()->administrator()->create();
+        $this->actingAs($admin);
+        $this->get(route('exams.index'))->assertStatus(403);
     }
 
     public function test_exams_index_shows_classroom_info()
