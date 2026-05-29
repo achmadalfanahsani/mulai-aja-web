@@ -48,10 +48,9 @@
         @endif
 
         {{-- Heading: CBT & Ujian --}}
+        @if(auth()->user()->isStudent() || auth()->user()->isSuperuser())
         <li class="nav-main-heading">CBT & Ujian</li>
         
-        {{-- Exam Taking: Student, Administrator, Superuser --}}
-        @if(auth()->user()->isStudent() || auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
         <li class="nav-main-item">
             <a class="nav-main-link {{ request()->routeIs('exams.*') ? 'active' : '' }}"
                 href="{{ route('exams.index') }}">
