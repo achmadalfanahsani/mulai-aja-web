@@ -24,6 +24,9 @@ class ClassroomController extends Controller
                     $q->where('users.id', $user->id);
                 });
             })
+            ->when($user->isAdministrator(), function($query) use ($user) {
+                return $query->where('created_by_id', $user->id);
+            })
             ->latest()
             ->paginate(10);
 
@@ -53,6 +56,7 @@ class ClassroomController extends Controller
         Classroom::create([
             'name' => $request->name,
             'description' => $request->description,
+            'created_by_id' => Auth::id(),
         ]);
 
         return redirect()->route('classrooms.index')

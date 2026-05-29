@@ -12,10 +12,21 @@ class QuestionPackagePolicy
      */
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->isSuperuser() || $user->isAdministrator()) {
+        if ($user->isSuperuser()) {
             return true;
         }
         return null; // Lanjut ke method spesifik
+    }
+
+    private function checkAccess(User $user, QuestionPackage $package): bool
+    {
+        if ($user->id === $package->user_id) {
+            return true;
+        }
+        if ($user->isAdministrator() && $package->user && $package->user->created_by_id === $user->id) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -23,7 +34,7 @@ class QuestionPackagePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isTeacher();
+        return $user->isTeacher() || $user->isAdministrator();
     }
 
     /**
@@ -31,7 +42,7 @@ class QuestionPackagePolicy
      */
     public function view(User $user, QuestionPackage $package): bool
     {
-        return $user->id === $package->user_id;
+        return $this->checkAccess($user, $package);
     }
 
     /**
@@ -39,7 +50,7 @@ class QuestionPackagePolicy
      */
     public function create(User $user): bool
     {
-        return $user->isTeacher();
+        return $user->isTeacher() || $user->isAdministrator();
     }
 
     /**
@@ -47,7 +58,7 @@ class QuestionPackagePolicy
      */
     public function update(User $user, QuestionPackage $package): bool
     {
-        return $user->id === $package->user_id;
+        return $this->checkAccess($user, $package);
     }
 
     /**
@@ -55,7 +66,7 @@ class QuestionPackagePolicy
      */
     public function delete(User $user, QuestionPackage $package): bool
     {
-        return $user->id === $package->user_id;
+        return $this->checkAccess($user, $package);
     }
 
     /**
@@ -63,7 +74,7 @@ class QuestionPackagePolicy
      */
     public function togglePublish(User $user, QuestionPackage $package): bool
     {
-        return $user->id === $package->user_id;
+        return $this->checkAccess($user, $package);
     }
 
     /**
@@ -71,6 +82,6 @@ class QuestionPackagePolicy
      */
     public function viewResults(User $user, QuestionPackage $package): bool
     {
-        return $user->id === $package->user_id;
+        return $this->checkAccess($user, $package);
     }
 }

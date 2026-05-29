@@ -14,7 +14,7 @@ class Classroom extends Model
 
     protected $fillable = [
         'name',
-        'teacher_id',
+        'created_by_id',
         'description',
     ];
 
@@ -43,5 +43,13 @@ class Classroom extends Model
     {
         return $this->belongsToMany(QuestionPackage::class, 'classroom_question_package')
                     ->withTimestamps();
+    }
+
+    /**
+     * User (Admin/Superuser) pembuat kelas ini
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
     }
 }
