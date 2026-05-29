@@ -35,9 +35,9 @@
     </h2>
 
     @if(Auth::user()->isSuperuser() || Auth::user()->isAdministrator())
-        {{-- Management Stats - Row 1 (Priority) --}}
+        {{-- Management Stats - Primary --}}
         <div class="row items-push">
-            <div class="col-6 col-lg-6">
+            <div class="col-6 col-lg-3">
                 <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('admin.users.index') }}">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
@@ -50,12 +50,25 @@
                     </div>
                 </a>
             </div>
-            <div class="col-6 col-lg-6">
+            <div class="col-6 col-lg-3">
+                <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('question-packages.index') }}">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-elegance">{{ $stats['total_packages'] }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Total Paket</div>
+                        </div>
+                        <div class="item item-rounded bg-elegance-lighter">
+                            <i class="fa fa-briefcase text-elegance"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-lg-3">
                 <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('admin.users.index', ['role' => 'administrator', 'status' => 'pending']) }}">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
                             <div class="font-size-h2 font-w700 text-warning">{{ $stats['pending_approvals'] }}</div>
-                            <div class="font-size-sm font-w600 text-uppercase text-muted">Pending Admin</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Menunggu Approval</div>
                         </div>
                         <div class="item item-rounded bg-warning-light">
                             <i class="fa fa-user-clock text-warning"></i>
@@ -63,29 +76,12 @@
                     </div>
                 </a>
             </div>
-        </div>
-
-        {{-- Management Stats - Row 2 (Details) --}}
-        <div class="row items-push">
-            <div class="col-4">
-                <div class="block block-rounded h-100 mb-0">
-                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="font-size-h2 font-w700 text-warning">{{ $stats['total_administrators'] }}</div>
-                            <div class="font-size-sm font-w600 text-uppercase text-muted">Administrator</div>
-                        </div>
-                        <div class="item item-rounded bg-warning-light">
-                            <i class="fa fa-user-shield text-warning"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-4">
+            <div class="col-6 col-lg-3">
                 <div class="block block-rounded h-100 mb-0">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
                             <div class="font-size-h2 font-w700 text-info">{{ $stats['total_teachers'] }}</div>
-                            <div class="font-size-sm font-w600 text-uppercase text-muted">Guru</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Total Guru</div>
                         </div>
                         <div class="item item-rounded bg-info-light">
                             <i class="fa fa-user-tie text-info"></i>
@@ -93,14 +89,59 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+        </div>
+
+        {{-- Management Stats - Secondary --}}
+        <div class="row items-push">
+            <div class="col-6 col-lg-3">
+                <div class="block block-rounded h-100 mb-0">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-earth">{{ $stats['total_classrooms'] }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Total Kelas</div>
+                        </div>
+                        <div class="item item-rounded bg-earth-lighter">
+                            <i class="fa fa-school text-earth"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if(Auth::user()->isSuperuser())
+            <div class="col-6 col-lg-3">
+                <div class="block block-rounded h-100 mb-0">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-pulse">{{ $stats['total_questions'] }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Total Soal</div>
+                        </div>
+                        <div class="item item-rounded bg-pulse-lighter">
+                            <i class="fa fa-question-circle text-pulse"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+            <div class="col-6 col-lg-3">
+                <div class="block block-rounded h-100 mb-0">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-flat">{{ round($stats['average_score'], 1) }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Rata-rata Skor</div>
+                        </div>
+                        <div class="item item-rounded bg-flat-lighter">
+                            <i class="fa fa-chart-line text-flat"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
                 <div class="block block-rounded h-100 mb-0">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
                             <div class="font-size-h2 font-w700 text-success">{{ $stats['total_students'] }}</div>
-                            <div class="font-size-sm font-w600 text-uppercase text-muted">Siswa</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Total Siswa</div>
                         </div>
-                        <div class="item item-rounded bg-success-light">
+                        <div class="item item-rounded bg-success-lighter">
                             <i class="fa fa-graduation-cap text-success"></i>
                         </div>
                     </div>
@@ -108,9 +149,9 @@
             </div>
         </div>
     @elseif(Auth::user()->isTeacher())
-        {{-- Admin/Teacher Stats --}}
+        {{-- Teacher Stats --}}
         <div class="row items-push">
-            <div class="col-6">
+            <div class="col-6 col-md-4">
                 <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('question-packages.index') }}">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
@@ -123,7 +164,7 @@
                     </div>
                 </a>
             </div>
-            <div class="col-6">
+            <div class="col-6 col-md-4">
                 <div class="block block-rounded h-100 mb-0">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
@@ -136,11 +177,65 @@
                     </div>
                 </div>
             </div>
+            <div class="col-12 col-md-4">
+                <div class="block block-rounded h-100 mb-0">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-info">{{ $stats['total_students'] }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Siswa Unik</div>
+                        </div>
+                        <div class="item item-rounded bg-info-light">
+                            <i class="fa fa-users text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row items-push">
+            <div class="col-6 col-md-4">
+                <div class="block block-rounded h-100 mb-0">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-earth">{{ $stats['total_classrooms'] }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Kelas Dikelola</div>
+                        </div>
+                        <div class="item item-rounded bg-earth-lighter">
+                            <i class="fa fa-school text-earth"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="block block-rounded h-100 mb-0">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-pulse">{{ $stats['pending_essays'] }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Perlu Dinilai</div>
+                        </div>
+                        <div class="item item-rounded bg-pulse-lighter">
+                            <i class="fa fa-edit text-pulse"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="block block-rounded h-100 mb-0">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-flat">{{ round($stats['average_score'], 1) }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Rata-rata Skor</div>
+                        </div>
+                        <div class="item item-rounded bg-flat-lighter">
+                            <i class="fa fa-chart-pie text-flat"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     @elseif(Auth::user()->isStudent())
         {{-- Student Stats --}}
         <div class="row items-push">
-            <div class="col-6 col-md-4">
+            <div class="col-6 col-md-3">
                 <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('exams.index') }}">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
@@ -153,7 +248,7 @@
                     </div>
                 </a>
             </div>
-            <div class="col-6 col-md-4">
+            <div class="col-6 col-md-3">
                 <div class="block block-rounded h-100 mb-0">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
@@ -166,7 +261,20 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-6 col-md-3">
+                <div class="block block-rounded h-100 mb-0">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-info">{{ $stats['available_exams'] }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Ujian Tersedia</div>
+                        </div>
+                        <div class="item item-rounded bg-info-light">
+                            <i class="fa fa-calendar-alt text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
                 <div class="block block-rounded h-100 mb-0">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
@@ -180,7 +288,95 @@
                 </div>
             </div>
         </div>
+        <div class="row items-push">
+            <div class="col-6 col-md-6">
+                <div class="block block-rounded h-100 mb-0">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-pulse">{{ $stats['highest_score'] }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Skor Tertinggi</div>
+                        </div>
+                        <div class="item item-rounded bg-pulse-lighter">
+                            <i class="fa fa-trophy text-pulse"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-6">
+                <div class="block block-rounded h-100 mb-0">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-flat">
+                                {{ floor($stats['total_time_spent'] / 60) }} m
+                            </div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Total Waktu</div>
+                        </div>
+                        <div class="item item-rounded bg-flat-lighter">
+                            <i class="fa fa-clock text-flat"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     @endif
+
+    {{-- Recent Activity --}}
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="content-heading">Aktivitas Terbaru</h2>
+            <div class="block block-rounded">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Percobaan Ujian Terakhir</h3>
+                </div>
+                <div class="block-content">
+                    @if($recent_attempts->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-striped table-vcenter">
+                                <thead>
+                                    <tr>
+                                        @if(!Auth::user()->isStudent())
+                                            <th>Siswa</th>
+                                        @endif
+                                        <th>Paket Soal</th>
+                                        <th>Tanggal</th>
+                                        <th class="text-center">Skor</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($recent_attempts as $attempt)
+                                        <tr>
+                                            @if(!Auth::user()->isStudent())
+                                                <td class="font-w600">{{ $attempt->user->name }}</td>
+                                            @endif
+                                            <td>{{ $attempt->questionPackage->name }}</td>
+                                            <td>{{ $attempt->started_at->format('d M Y, H:i') }}</td>
+                                            <td class="text-center">
+                                                <span class="font-w700 {{ $attempt->total_score >= ($attempt->questionPackage->passing_score ?? 0) ? 'text-success' : 'text-danger' }}">
+                                                    {{ $attempt->total_score ?? '-' }}
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                @if($attempt->is_completed)
+                                                    <span class="badge bg-success">Selesai</span>
+                                                @else
+                                                    <span class="badge bg-warning">Berjalan</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-center py-4">
+                            <p class="text-muted mb-0">Belum ada aktivitas pengerjaan ujian.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Quick Actions --}}
     <h2 class="content-heading">Aksi Cepat</h2>
