@@ -88,7 +88,8 @@ class ClassroomController extends Controller
                 $q->where('classrooms.id', $classroom->id);
             })
             ->when(!$user->isSuperuser(), function($q) use ($user) {
-                return $q->where('created_by_id', $user->id);
+                $creatorId = $user->isTeacher() ? $user->created_by_id : $user->id;
+                return $q->where('created_by_id', $creatorId);
             })
             ->get();
 
@@ -213,7 +214,8 @@ class ClassroomController extends Controller
         ]);
 
         $userToAdd = User::findOrFail($request->user_id);
-        if (!Auth::user()->isSuperuser() && $userToAdd->created_by_id !== Auth::id()) {
+        $creatorId = Auth::user()->isTeacher() ? Auth::user()->created_by_id : Auth::id();
+        if (!Auth::user()->isSuperuser() && $userToAdd->created_by_id !== $creatorId) {
             abort(403, 'Anda tidak memiliki akses untuk menambahkan user ini.');
         }
 
