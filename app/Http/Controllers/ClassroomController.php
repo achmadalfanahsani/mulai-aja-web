@@ -20,7 +20,9 @@ class ClassroomController extends Controller
         $user = Auth::user();
         $classrooms = Classroom::withCount('students')
             ->when($user->isTeacher(), function($query) use ($user) {
-                return $query->where('teacher_id', $user->id);
+                return $query->whereHas('teachers', function($q) use ($user) {
+                    $q->where('users.id', $user->id);
+                });
             })
             ->latest()
             ->paginate(10);
@@ -51,7 +53,6 @@ class ClassroomController extends Controller
         Classroom::create([
             'name' => $request->name,
             'description' => $request->description,
-            'teacher_id' => Auth::id(),
         ]);
 
         return redirect()->route('classrooms.index')
@@ -65,13 +66,29 @@ class ClassroomController extends Controller
     {
         Gate::authorize('view', $classroom);
 
-        $classroom->load(['students', 'questionPackages']);
+        $user = Auth::user();
+        $classroom->load([
+            'students' => function($q) use ($user) {
+                if (!$user->isSuperuser() && $user->isAdministrator()) {
+                    $q->where('users.created_by_id', $user->id);
+                }
+            },
+            'teachers' => function($q) use ($user) {
+                if (!$user->isSuperuser() && $user->isAdministrator()) {
+                    $q->where('users.created_by_id', $user->id);
+                }
+            },
+            'questionPackages'
+        ]);
         
         // Data untuk penambahan (Siswa yang belum ada di kelas ini)
         $availableStudents = User::where('role', User::ROLE_STUDENT)
             ->where('is_approved', true)
             ->whereDoesntHave('classrooms', function($q) use ($classroom) {
                 $q->where('classrooms.id', $classroom->id);
+            })
+            ->when(!$user->isSuperuser(), function($q) use ($user) {
+                return $q->where('created_by_id', $user->id);
             })
             ->get();
 
@@ -85,7 +102,21 @@ class ClassroomController extends Controller
             })
             ->get();
 
-        return view('classrooms.show', compact('classroom', 'availableStudents', 'availablePackages'));
+        // Data untuk penambahan (Guru yang belum ada di kelas ini) - Hanya untuk Admin
+        $availableTeachers = collect();
+        if (Auth::user()->isAdministrator() || Auth::user()->isSuperuser()) {
+            $availableTeachers = User::where('role', User::ROLE_TEACHER)
+                ->where('is_approved', true)
+                ->whereDoesntHave('managedClassrooms', function($q) use ($classroom) {
+                    $q->where('classrooms.id', $classroom->id);
+                })
+                ->when(!Auth::user()->isSuperuser(), function($q) {
+                    return $q->where('created_by_id', Auth::id());
+                })
+                ->get();
+        }
+
+        return view('classrooms.show', compact('classroom', 'availableStudents', 'availablePackages', 'availableTeachers'));
     }
 
     /**
@@ -130,6 +161,47 @@ class ClassroomController extends Controller
     }
 
     /**
+     * Add teacher to classroom (Admin only).
+     */
+    public function addTeacher(Request $request, Classroom $classroom)
+    {
+        if (!Auth::user()->isAdministrator() && !Auth::user()->isSuperuser()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $userToAdd = User::findOrFail($request->user_id);
+        if (!Auth::user()->isSuperuser() && $userToAdd->created_by_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses untuk menambahkan user ini.');
+        }
+
+        $classroom->teachers()->syncWithoutDetaching([$request->user_id]);
+
+        return back()->with('success', 'Guru berhasil ditambahkan ke kelas.');
+    }
+
+    /**
+     * Remove teacher from classroom (Admin only).
+     */
+    public function removeTeacher(Classroom $classroom, User $user)
+    {
+        if (!Auth::user()->isAdministrator() && !Auth::user()->isSuperuser()) {
+            abort(403);
+        }
+
+        if (!Auth::user()->isSuperuser() && $user->created_by_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses untuk mengeluarkan user ini.');
+        }
+
+        $classroom->teachers()->detach($user->id);
+
+        return back()->with('success', 'Guru berhasil dikeluarkan dari kelas.');
+    }
+
+    /**
      * Add student to classroom.
      */
     public function addStudent(Request $request, Classroom $classroom)
@@ -139,6 +211,11 @@ class ClassroomController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
         ]);
+
+        $userToAdd = User::findOrFail($request->user_id);
+        if (!Auth::user()->isSuperuser() && $userToAdd->created_by_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses untuk menambahkan user ini.');
+        }
 
         $classroom->students()->syncWithoutDetaching([$request->user_id]);
 
@@ -151,6 +228,10 @@ class ClassroomController extends Controller
     public function removeStudent(Classroom $classroom, User $user)
     {
         Gate::authorize('update', $classroom);
+
+        if (!Auth::user()->isSuperuser() && Auth::user()->isAdministrator() && $user->created_by_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses untuk mengeluarkan user ini.');
+        }
 
         $classroom->students()->detach($user->id);
 

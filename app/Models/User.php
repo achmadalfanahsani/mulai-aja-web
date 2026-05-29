@@ -128,6 +128,7 @@ class User extends Authenticatable {
      * Kelas yang dikelola oleh user ini (untuk Teacher)
      */
     public function managedClassrooms() {
-        return $this->hasMany(Classroom::class, 'teacher_id');
+        return $this->belongsToMany(Classroom::class, 'classroom_teacher')
+                    ->withTimestamps();
     }
 }

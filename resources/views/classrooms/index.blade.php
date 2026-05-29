@@ -8,9 +8,11 @@
     <div class="block-header block-header-default">
         <h3 class="block-title">Daftar Kelas</h3>
         <div class="block-options">
+            @can('create', App\Models\Classroom::class)
             <a href="{{ route('classrooms.create') }}" class="btn btn-sm btn-primary">
                 <i class="fa fa-plus me-1"></i> Buat Kelas Baru
             </a>
+            @endcan
         </div>
     </div>
     <div class="block-content">
@@ -27,7 +29,7 @@
                     <tr>
                         <th class="text-center" style="width: 50px;">#</th>
                         <th>Nama Kelas</th>
-                        <th>Pengajar</th>
+                        <th>Deskripsi</th>
                         <th class="text-center" style="width: 15%;">Jumlah Siswa</th>
                         <th class="text-center" style="width: 150px;">Aksi</th>
                     </tr>
@@ -39,7 +41,9 @@
                         <td class="fw-semibold">
                             <a href="{{ route('classrooms.show', $classroom->id) }}">{{ $classroom->name }}</a>
                         </td>
-                        <td>{{ $classroom->teacher->name }}</td>
+                        <td>
+                            {{ Str::limit($classroom->description, 100) ?: '-' }}
+                        </td>
                         <td class="text-center">
                             <span class="badge bg-info">{{ $classroom->students_count }} Siswa</span>
                         </td>

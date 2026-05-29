@@ -16,6 +16,13 @@
                         <i class="fa fa-users me-1"></i> Daftar Siswa
                     </button>
                 </li>
+                @if(Auth::user()->isAdministrator() || Auth::user()->isSuperuser())
+                <li class="nav-item">
+                    <button class="nav-link" id="teachers-tab" data-bs-toggle="tab" data-bs-target="#teachers" role="tab">
+                        <i class="fa fa-user-tie me-1"></i> Daftar Guru
+                    </button>
+                </li>
+                @endif
                 <li class="nav-item">
                     <button class="nav-link" id="packages-tab" data-bs-toggle="tab" data-bs-target="#packages" role="tab">
                         <i class="fa fa-boxes me-1"></i> Paket Soal
@@ -110,6 +117,83 @@
                     </div>
                 </div>
 
+                {{-- Tab: Guru (Hanya Admin) --}}
+                @if(Auth::user()->isAdministrator() || Auth::user()->isSuperuser())
+                <div class="tab-pane" id="teachers" role="tabpanel">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Daftar Guru Pengampu ({{ $classroom->teachers->count() }})</h5>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add-teacher">
+                                <i class="fa fa-user-plus me-1"></i> Tambah Guru
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 50px;">#</th>
+                                    <th>Nama Guru</th>
+                                    <th>Email</th>
+                                    <th class="text-center" style="width: 100px;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($classroom->teachers as $teacher)
+                                <tr>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td class="fw-semibold">{{ $teacher->name }}</td>
+                                    <td>{{ $teacher->email }}</td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-alt-danger" title="Keluarkan dari kelas"
+                                            data-bs-toggle="modal" data-bs-target="#modal-remove-teacher-{{ $teacher->id }}">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+
+                                        <!-- Modal: Remove Teacher -->
+                                        <div class="modal fade" id="modal-remove-teacher-{{ $teacher->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-remove-teacher-{{ $teacher->id }}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <form action="{{ route('classrooms.teachers.remove', [$classroom->id, $teacher->id]) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <div class="block block-rounded block-transparent mb-0">
+                                                            <div class="block-header block-header-default">
+                                                                <h3 class="block-title">Keluarkan Guru</h3>
+                                                                <div class="block-options">
+                                                                    <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                                                                        <i class="fa fa-fw fa-times"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="block-content fs-sm text-start">
+                                                                <p>Apakah Anda yakin ingin mengeluarkan guru <strong>{{ $teacher->name }}</strong> dari kelas ini?</p>
+                                                            </div>
+                                                            <div class="block-content block-content-full text-end bg-body">
+                                                                <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Batal</button>
+                                                                <button type="submit" class="btn btn-sm btn-danger">Ya, Keluarkan</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">Belum ada guru yang ditugaskan ke kelas ini.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @endif
+
                 {{-- Tab: Paket Soal --}}
                 <div class="tab-pane" id="packages" role="tabpanel">
                     <div class="row mb-4">
@@ -198,6 +282,45 @@
 
 {{-- Modals --}}
 
+@if(Auth::user()->isAdministrator() || Auth::user()->isSuperuser())
+<!-- Modal: Add Teacher -->
+<div class="modal fade" id="modal-add-teacher" tabindex="-1" role="dialog" aria-labelledby="modal-add-teacher" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{{ route('classrooms.teachers.add', $classroom->id) }}" method="POST">
+                @csrf
+                <div class="block block-rounded block-transparent mb-0">
+                    <div class="block-header block-header-default">
+                        <h3 class="block-title">Tambah Guru ke Kelas</h3>
+                        <div class="block-options">
+                            <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                                <i class="fa fa-fw fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="block-content fs-sm">
+                        <div class="mb-4">
+                            <label class="form-label" for="teacher_user_id">Pilih Guru</label>
+                            <select class="js-select2-teacher form-select" id="teacher_user_id" name="user_id" style="width: 100%;" data-placeholder="Cari nama atau email guru.." required>
+                                <option></option><!-- Required for data-placeholder -->
+                                @foreach($availableTeachers as $teacher)
+                                    <option value="{{ $teacher->id }}">{{ $teacher->name }} ({{ $teacher->email }})</option>
+                                @endforeach
+                            </select>
+                            <div class="form-text text-muted">Hanya menampilkan guru yang sudah disetujui dan belum ada di kelas ini.</div>
+                        </div>
+                    </div>
+                    <div class="block-content block-content-full text-end bg-body">
+                        <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Tambahkan</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Modal: Add Student -->
 <div class="modal fade" id="modal-add-student" tabindex="-1" role="dialog" aria-labelledby="modal-add-student" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -282,6 +405,16 @@
         jQuery(function() {
             // Inisialisasi Select2 untuk Siswa
             jQuery('.js-select2').each(function() {
+                let el = jQuery(this);
+                el.select2({
+                    dropdownParent: el.closest('.modal'),
+                    placeholder: el.data('placeholder'),
+                    allowClear: true
+                });
+            });
+
+            // Inisialisasi Select2 untuk Guru
+            jQuery('.js-select2-teacher').each(function() {
                 let el = jQuery(this);
                 el.select2({
                     dropdownParent: el.closest('.modal'),
