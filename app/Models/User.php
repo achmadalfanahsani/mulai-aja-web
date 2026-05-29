@@ -23,6 +23,8 @@ class User extends Authenticatable {
         'email',
         'password',
         'role',
+        'theme_color',
+        'theme_mode',
         'is_approved',
         'created_by_id',
     ];

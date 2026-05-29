@@ -39,4 +39,10 @@
 @stack('styles')
 
 {{-- Script pemilih tema (blocking, untuk mencegah flash) --}}
+<script>
+    window.UserTheme = {
+        color: {!! json_encode(auth()->check() ? auth()->user()->theme_color : 'default', JSON_UNESCAPED_SLASHES) !!},
+        mode: {!! json_encode(auth()->check() ? auth()->user()->theme_mode : 'system', JSON_UNESCAPED_SLASHES) !!}
+    };
+</script>
 <script src="{{ asset('assets/js/setTheme.js') }}"></script>

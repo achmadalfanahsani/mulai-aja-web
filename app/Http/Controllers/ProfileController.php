@@ -33,4 +33,19 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Password berhasil diperbarui.');
     }
+
+    /**
+     * Update the user's theme preferences.
+     */
+    public function updateTheme(Request $request)
+    {
+        $validated = $request->validate([
+            'theme_color' => ['sometimes', 'string'],
+            'theme_mode' => ['sometimes', 'string', 'in:on,off,system'],
+        ]);
+
+        $request->user()->update($validated);
+
+        return response()->json(['message' => 'Theme updated successfully']);
+    }
 }
