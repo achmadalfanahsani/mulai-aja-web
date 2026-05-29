@@ -12,7 +12,7 @@ class ClassroomPolicy
      */
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->isSuperuser() || $user->isAdministrator()) {
+        if ($user->isSuperuser()) {
             return true;
         }
         return null;
@@ -23,7 +23,7 @@ class ClassroomPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isTeacher();
+        return $user->isTeacher() || $user->isAdministrator();
     }
 
     /**
@@ -31,6 +31,9 @@ class ClassroomPolicy
      */
     public function view(User $user, Classroom $classroom): bool
     {
+        if ($user->isAdministrator() && $classroom->created_by_id === $user->id) {
+            return true;
+        }
         return $classroom->teachers()->where('users.id', $user->id)->exists();
     }
 
@@ -41,7 +44,7 @@ class ClassroomPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->isAdministrator();
     }
 
     /**
@@ -49,6 +52,9 @@ class ClassroomPolicy
      */
     public function update(User $user, Classroom $classroom): bool
     {
+        if ($user->isAdministrator() && $classroom->created_by_id === $user->id) {
+            return true;
+        }
         return $classroom->teachers()->where('users.id', $user->id)->exists();
     }
 
@@ -57,6 +63,9 @@ class ClassroomPolicy
      */
     public function delete(User $user, Classroom $classroom): bool
     {
+        if ($user->isAdministrator() && $classroom->created_by_id === $user->id) {
+            return true;
+        }
         return $classroom->teachers()->where('users.id', $user->id)->exists();
     }
 }

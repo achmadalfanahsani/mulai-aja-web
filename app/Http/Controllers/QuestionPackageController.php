@@ -19,6 +19,13 @@ class QuestionPackageController extends Controller {
         // Admin & Superuser bisa melihat semua, Teacher hanya miliknya
         if ($user->isTeacher()) {
             $query->where('user_id', $user->id);
+        } elseif ($user->isAdministrator()) {
+            $query->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhereHas('user', function($u) use ($user) {
+                      $u->where('created_by_id', $user->id);
+                  });
+            });
         }
 
         // Pencarian Nama

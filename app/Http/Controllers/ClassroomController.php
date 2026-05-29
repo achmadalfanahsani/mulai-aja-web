@@ -24,6 +24,9 @@ class ClassroomController extends Controller
                     $q->where('users.id', $user->id);
                 });
             })
+            ->when($user->isAdministrator(), function($query) use ($user) {
+                return $query->where('created_by_id', $user->id);
+            })
             ->latest()
             ->paginate(10);
 
@@ -53,6 +56,7 @@ class ClassroomController extends Controller
         Classroom::create([
             'name' => $request->name,
             'description' => $request->description,
+            'created_by_id' => Auth::id(),
         ]);
 
         return redirect()->route('classrooms.index')
@@ -98,8 +102,17 @@ class ClassroomController extends Controller
             ->whereDoesntHave('classrooms', function($q) use ($classroom) {
                 $q->where('classrooms.id', $classroom->id);
             })
-            ->when(Auth::user()->isTeacher(), function($q) {
-                return $q->where('user_id', Auth::id());
+            ->when(!Auth::user()->isSuperuser(), function($q) {
+                if (Auth::user()->isTeacher()) {
+                    return $q->where('user_id', Auth::id());
+                } elseif (Auth::user()->isAdministrator()) {
+                    return $q->where(function($query) {
+                        $query->where('user_id', Auth::id())
+                              ->orWhereHas('user', function($u) {
+                                  $u->where('created_by_id', Auth::id());
+                              });
+                    });
+                }
             })
             ->get();
 
@@ -250,6 +263,20 @@ class ClassroomController extends Controller
         $request->validate([
             'question_package_id' => 'required|exists:question_packages,id',
         ]);
+
+        $package = QuestionPackage::findOrFail($request->question_package_id);
+        
+        if (!Auth::user()->isSuperuser()) {
+            if (Auth::user()->isTeacher() && $package->user_id !== Auth::id()) {
+                abort(403, 'Anda tidak memiliki akses untuk menugaskan paket soal ini.');
+            } elseif (Auth::user()->isAdministrator()) {
+                $isOwn = $package->user_id === Auth::id();
+                $isFromSubordinate = $package->user && $package->user->created_by_id === Auth::id();
+                if (!$isOwn && !$isFromSubordinate) {
+                    abort(403, 'Anda tidak memiliki akses untuk menugaskan paket soal ini.');
+                }
+            }
+        }
 
         $classroom->questionPackages()->syncWithoutDetaching([$request->question_package_id]);
 
