@@ -75,6 +75,46 @@
 
     {{-- Additional page scripts --}}
     @stack('scripts')
+
+    @auth
+    {{-- Theme Sync Script --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            // Handle Color Theme change
+            document.querySelectorAll('[data-toggle="theme"]').forEach(el => {
+                el.addEventListener('click', () => {
+                    const theme = el.getAttribute('data-theme');
+                    updateTheme({ theme_color: theme });
+                });
+            });
+
+            // Handle Dark Mode change
+            document.querySelectorAll('[data-toggle="layout"][data-dark-mode]').forEach(el => {
+                el.addEventListener('click', () => {
+                    const mode = el.getAttribute('data-dark-mode');
+                    updateTheme({ theme_mode: mode });
+                });
+            });
+
+            function updateTheme(data) {
+                fetch("{{ route('profile.update-theme') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => console.log('Theme synced:', data))
+                .catch(error => console.error('Error syncing theme:', error));
+            }
+        });
+    </script>
+    @endauth
 </body>
 
 </html>
