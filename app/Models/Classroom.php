@@ -21,9 +21,10 @@ class Classroom extends Model
     /**
      * Guru yang mengelola kelas ini
      */
-    public function teacher(): BelongsTo
+    public function teachers(): BelongsToMany
     {
-        return $this->belongsTo(User::class, 'teacher_id');
+        return $this->belongsToMany(User::class, 'classroom_teacher')
+                    ->withTimestamps();
     }
 
     /**

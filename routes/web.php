@@ -75,6 +75,8 @@ Route::middleware(['auth', 'approved'])->group(function () {
 
         // Classroom Management
         Route::resource('classrooms', ClassroomController::class);
+        Route::post('classrooms/{classroom}/teachers', [ClassroomController::class, 'addTeacher'])->name('classrooms.teachers.add');
+        Route::delete('classrooms/{classroom}/teachers/{user}', [ClassroomController::class, 'removeTeacher'])->name('classrooms.teachers.remove');
         Route::post('classrooms/{classroom}/students', [ClassroomController::class, 'addStudent'])->name('classrooms.students.add');
         Route::delete('classrooms/{classroom}/students/{user}', [ClassroomController::class, 'removeStudent'])->name('classrooms.students.remove');
         Route::post('classrooms/{classroom}/packages', [ClassroomController::class, 'assignPackage'])->name('classrooms.packages.assign');

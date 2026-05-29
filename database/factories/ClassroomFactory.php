@@ -28,7 +28,6 @@ class ClassroomFactory extends Factory
 
         return [
             'name' => $name,
-            'teacher_id' => User::factory()->teacher(),
             'description' => fake()->sentence(),
         ];
     }

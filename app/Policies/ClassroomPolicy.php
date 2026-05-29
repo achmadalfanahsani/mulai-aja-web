@@ -31,15 +31,17 @@ class ClassroomPolicy
      */
     public function view(User $user, Classroom $classroom): bool
     {
-        return $user->id === $classroom->teacher_id;
+        return $classroom->teachers()->where('users.id', $user->id)->exists();
     }
 
     /**
      * Boleh membuat kelas?
+     * HANYA Administrator & Superuser yang boleh (di-handle di before).
+     * Teacher secara eksplisit tidak boleh.
      */
     public function create(User $user): bool
     {
-        return $user->isTeacher();
+        return false;
     }
 
     /**
@@ -47,7 +49,7 @@ class ClassroomPolicy
      */
     public function update(User $user, Classroom $classroom): bool
     {
-        return $user->id === $classroom->teacher_id;
+        return $classroom->teachers()->where('users.id', $user->id)->exists();
     }
 
     /**
@@ -55,6 +57,6 @@ class ClassroomPolicy
      */
     public function delete(User $user, Classroom $classroom): bool
     {
-        return $user->id === $classroom->teacher_id;
+        return $classroom->teachers()->where('users.id', $user->id)->exists();
     }
 }
