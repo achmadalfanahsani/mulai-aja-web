@@ -18,7 +18,13 @@
             <tbody>
                 @foreach ($attempts as $attempt)
                     <tr>
-                        <td class="font-w600">{{ $attempt->questionPackage->name }}</td>
+                        <td class="font-w600">
+                            @if($attempt->questionPackage)
+                                {{ $attempt->questionPackage->name }}
+                            @else
+                                <span class="text-muted fst-italic">Paket dihapus</span>
+                            @endif
+                        </td>
                         <td class="font-size-sm text-muted">
                             {{ $attempt->started_at->format('d M Y, H:i') }}
                         </td>
