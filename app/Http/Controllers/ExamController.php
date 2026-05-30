@@ -136,7 +136,7 @@ class ExamController extends Controller {
         ]);
 
         // Ambil semua soal aktif
-        $questions = $questionPackage->activeQuestions()->get();
+        $questions = $questionPackage->activeQuestions()->with('options')->get();
         $questionIds = $questions->pluck('id')->toArray();
 
         // 1. Logika Pengacakan Soal
@@ -155,7 +155,7 @@ class ExamController extends Controller {
         foreach ($questions as $question) {
             // Dapatkan label opsi yang tersedia (misal: A, B, C, D)
             $labels = $question->options->pluck('option_label')->toArray();
-            
+
             if ($questionPackage->shuffle_answers) {
                 shuffle($labels);
             }
@@ -168,9 +168,11 @@ class ExamController extends Controller {
 
         // Inisialisasi draft response kosong untuk semua soal agar mempermudah navigasi
         foreach ($questionIds as $qId) {
+            $question = $questions->firstWhere('id', $qId);
             QuestionResponse::create([
                 'question_attempt_id' => $attempt->id,
                 'question_id' => $qId,
+                'question_snapshot' => $question->toJson(), // Snapshot
                 'selected_answer' => null,
                 'is_correct' => null,
             ]);
