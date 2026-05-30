@@ -172,7 +172,7 @@
                                             <div class="text-muted text-uppercase font-size-xs font-w600">Menit</div>
                                         </div>
                                     </div>
-                                    <div class="alert alert-info d-flex align-items-center mt-4 mb-0" role="alert">
+                                    <div class="alert alert-info alert-permanent d-flex align-items-center mt-4 mb-0" role="alert">
                                         <i class="fa fa-info-circle me-2"></i>
                                         <p class="mb-0 fs-xs">
                                             Waktu pengerjaan akan dimulai setelah Anda menekan tombol "Ya, Mulai Sekarang". Pastikan koneksi internet Anda stabil.

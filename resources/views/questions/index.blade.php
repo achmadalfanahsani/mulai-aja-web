@@ -173,7 +173,7 @@
 
                                     {{-- Penjelasan --}}
                                     @if ($question->explanation)
-                                        <div class="alert alert-info bg-info-light border-0 text-dark font-size-sm mt-3 mb-0"
+                                        <div class="alert alert-info alert-permanent bg-info-light border-0 text-dark font-size-sm mt-3 mb-0"
                                             role="alert">
                                             <strong><i class="fa fa-info-circle me-1"></i> Penjelasan:</strong>
                                             <div class="mt-1">{!! nl2br(e($question->explanation)) !!}</div>
