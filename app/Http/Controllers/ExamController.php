@@ -371,6 +371,11 @@ class ExamController extends Controller {
             ->with(['question.options'])
             ->get();
 
+        if (!$package) {
+            return redirect()->route('exams.index')
+                ->with('error', 'Paket soal telah dihapus atau tidak tersedia.');
+        }
+
         return view('exams.results', compact('questionAttempt', 'stats', 'package', 'responses'));
     }
 

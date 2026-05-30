@@ -126,6 +126,19 @@
         @foreach ($responses as $index => $resp)
             @php
                 $question = $resp->question;
+            @endphp
+            
+            @if(!$question)
+                <div class="block block-rounded block-bordered mb-4">
+                    <div class="block-content py-4 text-center text-muted">
+                        <i class="fa fa-question-circle fa-2x mb-2"></i>
+                        <p>Soal ini telah dihapus atau tidak tersedia.</p>
+                    </div>
+                </div>
+                @continue
+            @endif
+
+            @php
                 $isCorrect = $resp->is_correct;
                 $selected = $resp->selected_answer;
                 $isAnswered = !$resp->isUnanswered();
