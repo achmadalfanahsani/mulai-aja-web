@@ -50,7 +50,6 @@
                                 <option value="">Semua Tipe</option>
                                 <option value="multiple_choice" {{ request('package_type') == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
                                 <option value="essay" {{ request('package_type') == 'essay' ? 'selected' : '' }}>Isian</option>
-                                <option value="mixed" {{ request('package_type') == 'mixed' ? 'selected' : '' }}>Campuran</option>
                             </select>
                         </div>
                         <div class="col-md-3">

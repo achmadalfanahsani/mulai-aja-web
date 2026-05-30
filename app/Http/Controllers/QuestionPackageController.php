@@ -65,7 +65,7 @@ class QuestionPackageController extends Controller {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'package_type' => 'required|in:multiple_choice,essay,mixed',
+            'package_type' => 'required|in:multiple_choice,essay',
             'duration_minutes' => 'required|integer|min:1|max:480',
             'passing_score' => 'nullable|integer|min:0|max:100',
             'attempt_limit' => 'nullable|integer|min:1',
@@ -80,7 +80,7 @@ class QuestionPackageController extends Controller {
 
         $package = QuestionPackage::create($validated);
 
-        return redirect()->route('question-packages.index', ['type' => $package->package_type])
+        return redirect()->route('question-packages.index')
             ->with('success', 'Paket soal berhasil dibuat! Silakan tambahkan pertanyaan.');
     }
 
@@ -103,7 +103,7 @@ class QuestionPackageController extends Controller {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'package_type' => 'required|in:multiple_choice,essay,mixed',
+            'package_type' => 'required|in:multiple_choice,essay',
             'duration_minutes' => 'required|integer|min:1|max:480',
             'passing_score' => 'nullable|integer|min:0|max:100',
             'attempt_limit' => 'nullable|integer|min:1',
@@ -116,7 +116,7 @@ class QuestionPackageController extends Controller {
 
         $question_package->update($validated);
 
-        return redirect()->route('question-packages.index', ['type' => $question_package->package_type])
+        return redirect()->route('question-packages.index')
             ->with('success', 'Paket soal berhasil diperbarui!');
     }
 
@@ -129,7 +129,7 @@ class QuestionPackageController extends Controller {
         $type = $questionPackage->package_type;
         $questionPackage->delete();
 
-        return redirect()->route('question-packages.index', ['type' => $type])
+        return redirect()->route('question-packages.index')
             ->with('success', 'Paket soal berhasil dihapus!');
     }
 

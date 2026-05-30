@@ -28,7 +28,11 @@ class AIQuestionController extends Controller {
         ]);
 
         try {
-            $generatedData = $this->aiService->generateMultipleChoice($request->raw_questions);
+            if ($questionPackage->package_type === 'essay') {
+                $generatedData = $this->aiService->generateEssay($request->raw_questions);
+            } else {
+                $generatedData = $this->aiService->generateMultipleChoice($request->raw_questions);
+            }
 
             if (empty($generatedData)) {
                 return redirect()->back()->with('error', 'AI gagal menghasilkan soal. Pastikan format input benar.');
@@ -42,7 +46,7 @@ class AIQuestionController extends Controller {
 
                     $question = Question::create([
                         'question_package_id' => $questionPackage->id,
-                        'question_type' => Question::TYPE_MULTIPLE_CHOICE,
+                        'question_type' => $questionPackage->package_type === 'essay' ? Question::TYPE_ESSAY : Question::TYPE_MULTIPLE_CHOICE,
                         'question_text' => $data['question_text'],
                         'explanation' => $data['explanation'] ?? null,
                         'correct_answer' => $data['correct_answer'],
@@ -51,12 +55,14 @@ class AIQuestionController extends Controller {
                         'is_active' => true,
                     ]);
 
-                    foreach ($data['options'] as $label => $text) {
-                        QuestionOption::create([
-                            'question_id' => $question->id,
-                            'option_label' => $label,
-                            'option_text' => $text,
-                        ]);
+                    if ($questionPackage->package_type !== 'essay' && isset($data['options'])) {
+                        foreach ($data['options'] as $label => $text) {
+                            QuestionOption::create([
+                                'question_id' => $question->id,
+                                'option_label' => $label,
+                                'option_text' => $text,
+                            ]);
+                        }
                     }
 
                     $questionPackage->increment('total_questions_count');

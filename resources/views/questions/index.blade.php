@@ -229,7 +229,7 @@
                                 <label class="form-label" for="raw_questions">Daftar Pertanyaan:</label>
                                 <textarea class="form-control" id="raw_questions" name="raw_questions" rows="10" placeholder="Contoh:&#10;1. Apa ibu kota Indonesia?&#10;2. Berapa hasil dari 25 x 4?&#10;3. Siapa penemu lampu pijar?"></textarea>
                                 <div class="form-text mt-2">
-                                    <i class="fa fa-lightbulb me-1"></i> AI akan menghasilkan soal bertipe <strong>Pilihan Ganda</strong> dengan 5 opsi (A-E).
+                                   <i class="fa fa-lightbulb me-1"></i> AI akan menghasilkan soal bertipe <strong>{{ $questionPackage->package_type === 'essay' ? 'Uraian (Essay)' : 'Pilihan Ganda' }}</strong>.
                                 </div>
                             </div>
                         </div>
