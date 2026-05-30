@@ -97,7 +97,8 @@ class QuestionAttempt extends Model {
      * Dapatkan statistik jawaban
      */
     public function getAnswerStatistics() {
-        $totalQuestions = $this->questionPackage->activeQuestions()->count();
+        // Gunakan jumlah response yang ada di database untuk attempt ini
+        $totalResponses = $this->responses()->count();
         
         $answeredCount = $this->responses()
             ->where(function($query) {
@@ -125,9 +126,9 @@ class QuestionAttempt extends Model {
             ->count();
 
         return [
-            'total_questions' => $totalQuestions,
+            'total_questions' => $totalResponses,
             'answered_count' => $answeredCount,
-            'unanswered_count' => max(0, $totalQuestions - $answeredCount),
+            'unanswered_count' => max(0, $totalResponses - $answeredCount),
             'correct_count' => $correctCount,
             'wrong_count' => $wrongCount,
         ];
@@ -166,6 +167,10 @@ class QuestionAttempt extends Model {
     public function isPassed(): ?bool {
         if (is_null($this->total_score)) {
             return null;
+        }
+
+        if (is_null($this->questionPackage)) {
+            return false; // Anggap tidak lulus jika paket sudah dihapus
         }
         
         $passingScore = $this->questionPackage->passing_score ?? 0;

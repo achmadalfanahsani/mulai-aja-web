@@ -12,6 +12,7 @@ class QuestionResponse extends Model {
     protected $fillable = [
         'question_attempt_id',
         'question_id',
+        'question_snapshot',
         'selected_answer',
         'essay_answer',
         'is_correct',
@@ -20,6 +21,7 @@ class QuestionResponse extends Model {
 
     protected $casts = [
         'is_correct' => 'boolean',
+        'question_snapshot' => 'array',
     ];
 
     // ===== RELATIONSHIPS =====
@@ -35,7 +37,19 @@ class QuestionResponse extends Model {
      * Soal yang dijawab
      */
     public function question(): BelongsTo {
-        return $this->belongsTo(Question::class);
+        return $this->belongsTo(Question::class)->withTrashed();
+    }
+
+    /**
+     * Helper untuk mengambil data soal (dari relasi atau snapshot)
+     */
+    public function getQuestionData() {
+        if ($this->question) {
+            return $this->question;
+        }
+        
+        // Return sebagai objek agar kompatibel dengan pemanggilan $resp->question->...
+        return (object) ($this->question_snapshot ?? []);
     }
 
     // ===== HELPER METHODS =====
@@ -51,7 +65,12 @@ class QuestionResponse extends Model {
      * Check apakah user tidak menjawab
      */
     public function isUnanswered(): bool {
-        if ($this->question->isMultipleChoice()) {
+        $question = $this->getQuestionData();
+        
+        // Cek jika pertanyaan tipe pilihan ganda (cek dari snapshot atau relasi)
+        $isMC = isset($question->question_type) ? $question->question_type === 'multiple_choice' : ($question instanceof \App\Models\Question && $question->isMultipleChoice());
+        
+        if ($isMC) {
             return is_null($this->selected_answer);
         }
         return is_null($this->essay_answer) || trim($this->essay_answer) === '';
@@ -61,7 +80,8 @@ class QuestionResponse extends Model {
      * Get the correct answer dari question
      */
     public function getCorrectAnswer(): string {
-        return $this->question->correct_answer;
+        $question = $this->getQuestionData();
+        return $question->correct_answer ?? '';
     }
 
     /**
@@ -72,27 +92,45 @@ class QuestionResponse extends Model {
             return null;
         }
 
-        if ($this->question->isEssay()) {
+        $question = $this->getQuestionData();
+        
+        $isEssay = isset($question->question_type) ? $question->question_type === 'essay' : ($question instanceof \App\Models\Question && $question->isEssay());
+
+        if ($isEssay) {
             return $this->essay_answer;
         }
         
-        return $this->question
-            ->options()
-            ->where('option_label', $this->selected_answer)
-            ->value('option_text');
+        // Jika dari relasi Question, ambil opsi dari database
+        if ($question instanceof \App\Models\Question) {
+            return $question->options()
+                ->where('option_label', $this->selected_answer)
+                ->value('option_text');
+        }
+
+        // Jika dari snapshot, ambil dari opsi di dalam snapshot
+        $options = $question->options ?? [];
+        return collect($options)->firstWhere('option_label', $this->selected_answer)['option_text'] ?? null;
     }
 
     /**
      * Get correct answer text
      */
     public function getCorrectAnswerText(): string {
-        if ($this->question->isEssay()) {
-            return $this->question->correct_answer;
+        $question = $this->getQuestionData();
+
+        $isEssay = isset($question->question_type) ? $question->question_type === 'essay' : ($question instanceof \App\Models\Question && $question->isEssay());
+
+        if ($isEssay) {
+            return $question->correct_answer ?? '';
         }
 
-        return $this->question
-            ->options()
-            ->where('option_label', $this->getCorrectAnswer())
-            ->value('option_text') ?? '';
+        if ($question instanceof \App\Models\Question) {
+            return $question->options()
+                ->where('option_label', $this->getCorrectAnswer())
+                ->value('option_text') ?? '';
+        }
+
+        $options = $question->options ?? [];
+        return collect($options)->firstWhere('option_label', $this->getCorrectAnswer())['option_text'] ?? '';
     }
 }
