@@ -20,9 +20,12 @@ class DatabaseSeeder extends Seeder {
         foreach ($teachers as $teacher) {
             $classrooms = \App\Models\Classroom::factory()
                 ->count(2)
-                ->create(['teacher_id' => $teacher->id]);
+                ->create();
 
             foreach ($classrooms as $classroom) {
+                // Attach teacher to classroom
+                $classroom->teachers()->attach($teacher->id);
+
                 // Assign 3-5 random packages to each classroom
                 $classroom->questionPackages()->attach(
                     $packages->random(rand(3, 5))->pluck('id')->toArray()
