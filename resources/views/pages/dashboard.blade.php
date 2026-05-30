@@ -310,7 +310,7 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 items-push">
         @if (Auth::user()->isSuperuser() || Auth::user()->isAdministrator())
             <div class="col">
-                <a class="block block-rounded block-link-shadow h-100 mb-0" 
+                <a class="block block-rounded block-link-shadow h-100 mb-0"
                     href="{{ Auth::user()->isSuperuser() ? route('superuser.users.index') : route('admin.users.index') }}">
                     <div class="block-content block-content-full text-center">
                         <div class="item item-circle bg-primary-lighter mx-auto mb-3">
@@ -366,63 +366,61 @@
     </div>
 
     {{-- Recent Activity --}}
-    @if (!Auth::user()->isAdministrator() && !Auth::user()->isTeacher())
-        <div class="row">
-            <div class="col-md-12">
-                <h2 class="content-heading">Aktivitas Terbaru</h2>
-                <div class="block block-rounded">
-                    <div class="block-header block-header-default">
-                        <h3 class="block-title">Percobaan Ujian Terakhir</h3>
-                    </div>
-                    <div class="block-content">
-                        @if ($recent_attempts->count() > 0)
-                            <div class="table-responsive">
-                                <table class="table table-borderless table-striped table-vcenter">
-                                    <thead>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="content-heading">Aktivitas Terbaru</h2>
+            <div class="block block-rounded">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Percobaan Ujian Terakhir</h3>
+                </div>
+                <div class="block-content">
+                    @if ($recent_attempts->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-striped table-vcenter">
+                                <thead>
+                                    <tr>
+                                        @if (!Auth::user()->isStudent())
+                                            <th>Siswa</th>
+                                        @endif
+                                        <th>Paket Soal</th>
+                                        <th>Tanggal</th>
+                                        <th class="text-center">Skor</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($recent_attempts as $attempt)
                                         <tr>
                                             @if (!Auth::user()->isStudent())
-                                                <th>Siswa</th>
+                                                <td class="font-w600">{{ $attempt->user->name }}</td>
                                             @endif
-                                            <th>Paket Soal</th>
-                                            <th>Tanggal</th>
-                                            <th class="text-center">Skor</th>
-                                            <th class="text-center">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($recent_attempts as $attempt)
-                                            <tr>
-                                                @if (!Auth::user()->isStudent())
-                                                    <td class="font-w600">{{ $attempt->user->name }}</td>
+                                            <td>{{ $attempt->questionPackage->name }}</td>
+                                            <td>{{ $attempt->started_at->format('d M Y, H:i') }}</td>
+                                            <td class="text-center">
+                                                <span
+                                                    class="font-w700 {{ $attempt->total_score >= ($attempt->questionPackage->passing_score ?? 0) ? 'text-success' : 'text-danger' }}">
+                                                    {{ $attempt->total_score ?? '-' }}
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                @if ($attempt->is_completed)
+                                                    <span class="badge bg-success">Selesai</span>
+                                                @else
+                                                    <span class="badge bg-warning">Berjalan</span>
                                                 @endif
-                                                <td>{{ $attempt->questionPackage->name }}</td>
-                                                <td>{{ $attempt->started_at->format('d M Y, H:i') }}</td>
-                                                <td class="text-center">
-                                                    <span
-                                                        class="font-w700 {{ $attempt->total_score >= ($attempt->questionPackage->passing_score ?? 0) ? 'text-success' : 'text-danger' }}">
-                                                        {{ $attempt->total_score ?? '-' }}
-                                                    </span>
-                                                </td>
-                                                <td class="text-center">
-                                                    @if ($attempt->is_completed)
-                                                        <span class="badge bg-success">Selesai</span>
-                                                    @else
-                                                        <span class="badge bg-warning">Berjalan</span>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div class="text-center py-4">
-                                <p class="text-muted mb-0">Belum ada aktivitas pengerjaan ujian.</p>
-                            </div>
-                        @endif
-                    </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-center py-4">
+                            <p class="text-muted mb-0">Belum ada aktivitas pengerjaan ujian.</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
-    @endif
+    </div>
 @endsection
