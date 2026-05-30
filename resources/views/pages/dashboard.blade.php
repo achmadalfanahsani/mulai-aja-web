@@ -79,9 +79,14 @@
                     </div>
                 </a>
             </div>
+        </div>
+
+        {{-- Management Stats - Row 2 --}}
+        <div class="row items-push">
             {{-- 3.5 Total Admin --}}
             <div class="col-6 col-lg-4">
-                <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('admin.users.index', ['role' => 'administrator']) }}">
+                <a class="block block-rounded block-link-shadow h-100 mb-0"
+                    href="{{ route('admin.users.index', ['role' => 'administrator']) }}">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
                             <div class="font-size-h2 font-w700 text-secondary">{{ $stats['total_administrators'] }}</div>
@@ -93,10 +98,6 @@
                     </div>
                 </a>
             </div>
-        </div>
-
-        {{-- Management Stats - Row 2 --}}
-        <div class="row items-push">
             {{-- 4. Total Guru --}}
             <div class="col-6 col-lg-4">
                 <a class="block block-rounded block-link-shadow h-100 mb-0"
@@ -127,6 +128,8 @@
                     </div>
                 </a>
             </div>
+        </div>
+        <div class="row items-push">
             {{-- 6. Menunggu Approval --}}
             <div class="col-6 col-lg-4">
                 <a class="block block-rounded block-link-shadow h-100 mb-0"
