@@ -310,7 +310,8 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 items-push">
         @if (Auth::user()->isSuperuser() || Auth::user()->isAdministrator())
             <div class="col">
-                <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('admin.users.index') }}">
+                <a class="block block-rounded block-link-shadow h-100 mb-0" 
+                    href="{{ Auth::user()->isSuperuser() ? route('superuser.users.index') : route('admin.users.index') }}">
                     <div class="block-content block-content-full text-center">
                         <div class="item item-circle bg-primary-lighter mx-auto mb-3">
                             <i class="fa fa-users-cog text-primary"></i>
