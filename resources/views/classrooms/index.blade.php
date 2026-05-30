@@ -78,7 +78,6 @@
                                                     </div>
                                                     <div class="block-content fs-sm text-start">
                                                         <p>Apakah Anda yakin ingin menghapus kelas <strong>{{ $classroom->name }}</strong>?</p>
-                                                        <p class="text-danger mb-0"><i class="fa fa-exclamation-triangle me-1"></i> Tindakan ini tidak dapat dibatalkan.</p>
                                                     </div>
                                                     <div class="block-content block-content-full text-end bg-body">
                                                         <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Batal</button>
