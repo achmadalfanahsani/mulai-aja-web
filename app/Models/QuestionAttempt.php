@@ -167,6 +167,10 @@ class QuestionAttempt extends Model {
         if (is_null($this->total_score)) {
             return null;
         }
+
+        if (is_null($this->questionPackage)) {
+            return false; // Anggap tidak lulus jika paket sudah dihapus
+        }
         
         $passingScore = $this->questionPackage->passing_score ?? 0;
         
