@@ -87,4 +87,28 @@ class ClassroomManagementTest extends TestCase
         $response = $this->actingAs($teacher)->get(route('classrooms.show', $classroom->id));
         $response->assertStatus(403);
     }
+
+    public function test_superuser_can_see_classroom_creator_info()
+    {
+        $superuser = User::factory()->create(['role' => User::ROLE_SUPERUSER]);
+        $admin = User::factory()->create(['role' => User::ROLE_ADMINISTRATOR, 'name' => 'Admin User']);
+        $classroom = Classroom::factory()->create(['created_by_id' => $admin->id]);
+
+        $response = $this->actingAs($superuser)->get(route('classrooms.index'));
+        
+        $response->assertStatus(200);
+        $response->assertSee('Dibuat Oleh');
+        $response->assertSee('Admin User');
+    }
+
+    public function test_administrator_cannot_see_classroom_creator_info()
+    {
+        $admin = User::factory()->create(['role' => User::ROLE_ADMINISTRATOR, 'is_approved' => true]);
+        $classroom = Classroom::factory()->create(['created_by_id' => $admin->id]);
+
+        $response = $this->actingAs($admin)->get(route('classrooms.index'));
+        
+        $response->assertStatus(200);
+        $response->assertDontSee('Dibuat Oleh');
+    }
 }
