@@ -79,6 +79,20 @@
                     </div>
                 </a>
             </div>
+            {{-- 3.5 Total Admin --}}
+            <div class="col-6 col-lg-4">
+                <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('admin.users.index', ['role' => 'administrator']) }}">
+                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="font-size-h2 font-w700 text-secondary">{{ $stats['total_administrators'] }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Total Admin</div>
+                        </div>
+                        <div class="item item-rounded bg-secondary-lighter">
+                            <i class="fa fa-user-shield text-secondary"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
 
         {{-- Management Stats - Row 2 --}}
