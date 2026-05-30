@@ -45,8 +45,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Find all alerts that should be auto-closed
-            // We target alert-success and alert-info by default, but you can adjust as needed
-            const alerts = document.querySelectorAll('.alert-success, .alert-info, .alert-danger:not(.alert-permanent)');
+            // We exclude alerts with 'alert-permanent' class
+            const alerts = document.querySelectorAll('.alert-success:not(.alert-permanent), .alert-info:not(.alert-permanent), .alert-danger:not(.alert-permanent)');
             
             alerts.forEach(function(alert) {
                 // Set timeout to close the alert after 3 seconds (3000ms)

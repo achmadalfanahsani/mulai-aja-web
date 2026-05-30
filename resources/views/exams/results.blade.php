@@ -247,7 +247,7 @@
                     @endphp
                     @if (!$isCorrect)
                         @if ($question->explanation)
-                            <div class="alert alert-danger bg-danger-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
+                            <div class="alert alert-danger alert-permanent bg-danger-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
                                 <strong class="text-danger"><i class="fa fa-chalkboard me-1"></i> Pembahasan:</strong>
                                 <div class="mt-2 border-top border-danger-light pt-2 font-size-sm">
                                     {!! nl2br(e($question->explanation)) !!}
@@ -255,7 +255,7 @@
                             </div>
                         @else
                             @if($question->isMultipleChoice())
-                                <div class="alert alert-danger bg-danger-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
+                                <div class="alert alert-danger alert-permanent bg-danger-light border-0 text-dark font-size-sm mt-3 mb-0" role="alert">
                                     <strong><i class="fa fa-info-circle me-1"></i> Kunci Jawaban:</strong>
                                     <div class="mt-1 font-w600 text-dark">Kunci jawaban yang benar adalah: <strong class="text-success">"{{ $correctText }}"</strong>. (Maaf, tidak ada pembahasan untuk soal ini).</div>
                                 </div>
@@ -263,19 +263,24 @@
                         @endif
                     @else
                         {{-- Jika Benar, bisa buka penjelasan secara opsional --}}
-                        @if ($question->explanation)
-                            <div class="mt-2 text-end">
-                                <button class="btn btn-sm btn-link text-success p-0 font-w600 font-size-sm" type="button" data-bs-toggle="collapse" data-bs-target="#explanationCollapse-{{ $question->id }}" aria-expanded="false" aria-controls="explanationCollapse-{{ $question->id }}">
-                                    <i class="fa fa-search-plus me-1"></i> Lihat Pembahasan Soal
-                                </button>
-                                <div class="collapse text-start mt-2" id="explanationCollapse-{{ $question->id }}">
-                                    <div class="alert alert-success bg-success-light border-0 text-dark font-size-sm mb-0" role="alert">
+                        <div class="mt-2 text-end">
+                            <button class="btn btn-sm btn-link text-success p-0 font-w600 font-size-sm" type="button" data-bs-toggle="collapse" data-bs-target="#explanationCollapse-{{ $question->id }}" aria-expanded="false" aria-controls="explanationCollapse-{{ $question->id }}">
+                                <i class="fa fa-search-plus me-1"></i> Lihat Pembahasan Soal
+                            </button>
+                            <div class="collapse text-start mt-2" id="explanationCollapse-{{ $question->id }}">
+                                <div class="alert alert-success alert-permanent bg-success-light border-0 text-dark font-size-sm mb-0" role="alert">
+                                    @if($question->isMultipleChoice())
+                                        <strong><i class="fa fa-info-circle me-1"></i> Kunci Jawaban:</strong>
+                                        <div class="mt-1 mb-2 font-w600 text-dark">Kunci jawaban yang benar adalah: <strong class="text-success">"{{ $correctText }}"</strong>.</div>
+                                    @endif
+
+                                    @if($question->explanation)
                                         <strong class="text-success"><i class="fa fa-check me-1"></i> Pembahasan:</strong>
                                         <div class="mt-1">{!! nl2br(e($question->explanation)) !!}</div>
-                                    </div>
+                                    @endif
                                 </div>
                             </div>
-                        @endif
+                        </div>
                     @endif
                 </div>
             </div>
