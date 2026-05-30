@@ -45,7 +45,8 @@
                                id="password_confirmation" name="password_confirmation" required>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-4 d-flex justify-content-between">
+                        <a href="{{ route('dashboard') }}" class="btn btn-secondary">Kembali</a>
                         <button type="submit" class="btn btn-primary">
                             <i class="fa fa-save me-1"></i> Perbarui Password
                         </button>
