@@ -30,9 +30,15 @@
             <div class="block-header block-header-default bg-primary-dark">
                 <h3 class="block-title"><i class="fa fa-chart-bar me-2"></i> Hasil Evaluasi Ujian CBT</h3>
                 <div class="block-options">
-                    <a href="{{ route('exams.index') }}" class="btn btn-sm btn-alt-secondary">
-                        <i class="fa fa-arrow-left"></i> Kembali ke Dashboard
-                    </a>
+                    @if(request('from') === 'package_results')
+                        <a href="{{ route('question-packages.results', [$package->id, 'from_classroom' => request('from_classroom'), 'type' => request('type')]) }}" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-arrow-left"></i> Kembali ke Hasil Paket
+                        </a>
+                    @else
+                        <a href="{{ route('exams.index') }}" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-arrow-left"></i> Kembali ke Dashboard
+                        </a>
+                    @endif
                 </div>
             </div>
 

@@ -103,7 +103,7 @@
                                         </td>
                                         <td class="text-center">
                                             @if($attempt->is_completed)
-                                                <a href="{{ route('exams.results', $attempt->id) }}" class="btn btn-sm btn-alt-info" title="Lihat Detail">
+                                                <a href="{{ route('exams.results', [$attempt->id, 'from' => 'package_results', 'from_classroom' => request('from_classroom'), 'type' => request('type')]) }}" class="btn btn-sm btn-alt-info" title="Lihat Detail">
                                                     <i class="fa fa-eye"></i>
                                                 </a>
                                             @else
