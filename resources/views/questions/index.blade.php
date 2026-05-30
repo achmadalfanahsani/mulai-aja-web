@@ -47,6 +47,16 @@
                 </div>
             @endif
 
+            @if (session('error'))
+                <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-exclamation-circle me-2"></i>
+                        <span>{{ session('error') }}</span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             <div class="block block-rounded block-themed">
                 <div class="block-header block-header-default bg-primary-dark">
                     <h3 class="block-title">
@@ -54,6 +64,9 @@
                         <span class="badge bg-primary ms-2">{{ $questions->count() }} Soal</span>
                     </h3>
                     <div class="block-options">
+                        <button type="button" class="btn btn-sm btn-alt-primary" data-bs-toggle="modal" data-bs-target="#modal-generate-ai">
+                            <i class="fa fa-magic me-1"></i> Generate Soal AI
+                        </button>
                         <a href="{{ route('question-packages.questions.create', [$questionPackage->id, 'type' => request('type')]) }}"
                             class="btn btn-sm btn-alt-secondary">
                             <i class="fa fa-plus me-1"></i> Tambah Soal Baru
@@ -173,9 +186,9 @@
 
                                     {{-- Penjelasan --}}
                                     @if ($question->explanation)
-                                        <div class="alert alert-info alert-permanent bg-info-light border-0 text-dark font-size-sm mt-3 mb-0"
+                                        <div class="alert alert-info alert-permanent font-size-sm mt-3 mb-0"
                                             role="alert">
-                                            <strong><i class="fa fa-info-circle me-1"></i> Penjelasan:</strong>
+                                            <i class="fa fa-info-circle me-1"></i> <strong>Penjelasan:</strong>
                                             <div class="mt-1">{!! nl2br(e($question->explanation)) !!}</div>
                                         </div>
                                     @endif
@@ -184,6 +197,50 @@
                         @endforeach
                     @endif
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Generate AI -->
+    <div class="modal fade" id="modal-generate-ai" tabindex="-1" role="dialog" aria-labelledby="modal-generate-ai" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form action="{{ route('question-packages.questions.generate-ai', $questionPackage->id) }}" method="POST">
+                    @csrf
+                    <div class="block block-rounded shadow-none mb-0">
+                        <div class="block-header block-header-default bg-primary">
+                            <h3 class="block-title text-white"><i class="fa fa-magic me-1"></i> Generate Soal AI Otomatis</h3>
+                            <div class="block-options">
+                                <button type="button" class="btn-block-option text-white" data-bs-dismiss="modal" aria-label="Close">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="block-content fs-sm py-4">
+                            <div class="alert alert-info alert-permanent d-flex mb-4">
+                                <i class="fa fa-info-circle me-2 mt-1"></i>
+                                <div>
+                                    <p class="mb-1"><strong>Cara Penggunaan:</strong></p>
+                                    <p class="mb-0">Masukkan daftar pertanyaan Anda di bawah ini (satu per baris atau gunakan nomor). AI akan secara otomatis menghasilkan 5 pilihan jawaban dan menentukan jawaban yang benar.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label" for="raw_questions">Daftar Pertanyaan:</label>
+                                <textarea class="form-control" id="raw_questions" name="raw_questions" rows="10" placeholder="Contoh:&#10;1. Apa ibu kota Indonesia?&#10;2. Berapa hasil dari 25 x 4?&#10;3. Siapa penemu lampu pijar?"></textarea>
+                                <div class="form-text mt-2">
+                                    <i class="fa fa-lightbulb me-1"></i> AI akan menghasilkan soal bertipe <strong>Pilihan Ganda</strong> dengan 5 opsi (A-E).
+                                </div>
+                            </div>
+                        </div>
+                        <div class="block-content block-content-full block-content-sm text-end border-top">
+                            <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-magic me-1"></i> Mulai Generate & Simpan
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

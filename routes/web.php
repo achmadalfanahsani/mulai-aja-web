@@ -71,6 +71,11 @@ Route::middleware(['auth', 'approved'])->group(function () {
             ->name('question-packages.toggle-publish');
         Route::get('question-packages/{questionPackage}/results', [QuestionPackageController::class, 'results'])
             ->name('question-packages.results');
+        
+        // AI Question Generation
+        Route::post('question-packages/{questionPackage}/questions/generate-ai', [\App\Http\Controllers\AIQuestionController::class, 'generate'])
+            ->name('question-packages.questions.generate-ai');
+
         Route::resource('question-packages.questions', QuestionController::class)->shallow();
 
         // Classroom Management
