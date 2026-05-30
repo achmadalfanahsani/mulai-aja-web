@@ -111,16 +111,38 @@
                                             class="btn btn-sm btn-alt-warning me-1" data-toggle="tooltip" title="Edit Soal">
                                             <i class="fa fa-pencil-alt"></i> Edit
                                         </a>
-                                        <form action="{{ route('questions.destroy', $question->id) }}" method="POST"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus soal ini?')"
-                                            style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-alt-danger" data-toggle="tooltip"
-                                                title="Hapus Soal">
-                                                <i class="fa fa-trash"></i> Hapus
-                                            </button>
-                                        </form>
+                                        <button type="button" class="btn btn-sm btn-alt-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-{{ $question->id }}" title="Hapus Soal">
+                                            <i class="fa fa-trash"></i> Hapus
+                                        </button>
+                                        
+                                        <!-- Delete Modal -->
+                                        <div class="modal fade" id="modal-delete-{{ $question->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-delete-{{ $question->id }}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <form action="{{ route('questions.destroy', $question->id) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <div class="block block-rounded shadow-none mb-0">
+                                                            <div class="block-header block-header-default">
+                                                                <h3 class="block-title">Hapus Soal?</h3>
+                                                                <div class="block-options">
+                                                                    <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                                                                        <i class="fa fa-times"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="block-content fs-sm py-4">
+                                                                <p class="mb-0">Apakah Anda yakin ingin menghapus soal ini?</p>
+                                                            </div>
+                                                            <div class="block-content block-content-full block-content-sm text-end border-top">
+                                                                <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                <button type="submit" class="btn btn-alt-danger">Ya, Hapus</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
