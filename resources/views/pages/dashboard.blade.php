@@ -83,21 +83,24 @@
 
         {{-- Management Stats - Row 2 --}}
         <div class="row items-push">
-            {{-- 3.5 Total Admin --}}
-            <div class="col-6 col-lg-4">
-                <a class="block block-rounded block-link-shadow h-100 mb-0"
-                    href="{{ route('admin.users.index', ['role' => 'administrator']) }}">
-                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="font-size-h2 font-w700 text-secondary">{{ $stats['total_administrators'] }}</div>
-                            <div class="font-size-sm font-w600 text-uppercase text-muted">Total Admin</div>
+            @if (Auth::user()->isSuperuser())
+                {{-- 3.5 Total Admin --}}
+                <div class="col-6 col-lg-4">
+                    <a class="block block-rounded block-link-shadow h-100 mb-0"
+                        href="{{ route('admin.users.index', ['role' => 'administrator']) }}">
+                        <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="font-size-h2 font-w700 text-secondary">{{ $stats['total_administrators'] }}
+                                </div>
+                                <div class="font-size-sm font-w600 text-uppercase text-muted">Total Admin</div>
+                            </div>
+                            <div class="item item-rounded bg-secondary-lighter">
+                                <i class="fa fa-user-shield text-secondary"></i>
+                            </div>
                         </div>
-                        <div class="item item-rounded bg-secondary-lighter">
-                            <i class="fa fa-user-shield text-secondary"></i>
-                        </div>
-                    </div>
-                </a>
-            </div>
+                    </a>
+                </div>
+            @endif
             {{-- 4. Total Guru --}}
             <div class="col-6 col-lg-4">
                 <a class="block block-rounded block-link-shadow h-100 mb-0"
@@ -128,24 +131,43 @@
                     </div>
                 </a>
             </div>
+            @if (Auth::user()->isAdministrator())
+                {{-- 6. Menunggu Approval --}}
+                <div class="col-6 col-lg-4">
+                    <a class="block block-rounded block-link-shadow h-100 mb-0"
+                        href="{{ route('admin.users.index', ['status' => 'pending']) }}">
+                        <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="font-size-h2 font-w700 text-warning">{{ $stats['pending_approvals'] }}</div>
+                                <div class="font-size-sm font-w600 text-uppercase text-muted">Menunggu Approval</div>
+                            </div>
+                            <div class="item item-rounded bg-warning-light">
+                                <i class="fa fa-user-clock text-warning"></i>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            @endif
         </div>
-        <div class="row items-push">
-            {{-- 6. Menunggu Approval --}}
-            <div class="col-6 col-lg-4">
-                <a class="block block-rounded block-link-shadow h-100 mb-0"
-                    href="{{ route('admin.users.index', ['status' => 'pending']) }}">
-                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="font-size-h2 font-w700 text-warning">{{ $stats['pending_approvals'] }}</div>
-                            <div class="font-size-sm font-w600 text-uppercase text-muted">Menunggu Approval</div>
+        @if (Auth::user()->isSuperuser())
+            <div class="row items-push">
+                {{-- 6. Menunggu Approval --}}
+                <div class="col-6 col-lg-4">
+                    <a class="block block-rounded block-link-shadow h-100 mb-0"
+                        href="{{ route('admin.users.index', ['status' => 'pending']) }}">
+                        <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="font-size-h2 font-w700 text-warning">{{ $stats['pending_approvals'] }}</div>
+                                <div class="font-size-sm font-w600 text-uppercase text-muted">Menunggu Approval</div>
+                            </div>
+                            <div class="item item-rounded bg-warning-light">
+                                <i class="fa fa-user-clock text-warning"></i>
+                            </div>
                         </div>
-                        <div class="item item-rounded bg-warning-light">
-                            <i class="fa fa-user-clock text-warning"></i>
-                        </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
-        </div>
+        @endif
     @elseif(Auth::user()->isTeacher())
         {{-- Teacher Stats --}}
         <div class="row items-push">
@@ -189,21 +211,6 @@
                 </div>
             </div>
         </div>
-        <div class="row items-push">
-            <div class="col-6 col-md-4">
-                <div class="block block-rounded h-100 mb-0">
-                    <div class="block-content block-content-full d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="font-size-h2 font-w700 text-pulse">{{ $stats['pending_essays'] }}</div>
-                            <div class="font-size-sm font-w600 text-uppercase text-muted">Perlu Dinilai</div>
-                        </div>
-                        <div class="item item-rounded bg-pulse-lighter">
-                            <i class="fa fa-edit text-pulse"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     @elseif(Auth::user()->isStudent())
         {{-- Student Stats --}}
         <div class="row items-push">
@@ -224,11 +231,13 @@
                 <div class="block block-rounded h-100 mb-0">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
-                            <div class="font-size-h2 font-w700 text-success">{{ $stats['completed_exams'] }}</div>
-                            <div class="font-size-sm font-w600 text-uppercase text-muted">Selesai</div>
+                            <div class="font-size-h2 font-w700 text-success">
+                                {{ floor($stats['total_time_spent'] / 60) }} m
+                            </div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Total Waktu</div>
                         </div>
                         <div class="item item-rounded bg-success-light">
-                            <i class="fa fa-check-circle text-success"></i>
+                            <i class="fa fa-clock text-success"></i>
                         </div>
                     </div>
                 </div>
@@ -278,13 +287,11 @@
                 <div class="block block-rounded h-100 mb-0">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
-                            <div class="font-size-h2 font-w700 text-flat">
-                                {{ floor($stats['total_time_spent'] / 60) }} m
-                            </div>
-                            <div class="font-size-sm font-w600 text-uppercase text-muted">Total Waktu</div>
+                            <div class="font-size-h2 font-w700 text-flat">{{ $stats['lowest_score'] }}</div>
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">Nilai Terendah</div>
                         </div>
                         <div class="item item-rounded bg-flat-lighter">
-                            <i class="fa fa-clock text-flat"></i>
+                            <i class="fa fa-arrow-down text-flat"></i>
                         </div>
                     </div>
                 </div>

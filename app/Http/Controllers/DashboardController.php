@@ -98,6 +98,7 @@ class DashboardController extends Controller
                 'completed_exams' => QuestionAttempt::where('user_id', $user->id)->where('is_completed', true)->count(),
                 'average_score' => QuestionAttempt::where('user_id', $user->id)->where('is_completed', true)->avg('total_score') ?? 0,
                 'highest_score' => QuestionAttempt::where('user_id', $user->id)->where('is_completed', true)->max('total_score') ?? 0,
+                'lowest_score' => QuestionAttempt::where('user_id', $user->id)->where('is_completed', true)->min('total_score') ?? 0,
                 'total_time_spent' => QuestionAttempt::where('user_id', $user->id)->sum('time_spent_seconds') ?? 0,
                 'available_exams' => QuestionPackage::published()
                     ->whereHas('classrooms.students', function ($q) use ($user) {
