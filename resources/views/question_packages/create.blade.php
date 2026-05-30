@@ -72,8 +72,6 @@
                                     </option>
                                     <option value="essay" {{ old('package_type') == 'essay' ? 'selected' : '' }}>Isian
                                         Singkat (Essay)</option>
-                                    <option value="mixed" {{ old('package_type') == 'mixed' ? 'selected' : '' }}>Campuran
-                                    </option>
                                 </select>
                             @endif
                             <small class="text-muted">Pilih tipe soal yang akan ada di dalam paket ini agar terorganisir

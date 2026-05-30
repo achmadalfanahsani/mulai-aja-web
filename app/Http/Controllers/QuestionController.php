@@ -51,6 +51,11 @@ class QuestionController extends Controller {
 
         $request->validate($rules);
 
+        // Validasi tambahan: question_type harus sesuai dengan package_type (kecuali mixed)
+        if ($questionPackage->package_type !== 'mixed' && $request->question_type !== $questionPackage->package_type) {
+            return redirect()->back()->withErrors(['question_type' => 'Tipe soal harus sesuai dengan tipe paket soal ('. $questionPackage->type_label .').'])->withInput();
+        }
+
         // Validasi tambahan: correct_answer harus ada di list label options
         if ($request->question_type === 'multiple_choice') {
             if (!array_key_exists($request->correct_answer, $request->options)) {
@@ -140,6 +145,11 @@ class QuestionController extends Controller {
         }
 
         $request->validate($rules);
+
+        // Validasi tambahan: question_type harus sesuai dengan package_type (kecuali mixed)
+        if ($questionPackage->package_type !== 'mixed' && $request->question_type !== $questionPackage->package_type) {
+            return redirect()->back()->withErrors(['question_type' => 'Tipe soal harus sesuai dengan tipe paket soal ('. $questionPackage->type_label .').'])->withInput();
+        }
 
         // Validasi tambahan: correct_answer harus ada di list label options
         if ($request->question_type === 'multiple_choice') {

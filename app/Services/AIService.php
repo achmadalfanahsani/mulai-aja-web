@@ -120,4 +120,86 @@ PROMPT;
             throw $e;
         }
     }
+
+    /**
+     * Generate essay questions from raw text.
+     */
+    public function generateEssay($rawText)
+    {
+        if (! $this->apiKey) {
+            throw new \Exception('Gemini API Key is not configured in .env file (GEMINI_API_KEY).');
+        }
+
+        $prompt = <<<PROMPT
+Anda adalah asisten pembuat soal ujian. 
+Tugas Anda adalah mengambil daftar pertanyaan mentah atau materi, dan menghasilkan daftar pertanyaan isian singkat (essay) beserta kunci jawabannya.
+
+Input:
+Daftar pertanyaan atau materi dalam format bebas.
+
+Output:
+Harus berupa JSON valid dengan format array of objects:
+[
+  {
+    "question_text": "Teks pertanyaan",
+    "correct_answer": "Kunci jawaban singkat",
+    "explanation": "Penjelasan singkat atau kriteria penilaian (opsional)"
+  }
+]
+
+Aturan:
+1. Pastikan JSON valid.
+2. 'correct_answer' harus berupa teks jawaban yang benar.
+3. Jika pertanyaan tidak jelas, cobalah yang terbaik atau buat soal yang masuk akal.
+
+Pertanyaan:
+$rawText
+PROMPT;
+
+        try {
+            $url = "{$this->baseUrl}/models/{$this->model}:generateContent";
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'x-goog-api-key' => $this->apiKey,
+            ])->post($url, [
+                'contents' => [
+                    [
+                        'parts' => [
+                            ['text' => $prompt],
+                        ],
+                    ],
+                ],
+                'generationConfig' => [
+                    'response_mime_type' => 'application/json',
+                ],
+            ]);
+
+            if ($response->failed()) {
+                $status = $response->status();
+                Log::error("Gemini API Error [$status]: ".$response->body());
+                throw new \Exception('AI Service Error: '.($response->json('error.message') ?? "Status $status"));
+            }
+
+            $data = $response->json();
+            $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+
+            if (! $text) {
+                throw new \Exception('Struktur respon dari AI tidak valid.');
+            }
+
+            $text = preg_replace('/^```json\s*|\s*```$/', '', trim($text));
+            $decoded = json_decode($text, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('Gagal memproses format data dari AI.');
+            }
+
+            return $decoded;
+
+        } catch (\Exception $e) {
+            Log::error('AI Essay Generation Exception: '.$e->getMessage());
+            throw $e;
+        }
+    }
 }
