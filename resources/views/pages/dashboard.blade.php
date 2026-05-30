@@ -67,7 +67,8 @@
             </div>
             {{-- 3. Total User --}}
             <div class="col-6 col-lg-4">
-                <a class="block block-rounded block-link-shadow h-100 mb-0" href="{{ route('admin.users.index') }}">
+                <a class="block block-rounded block-link-shadow h-100 mb-0"
+                    href="{{ Auth::user()->isSuperuser() ? route('superuser.users.index') : route('admin.users.index') }}">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
                             <div class="font-size-h2 font-w700 text-primary">{{ $stats['total_users'] }}</div>
@@ -87,7 +88,7 @@
                 {{-- 3.5 Total Admin --}}
                 <div class="col-6 col-lg-4">
                     <a class="block block-rounded block-link-shadow h-100 mb-0"
-                        href="{{ route('admin.users.index', ['role' => 'administrator']) }}">
+                        href="{{ route('superuser.users.index', ['role' => 'administrator']) }}">
                         <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                             <div>
                                 <div class="font-size-h2 font-w700 text-secondary">{{ $stats['total_administrators'] }}
@@ -104,7 +105,7 @@
             {{-- 4. Total Guru --}}
             <div class="col-6 col-lg-4">
                 <a class="block block-rounded block-link-shadow h-100 mb-0"
-                    href="{{ route('admin.users.index', ['role' => 'teacher']) }}">
+                    href="{{ Auth::user()->isSuperuser() ? route('superuser.users.index', ['role' => 'teacher']) : route('admin.users.index', ['role' => 'teacher']) }}">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
                             <div class="font-size-h2 font-w700 text-info">{{ $stats['total_teachers'] }}</div>
@@ -119,7 +120,7 @@
             {{-- 5. Total Siswa --}}
             <div class="col-6 col-lg-4">
                 <a class="block block-rounded block-link-shadow h-100 mb-0"
-                    href="{{ route('admin.users.index', ['role' => 'student']) }}">
+                    href="{{ Auth::user()->isSuperuser() ? route('superuser.users.index', ['role' => 'student']) : route('admin.users.index', ['role' => 'student']) }}">
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
                             <div class="font-size-h2 font-w700 text-success">{{ $stats['total_students'] }}</div>
@@ -154,7 +155,7 @@
                 {{-- 6. Menunggu Approval --}}
                 <div class="col-6 col-lg-4">
                     <a class="block block-rounded block-link-shadow h-100 mb-0"
-                        href="{{ route('admin.users.index', ['status' => 'pending']) }}">
+                        href="{{ route('superuser.users.index', ['status' => 'pending']) }}">
                         <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                             <div>
                                 <div class="font-size-h2 font-w700 text-warning">{{ $stats['pending_approvals'] }}</div>
