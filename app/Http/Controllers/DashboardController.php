@@ -35,6 +35,7 @@ class DashboardController extends Controller
                 'average_score' => QuestionAttempt::where('is_completed', true)->avg('total_score') ?? 0,
             ];
             $recent_attempts = QuestionAttempt::with(['user', 'questionPackage'])
+                ->whereHas('questionPackage')
                 ->latest()
                 ->take(5)
                 ->get();
@@ -61,6 +62,7 @@ class DashboardController extends Controller
                 $q->where('created_by_id', $user->id);
             })
                 ->with(['user', 'questionPackage'])
+                ->whereHas('questionPackage')
                 ->latest()
                 ->take(5)
                 ->get();
@@ -89,6 +91,7 @@ class DashboardController extends Controller
                 $q->where('user_id', $user->id);
             })
                 ->with(['user', 'questionPackage'])
+                ->whereHas('questionPackage')
                 ->latest()
                 ->take(5)
                 ->get();
@@ -107,6 +110,7 @@ class DashboardController extends Controller
             ];
             $recent_attempts = QuestionAttempt::where('user_id', $user->id)
                 ->with('questionPackage')
+                ->whereHas('questionPackage')
                 ->latest()
                 ->take(5)
                 ->get();

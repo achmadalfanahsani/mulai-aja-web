@@ -56,6 +56,7 @@ class ExamController extends Controller {
         // Ambil riwayat pengerjaan user login
         $attempts = QuestionAttempt::where('user_id', Auth::id())
             ->with('questionPackage')
+            ->whereHas('questionPackage')
             ->latest()
             ->paginate(5, ['*'], 'history_page');
 
@@ -74,6 +75,7 @@ class ExamController extends Controller {
         $userId = Auth::id();
         $attempts = QuestionAttempt::where('user_id', $userId)
             ->with('questionPackage')
+            ->whereHas('questionPackage')
             ->latest()
             ->paginate(10, ['*'], 'history_page');
 
