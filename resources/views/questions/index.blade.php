@@ -132,7 +132,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="block-content fs-sm py-4">
-                                                                <p class="mb-0">Apakah Anda yakin ingin menghapus soal ini? Tindakan ini tidak dapat dibatalkan.</p>
+                                                                <p class="mb-0">Apakah Anda yakin ingin menghapus soal ini?</p>
                                                             </div>
                                                             <div class="block-content block-content-full block-content-sm text-end border-top">
                                                                 <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">Batal</button>
