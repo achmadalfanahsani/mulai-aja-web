@@ -56,13 +56,39 @@
                                     <i class="fa fa-pencil-alt"></i>
                                 </a>
                                 <button type="button" class="btn btn-sm btn-alt-danger" title="Hapus" 
-                                    onclick="if(confirm('Apakah Anda yakin ingin menghapus kelas ini?')) { document.getElementById('delete-form-{{ $classroom->id }}').submit(); }">
+                                    data-bs-toggle="modal" data-bs-target="#modal-delete-{{ $classroom->id }}">
                                     <i class="fa fa-trash"></i>
                                 </button>
-                                <form id="delete-form-{{ $classroom->id }}" action="{{ route('classrooms.destroy', $classroom->id) }}" method="POST" style="display: none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
+
+                                <!-- Modal: Delete Classroom -->
+                                <div class="modal fade" id="modal-delete-{{ $classroom->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-delete-{{ $classroom->id }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <form action="{{ route('classrooms.destroy', $classroom->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <div class="block block-rounded block-transparent mb-0">
+                                                    <div class="block-header block-header-default">
+                                                        <h3 class="block-title">Hapus Kelas</h3>
+                                                        <div class="block-options">
+                                                            <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                                                                <i class="fa fa-fw fa-times"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="block-content fs-sm text-start">
+                                                        <p>Apakah Anda yakin ingin menghapus kelas <strong>{{ $classroom->name }}</strong>?</p>
+                                                        <p class="text-danger mb-0"><i class="fa fa-exclamation-triangle me-1"></i> Tindakan ini tidak dapat dibatalkan.</p>
+                                                    </div>
+                                                    <div class="block-content block-content-full text-end bg-body">
+                                                        <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Batal</button>
+                                                        <button type="submit" class="btn btn-sm btn-danger">Ya, Hapus Kelas</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </td>
                     </tr>
