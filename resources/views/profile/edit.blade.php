@@ -26,8 +26,14 @@
                         @enderror
                     </div>
                     
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" value="{{ $user->email }}" disabled>
+                        <div class="form-text">Email tidak dapat diubah.</div>
+                    </div>
+                    
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('dashboard') }}" class="btn btn-secondary">Kembali</a>
+                        <button type="button" class="btn btn-secondary" onclick="history.back()">Kembali</button>
                         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                     </div>
                 </form>
