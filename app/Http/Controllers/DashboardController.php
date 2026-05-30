@@ -47,7 +47,7 @@ class DashboardController extends Controller
                 'total_packages' => QuestionPackage::whereHas('user', function ($q) use ($user) {
                     $q->where('created_by_id', $user->id);
                 })->count(),
-                'total_classrooms' => Classroom::whereHas('teacher', function ($q) use ($user) {
+                'total_classrooms' => Classroom::whereHas('teachers', function ($q) use ($user) {
                     $q->where('created_by_id', $user->id);
                 })->count(),
                 'pending_approvals' => User::where('created_by_id', $user->id)
@@ -73,7 +73,9 @@ class DashboardController extends Controller
                 'total_students' => User::whereHas('questionAttempts.questionPackage', function ($q) use ($user) {
                     $q->where('user_id', $user->id);
                 })->distinct()->count(),
-                'total_classrooms' => Classroom::where('teacher_id', $user->id)->count(),
+                'total_classrooms' => Classroom::whereHas('teachers', function ($q) use ($user) {
+                    $q->where('users.id', $user->id);
+                })->count(),
                 'pending_essays' => QuestionResponse::whereHas('questionAttempt.questionPackage', function ($q) use ($user) {
                     $q->where('user_id', $user->id);
                 })->whereHas('question', function ($q) {
