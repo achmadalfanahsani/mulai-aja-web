@@ -31,6 +31,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->midd
 // Dashboard (Protected by Auth)
 Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile/edit', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/password', [ProfileController::class, 'showChangePasswordForm'])->name('profile.password');
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
     Route::post('/profile/theme', [ProfileController::class, 'updateTheme'])->name('profile.update-theme');

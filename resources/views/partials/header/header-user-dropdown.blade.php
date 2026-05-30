@@ -55,6 +55,12 @@
                 <i class="fa fa-fw fa-home opacity-25"></i>
             </a>
             
+            <a class="dropdown-item d-flex align-items-center justify-content-between"
+                href="{{ route('profile.edit') }}">
+                <span>Edit Profil</span>
+                <i class="fa fa-fw fa-user opacity-25"></i>
+            </a>
+            
             @auth
                 @if(auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
                 <a class="dropdown-item d-flex align-items-center justify-content-between"

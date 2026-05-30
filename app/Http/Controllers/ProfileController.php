@@ -10,6 +10,31 @@ use Illuminate\Validation\Rules\Password;
 class ProfileController extends Controller
 {
     /**
+     * Show the form for editing the user's profile.
+     */
+    public function edit()
+    {
+        return view('profile.edit', ['user' => Auth::user()]);
+    }
+
+    /**
+     * Update the user's profile.
+     */
+    public function update(Request $request)
+    {
+        $user = $request->user();
+        
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+        ]);
+
+        $user->update($validated);
+
+        return back()->with('success', 'Profil berhasil diperbarui.');
+    }
+
+    /**
      * Show the form for changing the user's password.
      */
     public function showChangePasswordForm()
