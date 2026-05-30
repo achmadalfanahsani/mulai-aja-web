@@ -232,7 +232,12 @@
                     <div class="block-content block-content-full d-flex align-items-center justify-content-between">
                         <div>
                             <div class="font-size-h2 font-w700 text-success">
-                                {{ floor($stats['total_time_spent'] / 60) }} m
+                                @php
+                                    $totalSeconds = $stats['total_time_spent'];
+                                    $hours = floor($totalSeconds / 3600);
+                                    $minutes = floor(($totalSeconds % 3600) / 60);
+                                @endphp
+                                {{ $hours > 0 ? $hours . ' j ' : '' }}{{ $minutes }} m
                             </div>
                             <div class="font-size-sm font-w600 text-uppercase text-muted">Total Waktu</div>
                         </div>
