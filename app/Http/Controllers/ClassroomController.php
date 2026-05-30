@@ -19,6 +19,9 @@ class ClassroomController extends Controller
         Gate::authorize('viewAny', Classroom::class);
         $user = Auth::user();
         $classrooms = Classroom::withCount('students')
+            ->when($user->isSuperuser(), function($query) {
+                return $query->with('creator');
+            })
             ->when($user->isTeacher(), function($query) use ($user) {
                 return $query->whereHas('teachers', function($q) use ($user) {
                     $q->where('users.id', $user->id);

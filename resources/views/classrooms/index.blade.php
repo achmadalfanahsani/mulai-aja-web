@@ -30,6 +30,9 @@
                         <th class="text-center" style="width: 50px;">#</th>
                         <th>Nama Kelas</th>
                         <th>Deskripsi</th>
+                        @if(auth()->user()->isSuperuser())
+                        <th>Dibuat Oleh</th>
+                        @endif
                         <th class="text-center" style="width: 15%;">Jumlah Siswa</th>
                         <th class="text-center" style="width: 150px;">Aksi</th>
                     </tr>
@@ -44,6 +47,11 @@
                         <td>
                             {{ Str::limit($classroom->description, 100) ?: '-' }}
                         </td>
+                        @if(auth()->user()->isSuperuser())
+                        <td>
+                            {{ $classroom->creator->name ?? 'System' }}
+                        </td>
+                        @endif
                         <td class="text-center">
                             <span class="badge bg-info">{{ $classroom->students_count }} Siswa</span>
                         </td>
@@ -78,7 +86,6 @@
                                                     </div>
                                                     <div class="block-content fs-sm text-start">
                                                         <p>Apakah Anda yakin ingin menghapus kelas <strong>{{ $classroom->name }}</strong>?</p>
-                                                        <p class="text-danger mb-0"><i class="fa fa-exclamation-triangle me-1"></i> Tindakan ini tidak dapat dibatalkan.</p>
                                                     </div>
                                                     <div class="block-content block-content-full text-end bg-body">
                                                         <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Batal</button>
@@ -94,7 +101,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="text-center py-4">Belum ada data kelas.</td>
+                        <td colspan="{{ auth()->user()->isSuperuser() ? '6' : '5' }}" class="text-center py-4">Belum ada data kelas.</td>
                     </tr>
                     @endforelse
                 </tbody>
