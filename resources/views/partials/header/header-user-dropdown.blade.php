@@ -55,10 +55,16 @@
                 <i class="fa fa-fw fa-home opacity-25"></i>
             </a>
             
+            <a class="dropdown-item d-flex align-items-center justify-content-between"
+                href="{{ route('profile.edit') }}">
+                <span>Edit Profil</span>
+                <i class="fa fa-fw fa-user opacity-25"></i>
+            </a>
+            
             @auth
                 @if(auth()->user()->isAdministrator() || auth()->user()->isSuperuser())
                 <a class="dropdown-item d-flex align-items-center justify-content-between"
-                    href="{{ route('admin.users.index') }}">
+                    href="{{ auth()->user()->isSuperuser() ? route('superuser.users.index') : route('admin.users.index') }}">
                     <span>Manajemen User</span>
                     <i class="fa fa-fw fa-users-cog opacity-25"></i>
                 </a>
