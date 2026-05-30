@@ -33,7 +33,7 @@
                     </div>
                     
                     <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-secondary" onclick="history.back()">Kembali</button>
+                        <a href="{{ route('dashboard') }}" class="btn btn-secondary">Kembali</a>
                         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                     </div>
                 </form>
