@@ -71,7 +71,7 @@
                             class="btn btn-sm btn-alt-secondary">
                             <i class="fa fa-plus me-1"></i> Tambah Soal Baru
                         </a>
-                        <a href="{{ route('question-packages.index', ['type' => request('type')]) }}"
+                        <a href="{{ route('question-packages.index') }}"
                             class="btn btn-sm btn-alt-secondary me-2">
                             <i class="fa fa-arrow-left"></i> Kembali ke Paket
                         </a>
