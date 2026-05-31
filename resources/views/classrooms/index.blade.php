@@ -60,9 +60,12 @@
                                 <a href="{{ route('classrooms.show', $classroom->id) }}" class="btn btn-sm btn-alt-secondary" title="Detail & Kelola">
                                     <i class="fa fa-eye"></i>
                                 </a>
+                                @can('update', $classroom)
                                 <a href="{{ route('classrooms.edit', $classroom->id) }}" class="btn btn-sm btn-alt-info" title="Edit">
                                     <i class="fa fa-pencil-alt"></i>
                                 </a>
+                                @endcan
+                                @can('delete', $classroom)
                                 <button type="button" class="btn btn-sm btn-alt-danger" title="Hapus" 
                                     data-bs-toggle="modal" data-bs-target="#modal-delete-{{ $classroom->id }}">
                                     <i class="fa fa-trash"></i>
@@ -96,6 +99,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                @endcan
                             </div>
                         </td>
                     </tr>
