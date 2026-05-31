@@ -63,9 +63,6 @@ class ClassroomPolicy
      */
     public function delete(User $user, Classroom $classroom): bool
     {
-        if ($user->isAdministrator() && $classroom->created_by_id === $user->id) {
-            return true;
-        }
-        return $classroom->teachers()->where('users.id', $user->id)->exists();
+        return $user->isAdministrator() && $classroom->created_by_id === $user->id;
     }
 }
