@@ -13,6 +13,7 @@ use App\Policies\QuestionPackagePolicy;
 use App\Policies\QuestionPolicy;
 use App\Policies\QuestionAttemptPolicy;
 use App\Policies\ClassroomPolicy;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
+
         Paginator::useBootstrapFive();
 
         Gate::policy(QuestionPackage::class, QuestionPackagePolicy::class);

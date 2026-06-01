@@ -1,0 +1,34 @@
+# Docker ignore — exclude file yang tidak perlu masuk ke image
+.git
+.gitignore
+.gitattributes
+.editorconfig
+.env
+.DS_Store
+.phpunit.result.cache
+node_modules
+npm-debug.log
+
+# Storage (akan dibuat ulang saat container start)
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+storage/logs
+
+# Database (akan di-migrate ulang)
+database/database.sqlite
+
+# Dev tools
+_buffer_teks
+_codebase-source-html
+docs
+classroom_issue.md
+README.md
+
+# Tests
+tests
+phpunit.xml
+
+# Build artifacts (sudah di-handle oleh node-builder stage)
+public/hot
+public/storage

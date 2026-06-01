@@ -27,12 +27,23 @@ class AIQuestionController extends Controller {
             'raw_questions' => 'required|string|min:10',
         ]);
 
+        $lockKey = 'generating_soal_' . $questionPackage->id;
+        $lock = \Illuminate\Support\Facades\Cache::lock($lockKey, 120); // Kunci selama 120 detik
+
+        if (!$lock->get()) {
+            return redirect()->back()->with('error', 'Proses pembuatan soal sedang berjalan, mohon tunggu beberapa saat...');
+        }
+
         try {
+            \Illuminate\Support\Facades\Log::info('=== AI GENERATE v3 === Package: ' . $questionPackage->id);
+
             if ($questionPackage->package_type === 'essay') {
                 $generatedData = $this->aiService->generateEssay($request->raw_questions);
             } else {
                 $generatedData = $this->aiService->generateMultipleChoice($request->raw_questions);
             }
+
+            \Illuminate\Support\Facades\Log::info('AI returned ' . count($generatedData) . ' soal (setelah deduplikasi). Data: ' . json_encode(array_column($generatedData, 'question_text')));
 
             if (empty($generatedData)) {
                 return redirect()->back()->with('error', 'AI gagal menghasilkan soal. Pastikan format input benar.');
@@ -70,10 +81,14 @@ class AIQuestionController extends Controller {
             });
 
             return redirect()->route('question-packages.questions.index', [$questionPackage->id, 'type' => $questionPackage->package_type])
-                ->with('success', count($generatedData) . ' soal berhasil digenerate dan ditambahkan!');
+                ->with('success', count($generatedData) . ' soal berhasil digenerate dan ditambahkan! (v3)');
 
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        } finally {
+            if (isset($lock)) {
+                $lock->release();
+            }
         }
     }
 }

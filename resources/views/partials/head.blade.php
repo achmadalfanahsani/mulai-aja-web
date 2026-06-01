@@ -35,6 +35,9 @@
 {{-- Codebase Core CSS --}}
 <link rel="stylesheet" id="css-main" href="{{ asset('assets/css/codebase.min.css') }}">
 
+{{-- Vite CSS & JS --}}
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+
 {{-- Theme CSS (opsional, diisi dari halaman jika diperlukan) --}}
 @stack('styles')
 
