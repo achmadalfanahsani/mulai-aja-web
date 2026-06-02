@@ -202,6 +202,11 @@
                                         </div>
                                     </div>
                                 </form>
+                                <script>
+                                    document.getElementById('modal-password-{{ $user->id }}').addEventListener('hidden.bs.modal', function () {
+                                        this.querySelectorAll('input[type="password"]').forEach(input => input.value = '');
+                                    });
+                                </script>
                             </div>
                         </div>
                     </div>
