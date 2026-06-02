@@ -202,6 +202,47 @@
                                         </div>
                                     </div>
                                 </form>
+                                <script>
+                                    (function() {
+                                        const modal = document.getElementById('modal-password-{{ $user->id }}');
+                                        const form = modal.querySelector('form');
+                                        const pass = modal.querySelector('#password-{{ $user->id }}');
+                                        const confirmPass = modal.querySelector('#password-confirm-{{ $user->id }}');
+
+                                        function validatePasswords() {
+                                            if (pass.value !== confirmPass.value) {
+                                                confirmPass.classList.add('is-invalid');
+                                                if (!confirmPass.nextElementSibling || !confirmPass.nextElementSibling.classList.contains('invalid-feedback')) {
+                                                    const error = document.createElement('div');
+                                                    error.className = 'invalid-feedback';
+                                                    error.innerText = 'Konfirmasi password tidak cocok.';
+                                                    confirmPass.parentNode.appendChild(error);
+                                                }
+                                                return false;
+                                            } else {
+                                                confirmPass.classList.remove('is-invalid');
+                                                const error = confirmPass.parentNode.querySelector('.invalid-feedback');
+                                                if (error) error.remove();
+                                                return true;
+                                            }
+                                        }
+
+                                        form.addEventListener('submit', function(e) {
+                                            if (!validatePasswords()) {
+                                                e.preventDefault();
+                                            }
+                                        });
+
+                                        modal.addEventListener('hidden.bs.modal', function () {
+                                            this.querySelectorAll('input[type="password"]').forEach(input => {
+                                                input.value = '';
+                                                input.classList.remove('is-invalid');
+                                                const error = input.parentNode.querySelector('.invalid-feedback');
+                                                if (error) error.remove();
+                                            });
+                                        });
+                                    })();
+                                </script>
                             </div>
                         </div>
                     </div>
