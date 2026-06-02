@@ -119,7 +119,13 @@ class QuestionController extends Controller {
         $questionPackage = $question->questionPackage;
         // Ambil opsi yang ada dipetakan ke key A-E
         $options = $question->options->pluck('option_text', 'option_label')->toArray();
-        return view('questions.edit', compact('questionPackage', 'question', 'options'));
+        
+        // Dapatkan index 1-based dari urutan nomor soal
+        $questionsInPackage = $questionPackage->questions()->ordered()->pluck('id')->toArray();
+        $questionIndex = array_search($question->id, $questionsInPackage);
+        $questionNumber = $questionIndex !== false ? $questionIndex + 1 : 1;
+
+        return view('questions.edit', compact('questionPackage', 'question', 'options', 'questionNumber'));
     }
 
     /**
