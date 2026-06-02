@@ -1,53 +1,52 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Paket Soal | MulaiAja')
+@section('title', 'Kelola Paket Soal')
+@section('page-heading', 'Kelola Paket Soal')
 
 @section('content')
-<div class="row">
-    <div class="col-md-12">
-        <div class="block block-rounded block-themed">
-            <div class="block-header block-header-default bg-primary-dark">
-                <h3 class="block-title">Kelola Paket Soal</h3>
-                <div class="block-options">
-                    <a href="{{ route('question-packages.create', ['type' => request('type')]) }}" class="btn btn-sm btn-alt-secondary">
-                        <i class="fa fa-plus me-1"></i> Buat Paket Baru
-                    </a>
+<div class="block block-rounded">
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Daftar Paket Soal</h3>
+        <div class="block-options">
+            <a href="{{ route('question-packages.create', ['type' => request('type')]) }}" class="btn btn-sm btn-primary">
+                <i class="fa fa-plus me-1"></i> Buat Paket Baru
+            </a>
+        </div>
+    </div>
+    
+    <div class="block-content">
+        <!-- Filter Form -->
+        <form autocomplete="off" action="{{ route('question-packages.index') }}" method="GET" class="mb-4" autocomplete="off">
+            @if(request()->has('type'))
+                <input autocomplete="off" type="hidden" name="type" value="{{ request('type') }}">
+            @endif
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input autocomplete="off" type="text" name="q" class="form-control" placeholder="Cari Nama Paket..." value="{{ request('q') }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="package_type" class="form-select">
+                        <option value="">Semua Tipe</option>
+                        <option value="multiple_choice" {{ request('package_type') == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
+                        <option value="essay" {{ request('package_type') == 'essay' ? 'selected' : '' }}>Isian</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Published</option>
+                        <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa fa-filter me-1"></i> Filter
+                    </button>
                 </div>
             </div>
-            
-            <div class="block-content block-content-full">
-                <!-- Filter Form -->
-                <form autocomplete="off" action="{{ route('question-packages.index') }}" method="GET" class="mb-4" autocomplete="off">
-                    @if(request()->has('type'))
-                        <input autocomplete="off" type="hidden" name="type" value="{{ request('type') }}">
-                    @endif
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <input autocomplete="off" type="text" name="q" class="form-control" placeholder="Cari Nama Paket..." value="{{ request('q') }}">
-                        </div>
-                        <div class="col-md-3">
-                            <select name="package_type" class="form-select">
-                                <option value="">Semua Tipe</option>
-                                <option value="multiple_choice" {{ request('package_type') == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
-                                <option value="essay" {{ request('package_type') == 'essay' ? 'selected' : '' }}>Isian</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select name="status" class="form-select">
-                                <option value="">Semua Status</option>
-                                <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Published</option>
-                                <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fa fa-filter me-1"></i> Filter
-                            </button>
-                        </div>
-                    </div>
-                </form>
+        </form>
 
-                @if ($packages->isEmpty())
+        @if ($packages->isEmpty())
                     <div class="text-center py-5">
                         <i class="fa fa-folder-open fa-3x text-muted mb-3"></i>
                         <h4 class="text-muted">Belum ada Paket Soal yang Dibuat</h4>
@@ -176,4 +175,6 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
+
