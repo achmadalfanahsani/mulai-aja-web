@@ -6,6 +6,8 @@
 </head>
 
 <body>
+    @include('partials.notifications')
+
     {{-- Page Container --}}
     <div id="page-container" class="{{ $pageContainerClass ?? 'sidebar-o sidebar-mini enable-page-overlay side-scroll page-header-modern page-header-fixed main-content-narrow' }}">
 

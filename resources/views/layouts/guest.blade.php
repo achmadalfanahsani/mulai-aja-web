@@ -20,6 +20,8 @@
     @stack('css')
 </head>
 <body>
+    @include('partials.notifications')
+
     <div id="page-container" class="main-content-boxed">
         <main id="main-container">
             @yield('content')

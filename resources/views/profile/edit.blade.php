@@ -10,10 +10,6 @@
                 <h3 class="block-title">Edit Profil</h3>
             </div>
             <div class="block-content block-content-full">
-                @if (session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
-                
                 <form action="{{ route('profile.update') }}" method="POST">
                     @csrf
                     @method('PATCH')
