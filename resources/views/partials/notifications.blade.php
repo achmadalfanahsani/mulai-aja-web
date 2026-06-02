@@ -2,7 +2,7 @@
     {{-- BERHASIL STORE -> BLUE (info) --}}
     @if (session('success_store') || session('store_success'))
         <div class="alert alert-info alert-dismissible fade show shadow border-0 mb-3" role="alert" style="background-color: #007bff; color: white;">
-            <div class="d-flex align-items-start">
+            <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-2">
                     <i class="fa fa-plus-circle"></i>
                 </div>
@@ -17,7 +17,7 @@
     {{-- BERHASIL UPDATE -> GREEN (success) --}}
     @if (session('success_update') || session('update_success') || session('success'))
         <div class="alert alert-success alert-dismissible fade show shadow border-0 mb-3" role="alert">
-            <div class="d-flex align-items-start">
+            <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-2">
                     <i class="fa fa-check-circle"></i>
                 </div>
@@ -32,7 +32,7 @@
     {{-- BERHASIL DELETE -> RED (danger) --}}
     @if (session('success_delete') || session('delete_success'))
         <div class="alert alert-danger alert-dismissible fade show shadow border-0 mb-3" role="alert">
-            <div class="d-flex align-items-start">
+            <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-2">
                     <i class="fa fa-trash-alt"></i>
                 </div>
@@ -47,7 +47,7 @@
     {{-- ERROR / DANGER --}}
     @if (session('error'))
         <div class="alert alert-danger alert-dismissible fade show shadow border-0 mb-3" role="alert">
-            <div class="d-flex align-items-start">
+            <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-2">
                     <i class="fa fa-exclamation-circle"></i>
                 </div>
@@ -62,7 +62,7 @@
     {{-- INFO --}}
     @if (session('info'))
         <div class="alert alert-info alert-dismissible fade show shadow border-0 mb-3" role="alert">
-            <div class="d-flex align-items-start">
+            <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-2">
                     <i class="fa fa-info-circle"></i>
                 </div>
@@ -77,7 +77,7 @@
     {{-- WARNING --}}
     @if (session('warning'))
         <div class="alert alert-warning alert-dismissible fade show shadow border-0 mb-3" role="alert">
-            <div class="d-flex align-items-start">
+            <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-2">
                     <i class="fa fa-exclamation-triangle"></i>
                 </div>
