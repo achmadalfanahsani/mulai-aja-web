@@ -35,17 +35,35 @@
 {{-- Codebase Core CSS --}}
 <link rel="stylesheet" id="css-main" href="{{ asset('assets/css/codebase.min.css') }}">
 
+{{-- Theme CSS (untuk mencegah flash, langsung diload jika ada) --}}
+@auth
+    @if(auth()->user()->theme_color && auth()->user()->theme_color !== 'default')
+        <link rel="stylesheet" id="css-theme" href="{{ auth()->user()->theme_color }}">
+    @endif
+@endauth
+
 {{-- Vite CSS & JS --}}
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 {{-- Theme CSS (opsional, diisi dari halaman jika diperlukan) --}}
 @stack('styles')
 
-{{-- Script pemilih tema (blocking, untuk mencegah flash) --}}
+{{-- Script pemilih tema (blocking, untuk mencegah flash dark mode) --}}
 <script>
-    window.UserTheme = {
-        color: {!! json_encode(auth()->check() ? auth()->user()->theme_color : 'default', JSON_UNESCAPED_SLASHES) !!},
-        mode: {!! json_encode(auth()->check() ? auth()->user()->theme_mode : 'system', JSON_UNESCAPED_SLASHES) !!}
-    };
+    (function() {
+        const mode = {!! json_encode(auth()->check() ? auth()->user()->theme_mode : 'system', JSON_UNESCAPED_SLASHES) !!};
+        const lHtml = document.documentElement;
+        
+        if (mode === "on") {
+            lHtml.classList.add("dark");
+        } else if (mode === "off") {
+            lHtml.classList.remove("dark");
+        } else if (mode === "system") {
+            if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                lHtml.classList.add("dark");
+            } else {
+                lHtml.classList.remove("dark");
+            }
+        }
+    })();
 </script>
-<script src="{{ asset('assets/js/setTheme.js') }}"></script>
