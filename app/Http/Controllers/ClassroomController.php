@@ -197,7 +197,7 @@ class ClassroomController extends Controller
 
         $classroom->teachers()->syncWithoutDetaching([$request->user_id]);
 
-        return back()->with('success', 'Guru berhasil ditambahkan ke kelas.');
+        return back()->with('success', 'Guru berhasil ditambahkan ke kelas.')->with('active_tab', 'teachers');
     }
 
     /**
@@ -215,7 +215,7 @@ class ClassroomController extends Controller
 
         $classroom->teachers()->detach($user->id);
 
-        return back()->with('success', 'Guru berhasil dikeluarkan dari kelas.');
+        return back()->with('success', 'Guru berhasil dikeluarkan dari kelas.')->with('active_tab', 'teachers');
     }
 
     /**
@@ -237,7 +237,7 @@ class ClassroomController extends Controller
 
         $classroom->students()->syncWithoutDetaching([$request->user_id]);
 
-        return back()->with('success', 'Siswa berhasil ditambahkan ke kelas.');
+        return back()->with('success', 'Siswa berhasil ditambahkan ke kelas.')->with('active_tab', 'students');
     }
 
     /**
@@ -253,7 +253,7 @@ class ClassroomController extends Controller
 
         $classroom->students()->detach($user->id);
 
-        return back()->with('success', 'Siswa berhasil dikeluarkan dari kelas.');
+        return back()->with('success', 'Siswa berhasil dikeluarkan dari kelas.')->with('active_tab', 'students');
     }
 
     /**
@@ -283,7 +283,7 @@ class ClassroomController extends Controller
 
         $classroom->questionPackages()->syncWithoutDetaching([$request->question_package_id]);
 
-        return back()->with('success', 'Paket soal berhasil ditugaskan ke kelas.');
+        return back()->with('success', 'Paket soal berhasil ditugaskan ke kelas.')->with('active_tab', 'packages');
     }
 
     /**
@@ -295,6 +295,6 @@ class ClassroomController extends Controller
 
         $classroom->questionPackages()->detach($questionPackage->id);
 
-        return back()->with('success', 'Paket soal berhasil ditarik dari kelas.');
+        return back()->with('success', 'Paket soal berhasil ditarik dari kelas.')->with('active_tab', 'packages');
     }
 }
