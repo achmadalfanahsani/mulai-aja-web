@@ -25,6 +25,25 @@
                         <span class="font-size-sm">Menambahkan soal ke paket: <strong>{{ $questionPackage->name }}</strong></span>
                     </div>
 
+                    {{-- Auto-Fill dari Teks --}}
+                    <div id="auto-fill-wrapper" class="mb-4">
+                        <button type="button" class="btn btn-alt-info btn-sm mb-2" onclick="document.getElementById('auto-fill-container').classList.toggle('d-none')">
+                            <i class="fa fa-magic me-1"></i> Gunakan Auto-Fill dari Teks
+                        </button>
+                        <div class="d-none" id="auto-fill-container">
+                            <div class="bg-body-light border border-info border-2 rounded py-3 px-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="mb-0 font-size-sm"><i class="fa fa-info-circle me-2 text-info"></i>Paste Soal & Opsi di Bawah</h5>
+                                    <button type="button" class="btn btn-sm btn-info" onclick="autoFillQuestion()">
+                                        <i class="fa fa-bolt me-1"></i> Proses & Isi Form
+                                    </button>
+                                </div>
+                                <textarea class="form-control" id="auto_fill_text" rows="4" placeholder="Paste soal beserta pilihan A, B, C, D, E di sini..."></textarea>
+                                <small class="text-muted mt-1 d-block">Format: Teks soal di atas, diikuti dengan pilihan A. [teks], B. [teks], dst.</small>
+                            </div>
+                        </div>
+                    </div>
+
                     {{-- Isi Soal --}}
                     <div class="form-group mb-4">
                         <label class="form-label" for="question_text">Teks Pertanyaan (Soal) <span class="text-danger">*</span></label>
@@ -233,17 +252,20 @@
         const type = document.getElementById('question_type').value;
         const optionsContainer = document.getElementById('options-container');
         const essayContainer = document.getElementById('essay-container');
+        const autoFillWrapper = document.getElementById('auto-fill-wrapper');
         const mcInputs = document.querySelectorAll('.multiple-choice-input');
         const essayInputs = document.querySelectorAll('.essay-input');
         
         if (type === 'essay') {
             optionsContainer.style.display = 'none';
             essayContainer.style.display = 'block';
+            if (autoFillWrapper) autoFillWrapper.style.display = 'none';
             mcInputs.forEach(input => input.required = false);
             essayInputs.forEach(input => input.required = true);
         } else {
             optionsContainer.style.display = 'block';
             essayContainer.style.display = 'none';
+            if (autoFillWrapper) autoFillWrapper.style.display = 'block';
             mcInputs.forEach(input => {
                 if (input.type === 'text') {
                     input.required = true;
@@ -263,5 +285,101 @@
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
     });
+
+    function showToastAlert(message) {
+        let container = document.getElementById('notification-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'notification-container';
+            container.style.cssText = "position: fixed; top: 1.5rem; right: 1.5rem; z-index: 99999; width: 350px; max-width: 80vw;";
+            document.body.appendChild(container);
+        }
+        
+        let toast = document.createElement('div');
+        toast.className = 'alert alert-warning fade show shadow border-0 mb-3';
+        toast.setAttribute('role', 'alert');
+        
+        toast.innerHTML = `
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0 me-2">
+                    <i class="fa fa-exclamation-triangle"></i>
+                </div>
+                <div class="flex-grow-1">
+                    ${message}
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 150);
+            }
+        }, 4000);
+    }
+
+
+    function autoFillQuestion() {
+        const text = document.getElementById('auto_fill_text').value.trim();
+        if (!text) {
+            showToastAlert("Silakan masukkan teks soal terlebih dahulu.");
+            return;
+        }
+
+        const optionsRegex = /(?:^|\n)\s*([A-E])[.)]\s*([\s\S]*?)(?=\n\s*[A-E][.)]|$)/gi;
+        
+        let match;
+        let options = {};
+        let firstOptionIndex = text.length;
+
+        while ((match = optionsRegex.exec(text)) !== null) {
+            if (firstOptionIndex === text.length) {
+                firstOptionIndex = match.index;
+            }
+            let label = match[1].toUpperCase();
+            let content = match[2].trim();
+            options[label] = content;
+        }
+
+        if (Object.keys(options).length === 0) {
+            showToastAlert("Tidak ditemukan format opsi A., B., C., D., atau E.");
+            return;
+        }
+
+        const questionText = text.substring(0, firstOptionIndex).trim();
+        document.getElementById('question_text').value = questionText;
+
+        let labelsToFill = Object.keys(options).sort();
+        
+        labelsToFill.forEach(label => {
+            let inputField = document.querySelector(`input[name="options[${label}]"]`);
+            if (!inputField) {
+                let maxTries = 5;
+                while (!document.querySelector(`input[name="options[${label}]"]`) && maxTries > 0) {
+                    addOption();
+                    maxTries--;
+                }
+                inputField = document.querySelector(`input[name="options[${label}]"]`);
+            }
+            if (inputField) {
+                inputField.value = options[label];
+            }
+        });
+
+        // Hapus teks dari input form auto-fill jika sudah berhasil
+        document.getElementById('auto_fill_text').value = '';
+        
+        // Sembunyikan kembali form auto-fill
+        document.getElementById('auto-fill-container').classList.add('d-none');
+        
+        // Scroll ke field teks pertanyaan
+        document.getElementById('question_text').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 </script>
 @endpush

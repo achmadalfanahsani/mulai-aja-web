@@ -48,10 +48,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Find all alerts that should be auto-closed
             // We exclude alerts with 'alert-permanent' class
-            const alerts = document.querySelectorAll('.alert-success:not(.alert-permanent), .alert-info:not(.alert-permanent), .alert-danger:not(.alert-permanent)');
+            const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
             
             alerts.forEach(function(alert) {
-                // Set timeout to close the alert after 3 seconds (3000ms)
+                // Set timeout to close the alert after 4 seconds (4000ms)
                 setTimeout(function() {
                     // Check if Bootstrap's alert instance exists and use its close method
                     // or fallback to manual removal if using a simple CSS-based alert
