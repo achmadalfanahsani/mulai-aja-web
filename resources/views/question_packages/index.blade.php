@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Paket Soal | MulaiAja')
+@section('title', 'Kelola Paket Soal')
+@section('page-heading', 'Kelola Paket Soal')
 
 @section('content')
 <div class="block block-rounded">
     <div class="block-header block-header-default">
-        <h3 class="block-title">Kelola Paket Soal</h3>
+        <h3 class="block-title">Daftar Paket Soal</h3>
         <div class="block-options">
             <a href="{{ route('question-packages.create', ['type' => request('type')]) }}" class="btn btn-sm btn-primary">
                 <i class="fa fa-plus me-1"></i> Buat Paket Baru
