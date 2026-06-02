@@ -11,11 +11,11 @@
                 <h3 class="block-title">Form Data Kelas</h3>
             </div>
             <div class="block-content">
-                <form action="{{ route('classrooms.store') }}" method="POST">
+                <form autocomplete="off" action="{{ route('classrooms.store') }}" method="POST" autocomplete="off">
                     @csrf
                     <div class="mb-4">
                         <label class="form-label" for="name">Nama Kelas <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Misal: XII RPL 1" value="{{ old('name') }}" required>
+                        <input autocomplete="off" type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Misal: XII RPL 1" value="{{ old('name') }}" required>
                         @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

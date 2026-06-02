@@ -13,14 +13,14 @@
         {{-- Filter Form --}}
         <div class="block block-rounded block-bordered mb-4">
             <div class="block-content block-content-full">
-                <form action="{{ route('exams.index') }}" method="GET">
+                <form autocomplete="off" action="{{ route('exams.index') }}" method="GET" autocomplete="off">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text bg-white border-right-0">
                                     <i class="fa fa-search text-muted"></i>
                                 </span>
-                                <input type="text" name="q" class="form-control border-left-0" 
+                                <input autocomplete="off" type="text" name="q" class="form-control border-left-0" 
                                        placeholder="Cari nama paket soal..." value="{{ request('q') }}">
                             </div>
                         </div>
@@ -123,7 +123,7 @@
             <div class="modal fade" id="modal-start-exam" tabindex="-1" role="dialog" aria-labelledby="modal-start-exam" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
-                        <form id="form-start-exam" action="" method="POST">
+                        <form autocomplete="off" id="form-start-exam" action="" method="POST" autocomplete="off">
                             @csrf
                             <div class="block block-rounded shadow-none mb-0">
                                 <div class="block-header block-header-default bg-primary">

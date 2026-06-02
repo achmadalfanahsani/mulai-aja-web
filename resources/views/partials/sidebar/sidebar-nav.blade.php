@@ -61,7 +61,7 @@
         @endif
         
         <li class="nav-main-item mt-4">
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+            <form autocomplete="off" id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                 @csrf
             </form>
             <a class="nav-main-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

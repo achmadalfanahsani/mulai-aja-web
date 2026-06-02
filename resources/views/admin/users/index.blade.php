@@ -15,10 +15,10 @@
     </div>
     <div class="block-content">
         <!-- Filter Form -->
-        <form action="{{ route(auth()->user()->getRoutePrefix() . '.users.index') }}" method="GET" class="mb-4">
+        <form autocomplete="off" action="{{ route(auth()->user()->getRoutePrefix() . '.users.index') }}" method="GET" class="mb-4" autocomplete="off">
             <div class="row g-3">
                 <div class="col-md-4">
-                    <input type="text" name="q" class="form-control" placeholder="Cari Nama atau Email..." value="{{ request('q') }}">
+                    <input autocomplete="off" type="text" name="q" class="form-control" placeholder="Cari Nama atau Email..." value="{{ request('q') }}">
                 </div>
                 <div class="col-md-3">
                     <select name="role" class="form-select">
@@ -120,11 +120,11 @@
 
                             {{-- Hidden Forms for Approval --}}
                             @if(!$user->is_approved)
-                                <form id="approve-form-{{ $user->id }}" action="{{ route(auth()->user()->getRoutePrefix() . '.users.approve', $user) }}" method="POST" class="d-none">
+                                <form autocomplete="off" id="approve-form-{{ $user->id }}" action="{{ route(auth()->user()->getRoutePrefix() . '.users.approve', $user) }}" method="POST" class="d-none">
                                     @csrf
                                 </form>
                             @else
-                                <form id="reject-form-{{ $user->id }}" action="{{ route(auth()->user()->getRoutePrefix() . '.users.reject', $user) }}" method="POST" class="d-none">
+                                <form autocomplete="off" id="reject-form-{{ $user->id }}" action="{{ route(auth()->user()->getRoutePrefix() . '.users.reject', $user) }}" method="POST" class="d-none">
                                     @csrf
                                 </form>
                             @endif
@@ -135,7 +135,7 @@
                     <div class="modal fade" id="modal-role-{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-role-{{ $user->id }}" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
-                                <form action="{{ route(auth()->user()->getRoutePrefix() . '.users.update-role', $user) }}" method="POST">
+                                <form autocomplete="off" action="{{ route(auth()->user()->getRoutePrefix() . '.users.update-role', $user) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
                                     <div class="block block-rounded shadow-none mb-0">
@@ -174,7 +174,7 @@
                     <div class="modal fade" id="modal-password-{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-password-{{ $user->id }}" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
-                                <form action="{{ route(auth()->user()->getRoutePrefix() . '.users.update-password', $user) }}" method="POST">
+                                <form autocomplete="off" action="{{ route(auth()->user()->getRoutePrefix() . '.users.update-password', $user) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
                                     <div class="block block-rounded shadow-none mb-0">
@@ -189,11 +189,11 @@
                                         <div class="block-content fs-sm">
                                             <div class="mb-4">
                                                 <label class="form-label" for="password-{{ $user->id }}">Password Baru</label>
-                                                <input type="password" class="form-control" id="password-{{ $user->id }}" name="password" required>
+                                                <input autocomplete="off" type="password" class="form-control" id="password-{{ $user->id }}" name="password" required>
                                             </div>
                                             <div class="mb-4">
                                                 <label class="form-label" for="password-confirm-{{ $user->id }}">Konfirmasi Password Baru</label>
-                                                <input type="password" class="form-control" id="password-confirm-{{ $user->id }}" name="password_confirmation" required>
+                                                <input autocomplete="off" type="password" class="form-control" id="password-confirm-{{ $user->id }}" name="password_confirmation" required>
                                             </div>
                                         </div>
                                         <div class="block-content block-content-full block-content-sm text-end border-top">
@@ -210,7 +210,7 @@
                     <div class="modal fade" id="modal-delete-{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-delete-{{ $user->id }}" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
-                                <form action="{{ route(auth()->user()->getRoutePrefix() . '.users.destroy', $user) }}" method="POST">
+                                <form autocomplete="off" action="{{ route(auth()->user()->getRoutePrefix() . '.users.destroy', $user) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <div class="block block-rounded shadow-none mb-0">

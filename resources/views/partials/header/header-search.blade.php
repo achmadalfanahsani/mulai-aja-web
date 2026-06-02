@@ -5,8 +5,8 @@
 
 <div id="page-header-search" class="overlay-header bg-body-extra-light">
     <div class="content-header">
-        {{-- <form class="w-100" action="{{ route('search') }}" method="GET"> --}}
-        <form class="w-100" action="#" method="GET">
+        {{-- <form autocomplete="off" class="w-100" action="{{ route('search') }}" method="GET" autocomplete="off"> --}}
+        <form autocomplete="off" class="w-100" action="#" method="GET" autocomplete="off">
             <div class="input-group">
 
                 {{-- Tombol Tutup Pencarian --}}
@@ -18,7 +18,7 @@
                 </button>
 
                 {{-- Input Pencarian --}}
-                <input type="text"
+                <input autocomplete="off" type="text"
                     class="form-control"
                     placeholder="Cari atau tekan ESC..."
                     id="page-header-search-input"

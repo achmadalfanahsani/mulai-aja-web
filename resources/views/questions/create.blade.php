@@ -16,7 +16,7 @@
             </div>
             
             <div class="block-content">
-                <form action="{{ route('question-packages.questions.store', $questionPackage->id) }}" method="POST" enctype="multipart/form-data" class="py-3">
+                <form autocomplete="off" action="{{ route('question-packages.questions.store', $questionPackage->id) }}" method="POST" enctype="multipart/form-data" class="py-3" autocomplete="off">
                     @csrf
                     
                     {{-- Detail Paket --}}
@@ -50,8 +50,8 @@
                                     $fixedType = $questionPackage->package_type === 'essay' ? 'essay' : 'multiple_choice';
                                     $label = $fixedType === 'essay' ? 'Uraian (Essay)' : 'Pilihan Ganda';
                                 @endphp
-                                <input type="text" class="form-control" value="{{ $label }}" readonly>
-                                <input type="hidden" id="question_type" name="question_type" value="{{ $fixedType }}">
+                                <input autocomplete="off" type="text" class="form-control" value="{{ $label }}" readonly>
+                                <input autocomplete="off" type="hidden" id="question_type" name="question_type" value="{{ $fixedType }}">
                             @endif
                             @error('question_type')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -76,7 +76,7 @@
                         {{-- Gambar Pendukung --}}
                         <div class="col-md-12 form-group mb-4">
                             <label class="form-label" for="question_image">Gambar Penjelas (Opsional)</label>
-                            <input class="form-control @error('question_image') is-invalid @enderror" type="file" id="question_image" name="question_image" accept="image/*">
+                            <input autocomplete="off" class="form-control @error('question_image') is-invalid @enderror" type="file" id="question_image" name="question_image" accept="image/*">
                             <small class="text-muted">Maksimal resolusi gambar 2MB. Format: png, jpg, jpeg.</small>
                             @error('question_image')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -112,14 +112,14 @@
                                 <div class="row mb-3 align-items-center option-row" data-label="{{ $label }}">
                                     <div class="col-auto">
                                         <div class="form-check">
-                                            <input class="form-check-input multiple-choice-input" type="radio" name="correct_answer" id="correct_{{ $label }}" value="{{ $label }}" {{ old('correct_answer') == $label ? 'checked' : ($index == 0 ? 'checked' : '') }}>
+                                            <input autocomplete="off" class="form-check-input multiple-choice-input" type="radio" name="correct_answer" id="correct_{{ $label }}" value="{{ $label }}" {{ old('correct_answer') == $label ? 'checked' : ($index == 0 ? 'checked' : '') }}>
                                             <label class="form-check-label font-w700 text-primary font-size-lg" for="correct_{{ $label }}" data-toggle="tooltip" title="Pilih sebagai kunci jawaban yang benar">
                                                 {{ $label }}
                                             </label>
                                         </div>
                                     </div>
                                     <div class="col">
-                                        <input type="text" class="form-control multiple-choice-input @error('options.' . $label) is-invalid @enderror" 
+                                        <input autocomplete="off" type="text" class="form-control multiple-choice-input @error('options.' . $label) is-invalid @enderror" 
                                                name="options[{{ $label }}]" value="{{ old('options.' . $label) }}" 
                                                placeholder="Ketikkan teks untuk Opsi {{ $label }}..." required>
                                         @error('options.' . $label)
@@ -138,7 +138,7 @@
                         
                         <div class="form-group mb-4">
                             <label class="form-label" for="correct_answer_essay">Kunci Jawaban Singkat <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control essay-input @error('correct_answer') is-invalid @enderror" 
+                            <input autocomplete="off" type="text" class="form-control essay-input @error('correct_answer') is-invalid @enderror" 
                                    id="correct_answer_essay" name="correct_answer_essay" value="{{ old('correct_answer_essay') }}" 
                                    placeholder="Ketikkan kunci jawaban yang benar untuk soal isian ini...">
                             <small class="text-muted"><i class="fa fa-info-circle me-1"></i> Untuk soal isian, jawaban siswa akan dibandingkan secara kaku dengan kunci jawaban ini.</small>
@@ -191,16 +191,16 @@
         newRow.innerHTML = `
             <div class="col-auto">
                 <div class="form-check">
-                    <input class="form-check-input multiple-choice-input" type="radio" name="correct_answer" id="correct_${nextLabel}" value="${nextLabel}">
+                    <input autocomplete="off" class="form-check-input multiple-choice-input" type="radio" name="correct_answer" id="correct_${nextLabel}" value="${nextLabel}">
                     <label class="form-check-label font-w700 text-primary font-size-lg" for="correct_${nextLabel}" data-toggle="tooltip" title="Pilih sebagai kunci jawaban yang benar">
                         ${nextLabel}
                     </label>
                 </div>
             </div>
             <div class="col">
-                <input type="text" class="form-control multiple-choice-input" 
+                <input autocomplete="off" type="text" class="form-control multiple-choice-input" 
                        name="options[${nextLabel}]" 
-                       placeholder="Ketikkan teks untuk Opsi ${nextLabel}..." required>
+                       placeholder="Ketikkan teks untuk Opsi ${nextLabel}..." required autocomplete="off">
             </div>
         `;
         container.appendChild(newRow);

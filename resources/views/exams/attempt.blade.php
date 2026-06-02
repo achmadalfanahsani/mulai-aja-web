@@ -183,9 +183,9 @@
 
                 {{-- Pilihan Jawaban (Multiple Choice or Essay) --}}
                 <div class="mb-4">
-                    <form id="draft-form" action="{{ route('exams.save-response', $questionAttempt->id) }}" method="POST">
+                    <form autocomplete="off" id="draft-form" action="{{ route('exams.save-response', $questionAttempt->id) }}" method="POST" autocomplete="off">
                         @csrf
-                        <input type="hidden" name="question_id" value="{{ $question->id }}">
+                        <input autocomplete="off" type="hidden" name="question_id" value="{{ $question->id }}">
                         
                         @if($question->isMultipleChoice())
                             <div class="cbt-options-list">
@@ -194,7 +194,7 @@
                                         $isSelected = $currentResponse && $currentResponse->selected_answer === $option->option_label;
                                     @endphp
                                     <label class="cbt-option-wrapper d-block mb-3 {{ $isSelected ? 'selected' : '' }}" style="cursor:pointer;">
-                                        <input type="radio" name="selected_answer" value="{{ $option->option_label }}" 
+                                        <input autocomplete="off" type="radio" name="selected_answer" value="{{ $option->option_label }}" 
                                                class="cbt-option-input d-none" 
                                                {{ $isSelected ? 'checked' : '' }}
                                                onchange="autoSaveAnswer('{{ $option->option_label }}', 'multiple_choice')">
@@ -211,7 +211,7 @@
                             {{-- Essay Input --}}
                             <div class="essay-container">
                                 <label class="form-label" for="essay_answer">Ketikkan Jawaban Anda:</label>
-                                <input type="text" class="form-control form-control-lg" id="essay_answer" name="essay_answer" 
+                                <input autocomplete="off" type="text" class="form-control form-control-lg" id="essay_answer" name="essay_answer" 
                                        placeholder="Ketikkan jawaban Anda di sini..."
                                        value="{{ $currentResponse->essay_answer ?? '' }}"
                                        onblur="autoSaveAnswer(this.value, 'essay')"
@@ -323,7 +323,7 @@
             
             <div class="modal-footer bg-body-light border-0 py-3 px-4 d-flex justify-content-between">
                 <button type="button" class="btn btn-secondary font-w600 rounded-3 px-3 py-2" data-bs-dismiss="modal">Lanjutkan Mengerjakan</button>
-                <form action="{{ route('exams.submit', $questionAttempt->id) }}" method="POST" class="m-0">
+                <form autocomplete="off" action="{{ route('exams.submit', $questionAttempt->id) }}" method="POST" class="m-0">
                     @csrf
                     <button type="submit" class="btn btn-primary font-w700 rounded-3 px-3 py-2 shadow-sm">
                         <i class="fa fa-check-circle me-1"></i> Ya, Selesai & Kirim
@@ -336,9 +336,9 @@
 </div>
 
 {{-- FORM HIDDEN AUTO SUBMIT KETIKA TIMER HABIS --}}
-<form id="auto-submit-form" action="{{ route('exams.submit', $questionAttempt->id) }}" method="POST" class="d-none">
+<form autocomplete="off" id="auto-submit-form" action="{{ route('exams.submit', $questionAttempt->id) }}" method="POST" class="d-none">
     @csrf
-    <input type="hidden" name="auto_submitted" value="1">
+    <input autocomplete="off" type="hidden" name="auto_submitted" value="1">
 </form>
 
 @endsection

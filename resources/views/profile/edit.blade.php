@@ -10,13 +10,13 @@
                 <h3 class="block-title">Edit Profil</h3>
             </div>
             <div class="block-content block-content-full">
-                <form action="{{ route('profile.update') }}" method="POST">
+                <form autocomplete="off" action="{{ route('profile.update') }}" method="POST" autocomplete="off">
                     @csrf
                     @method('PATCH')
                     
                     <div class="mb-3">
                         <label for="name" class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $user->name) }}" required>
+                        <input autocomplete="off" type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $user->name) }}" required>
                         @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -24,7 +24,7 @@
                     
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" value="{{ $user->email }}" disabled>
+                        <input autocomplete="off" type="email" class="form-control" id="email" value="{{ $user->email }}" disabled>
                         <div class="form-text">Email tidak dapat diubah.</div>
                     </div>
                     

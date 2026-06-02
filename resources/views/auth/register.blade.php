@@ -27,12 +27,12 @@
                                     <p class="text-muted mb-0">Lengkapi data di bawah ini untuk mendaftar</p>
                                 </div>
 
-                                <form action="{{ route('register') }}" method="POST">
+                                <form autocomplete="off" action="{{ route('register') }}" method="POST" autocomplete="off">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-floating mb-4">
-                                                <input type="text"
+                                                <input autocomplete="off" type="text"
                                                     class="form-control @error('name') is-invalid @enderror"
                                                     id="register-name" name="name" placeholder="Masukkan nama lengkap"
                                                     value="{{ old('name') }}" required>
@@ -44,7 +44,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-floating mb-4">
-                                                <input type="email"
+                                                <input autocomplete="off" type="email"
                                                     class="form-control @error('email') is-invalid @enderror"
                                                     id="register-email" name="email" placeholder="Masukkan email"
                                                     value="{{ old('email') }}" required>
@@ -58,7 +58,7 @@
 
                                     <div class="form-group mb-4">
                                         <label class="form-label fs-sm fw-semibold mb-2">Daftar Sebagai</label>
-                                        <input type="hidden" name="role" value="administrator">
+                                        <input autocomplete="off" type="hidden" name="role" value="administrator">
                                         <div
                                             class="form-control form-control-lg bg-body-light border-0 fs-6 fw-medium d-flex align-items-center">
                                             <i class="fa fa-user-tie text-primary me-2"></i> Administrator (Admin Lembaga)
@@ -78,7 +78,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-floating mb-4">
-                                                <input type="password"
+                                                <input autocomplete="off" type="password"
                                                     class="form-control @error('password') is-invalid @enderror"
                                                     id="register-password" name="password" placeholder="Masukkan password"
                                                     required>
@@ -90,7 +90,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-floating mb-4">
-                                                <input type="password" class="form-control" id="register-password-confirm"
+                                                <input autocomplete="off" type="password" class="form-control" id="register-password-confirm"
                                                     name="password_confirmation" placeholder="Konfirmasi password" required>
                                                 <label class="form-label" for="register-password-confirm">Konfirmasi</label>
                                             </div>
@@ -99,7 +99,7 @@
 
                                     <div class="mb-4">
                                         <div class="form-check">
-                                            <input class="form-check-input @error('terms') is-invalid @enderror" type="checkbox"
+                                            <input autocomplete="off" class="form-check-input @error('terms') is-invalid @enderror" type="checkbox"
                                                 id="register-terms" name="terms" required {{ old('terms') ? 'checked' : '' }}>
                                             <label class="form-check-label fs-sm" for="register-terms">
                                                 Saya setuju dengan <a href="{{ route('terms') }}">Syarat & Ketentuan</a>

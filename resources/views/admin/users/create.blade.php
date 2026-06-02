@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="block-content block-content-full">
-            <form action="{{ route(auth()->user()->getRoutePrefix() . '.users.store') }}" method="POST">
+            <form autocomplete="off" action="{{ route(auth()->user()->getRoutePrefix() . '.users.store') }}" method="POST" autocomplete="off">
                 @csrf
                 <div class="row items-push">
                     <div class="col-lg-4">
@@ -25,14 +25,14 @@
                     <div class="col-lg-8 col-xl-5">
                         <div class="mb-4">
                             <label class="form-label" for="name">Nama Lengkap</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" placeholder="Masukkan nama lengkap.." required>
+                            <input autocomplete="off" type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" placeholder="Masukkan nama lengkap.." required>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-4">
                             <label class="form-label" for="email">Email</label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="Masukkan email.." required>
+                            <input autocomplete="off" type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="Masukkan email.." required>
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -53,14 +53,14 @@
                         </div>
                         <div class="mb-4">
                             <label class="form-label" for="password">Password</label>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Masukkan password.." required>
+                            <input autocomplete="off" type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Masukkan password.." required>
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-4">
                             <label class="form-label" for="password_confirmation">Konfirmasi Password</label>
-                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Konfirmasi password.." required>
+                            <input autocomplete="off" type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Konfirmasi password.." required>
                         </div>
                         <div class="mb-4">
                             <button type="submit" class="btn btn-primary">

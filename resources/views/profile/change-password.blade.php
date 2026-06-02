@@ -10,13 +10,13 @@
                 <h3 class="block-title">Ganti Password</h3>
             </div>
             <div class="block-content">
-                <form action="{{ route('profile.password.update') }}" method="POST">
+                <form autocomplete="off" action="{{ route('profile.password.update') }}" method="POST" autocomplete="off">
                     @csrf
                     @method('PATCH')
 
                     <div class="mb-4">
                         <label class="form-label" for="current_password">Password Saat Ini</label>
-                        <input type="password" class="form-control @error('current_password') is-invalid @enderror" 
+                        <input autocomplete="off" type="password" class="form-control @error('current_password') is-invalid @enderror" 
                                id="current_password" name="current_password" required>
                         @error('current_password')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -25,7 +25,7 @@
 
                     <div class="mb-4">
                         <label class="form-label" for="password">Password Baru</label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                        <input autocomplete="off" type="password" class="form-control @error('password') is-invalid @enderror" 
                                id="password" name="password" required>
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -34,7 +34,7 @@
 
                     <div class="mb-4">
                         <label class="form-label" for="password_confirmation">Konfirmasi Password Baru</label>
-                        <input type="password" class="form-control" 
+                        <input autocomplete="off" type="password" class="form-control" 
                                id="password_confirmation" name="password_confirmation" required>
                     </div>
 

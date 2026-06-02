@@ -16,14 +16,14 @@
                 </div>
 
                 <div class="block-content">
-                    <form action="{{ route('question-packages.store') }}" method="POST" class="py-3">
+                    <form autocomplete="off" action="{{ route('question-packages.store') }}" method="POST" class="py-3" autocomplete="off">
                         @csrf
 
                         {{-- Nama Paket --}}
                         <div class="form-group mb-4">
                             <label class="form-label" for="name">Nama Paket Soal <span
                                     class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
+                            <input autocomplete="off" type="text" class="form-control @error('name') is-invalid @enderror" id="name"
                                 name="name" value="{{ old('name') }}"
                                 placeholder="Contoh: Ujian Tengah Semester Matematika Kelas X" required>
                             @error('name')
@@ -61,9 +61,9 @@
                                 @endphp
 
                                 <!-- Input teks biasa yang hanya bisa dibaca (readonly) -->
-                                <input type="text" class="form-control" id="package_type_display" value="{{ $displayValue }}" readonly>
+                                <input autocomplete="off" type="text" class="form-control" id="package_type_display" value="{{ $displayValue }}" readonly>
 
-                                <input type="hidden" name="package_type" value="{{ $requestedType }}">
+                                <input autocomplete="off" type="hidden" name="package_type" value="{{ $requestedType }}">
                             @else
                                 <select class="form-select @error('package_type') is-invalid @enderror" id="package_type"
                                     name="package_type" onchange="toggleShuffleOptions()" required>
@@ -88,7 +88,7 @@
                                         class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-clock"></i></span>
-                                    <input type="number"
+                                    <input autocomplete="off" type="number"
                                         class="form-control @error('duration_minutes') is-invalid @enderror"
                                         id="duration_minutes" name="duration_minutes"
                                         value="{{ old('duration_minutes', 60) }}" min="1" max="480" required>
@@ -105,7 +105,7 @@
                                 <label class="form-label" for="passing_score">Nilai Kelulusan minimum (%)</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-award"></i></span>
-                                    <input type="number" class="form-control @error('passing_score') is-invalid @enderror"
+                                    <input autocomplete="off" type="number" class="form-control @error('passing_score') is-invalid @enderror"
                                         id="passing_score" name="passing_score" value="{{ old('passing_score') }}"
                                         placeholder="Contoh: 70" min="0" max="100">
                                     <span class="input-group-text">%</span>
@@ -121,7 +121,7 @@
                                 <label class="form-label" for="attempt_limit">Batas Pengerjaan (Attempts)</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-redo"></i></span>
-                                    <input type="number" class="form-control @error('attempt_limit') is-invalid @enderror"
+                                    <input autocomplete="off" type="number" class="form-control @error('attempt_limit') is-invalid @enderror"
                                         id="attempt_limit" name="attempt_limit" value="{{ old('attempt_limit') }}"
                                         placeholder="Contoh: 1" min="1">
                                     <span class="input-group-text">Kali</span>
@@ -140,7 +140,7 @@
                                 Pengacakan</h4>
 
                             <div class="form-check form-switch mb-2">
-                                <input class="form-check-input" type="checkbox" id="shuffle_questions"
+                                <input autocomplete="off" class="form-check-input" type="checkbox" id="shuffle_questions"
                                     name="shuffle_questions" value="1" checked>
                                 <label class="form-check-label font-w600" for="shuffle_questions">Acak Urutan Soal
                                     (Shuffle Questions)</label>
@@ -149,7 +149,7 @@
                             </div>
 
                             <div class="form-check form-switch mt-3" id="shuffle_answers_container">
-                                <input class="form-check-input" type="checkbox" id="shuffle_answers"
+                                <input autocomplete="off" class="form-check-input" type="checkbox" id="shuffle_answers"
                                     name="shuffle_answers" value="1" checked>
                                 <label class="form-check-label font-w600" for="shuffle_answers">Acak Urutan Opsi Jawaban
                                     (Shuffle Options)</label>

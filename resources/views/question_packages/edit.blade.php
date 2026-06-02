@@ -16,14 +16,14 @@
             </div>
             
             <div class="block-content">
-                <form action="{{ route('question-packages.update', $questionPackage->id) }}" method="POST" class="py-3">
+                <form autocomplete="off" action="{{ route('question-packages.update', $questionPackage->id) }}" method="POST" class="py-3" autocomplete="off">
                     @csrf
                     @method('PUT')
                     
                     {{-- Nama Paket --}}
                     <div class="form-group mb-4">
                         <label class="form-label" for="name">Nama Paket Soal <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                        <input autocomplete="off" type="text" class="form-control @error('name') is-invalid @enderror" 
                                id="name" name="name" value="{{ old('name', $questionPackage->name) }}" 
                                placeholder="Contoh: Ujian Tengah Semester Matematika Kelas X" required>
                         @error('name')
@@ -45,8 +45,8 @@
                     {{-- Tipe Paket --}}
                     <div class="mb-4">
                         <label class="form-label" for="package_type">Tipe Paket Soal <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control bg-body-light" id="package_type_display" value="{{ $questionPackage->type_label }}" readonly>
-                        <input type="hidden" name="package_type" value="{{ $questionPackage->package_type }}">
+                        <input autocomplete="off" type="text" class="form-control bg-body-light" id="package_type_display" value="{{ $questionPackage->type_label }}" readonly>
+                        <input autocomplete="off" type="hidden" name="package_type" value="{{ $questionPackage->package_type }}">
                         <div class="form-text text-muted">Tipe paket soal tidak dapat diubah setelah dibuat.</div>
                     </div>
 
@@ -56,7 +56,7 @@
                             <label class="form-label" for="duration_minutes">Durasi Pengerjaan (Menit) <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa fa-clock"></i></span>
-                                <input type="number" class="form-control @error('duration_minutes') is-invalid @enderror" 
+                                <input autocomplete="off" type="number" class="form-control @error('duration_minutes') is-invalid @enderror" 
                                        id="duration_minutes" name="duration_minutes" value="{{ old('duration_minutes', $questionPackage->duration_minutes) }}" 
                                        min="1" max="480" required>
                                 <span class="input-group-text">Menit</span>
@@ -72,7 +72,7 @@
                             <label class="form-label" for="passing_score">Nilai Kelulusan minimum (%)</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa fa-award"></i></span>
-                                <input type="number" class="form-control @error('passing_score') is-invalid @enderror" 
+                                <input autocomplete="off" type="number" class="form-control @error('passing_score') is-invalid @enderror" 
                                        id="passing_score" name="passing_score" value="{{ old('passing_score', $questionPackage->passing_score) }}" 
                                        placeholder="Contoh: 70" min="0" max="100">
                                 <span class="input-group-text">%</span>
@@ -88,7 +88,7 @@
                             <label class="form-label" for="attempt_limit">Batas Pengerjaan (Attempts)</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa fa-redo"></i></span>
-                                <input type="number" class="form-control @error('attempt_limit') is-invalid @enderror" 
+                                <input autocomplete="off" type="number" class="form-control @error('attempt_limit') is-invalid @enderror" 
                                        id="attempt_limit" name="attempt_limit" value="{{ old('attempt_limit', $questionPackage->attempt_limit) }}" 
                                        placeholder="Contoh: 1" min="1">
                                 <span class="input-group-text">Kali</span>
@@ -105,14 +105,14 @@
                         <h4 class="font-size-sm font-w700 text-uppercase text-muted mb-3">Pengaturan Keamanan & Pengacakan</h4>
                         
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" id="shuffle_questions" name="shuffle_questions" value="1" 
+                            <input autocomplete="off" class="form-check-input" type="checkbox" id="shuffle_questions" name="shuffle_questions" value="1" 
                                 {{ $questionPackage->shuffle_questions ? 'checked' : '' }}>
                             <label class="form-check-label font-w600" for="shuffle_questions">Acak Urutan Soal (Shuffle Questions)</label>
                             <div class="text-muted font-size-sm">Setiap siswa akan mendapatkan urutan soal yang berbeda-beda saat ujian dimulai.</div>
                         </div>
 
                         <div class="form-check form-switch mt-3" id="shuffle_answers_container">
-                            <input class="form-check-input" type="checkbox" id="shuffle_answers" name="shuffle_answers" value="1" 
+                            <input autocomplete="off" class="form-check-input" type="checkbox" id="shuffle_answers" name="shuffle_answers" value="1" 
                                 {{ $questionPackage->shuffle_answers ? 'checked' : '' }}>
                             <label class="form-check-label font-w600" for="shuffle_answers">Acak Urutan Opsi Jawaban (Shuffle Options)</label>
                             <div class="text-muted font-size-sm">Opsi jawaban (A s/d E) akan teracak secara otomatis untuk menghindari kerjasama antar siswa.</div>
