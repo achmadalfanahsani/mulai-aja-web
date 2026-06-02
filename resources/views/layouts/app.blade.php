@@ -70,7 +70,7 @@
                             setTimeout(() => alert.remove(), 500);
                         }
                     }
-                }, 1000); // 1 second delay
+                }, 4000); // 4 seconds delay
             });
         });
     </script>
