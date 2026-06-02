@@ -63,7 +63,7 @@ class ClassroomController extends Controller
         ]);
 
         return redirect()->route('classrooms.index')
-            ->with('success', 'Kelas berhasil dibuat.');
+            ->with('success_store', 'Kelas berhasil dibuat.');
     }
 
     /**
@@ -161,7 +161,7 @@ class ClassroomController extends Controller
         $classroom->update($request->only('name', 'description'));
 
         return redirect()->route('classrooms.index')
-            ->with('success', 'Data kelas berhasil diperbarui.');
+            ->with('success_update', 'Data kelas berhasil diperbarui.');
     }
 
     /**
@@ -174,7 +174,7 @@ class ClassroomController extends Controller
         $classroom->delete();
 
         return redirect()->route('classrooms.index')
-            ->with('success', 'Kelas berhasil dihapus.');
+            ->with('success_delete', 'Kelas berhasil dihapus.');
     }
 
     /**

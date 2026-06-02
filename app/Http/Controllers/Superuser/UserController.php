@@ -90,7 +90,7 @@ class UserController extends Controller
             'created_by_id' => auth()->id(),
         ]);
 
-        return redirect()->route($this->getIndexRoute())->with('success', "User {$request->name} berhasil dibuat.");
+        return redirect()->route($this->getIndexRoute())->with('success_store', "User {$request->name} berhasil dibuat.");
     }
 
     /**
@@ -136,7 +136,7 @@ class UserController extends Controller
 
         $user->update(['role' => $request->role]);
 
-        return back()->with('success', "Role user {$user->name} berhasil diubah menjadi {$request->role}.");
+        return back()->with('success_update', "Role user {$user->name} berhasil diubah menjadi {$request->role}.");
     }
 
     /**
@@ -150,7 +150,7 @@ class UserController extends Controller
 
         $user->update(['is_approved' => true]);
 
-        return back()->with('success', "Akun {$user->name} telah di-approve.");
+        return back()->with('success_update', "Akun {$user->name} telah di-approve.");
     }
 
     /**
@@ -164,7 +164,7 @@ class UserController extends Controller
 
         $user->update(['is_approved' => false]);
 
-        return back()->with('success', "Status approval {$user->name} telah dicabut.");
+        return back()->with('success_update', "Status approval {$user->name} telah dicabut.");
     }
 
     /**
@@ -188,7 +188,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return back()->with('success', "Password user {$user->name} berhasil diperbarui.");
+        return back()->with('success_update', "Password user {$user->name} berhasil diperbarui.");
     }
 
     /**
@@ -207,6 +207,6 @@ class UserController extends Controller
         $userName = $user->name;
         $user->delete();
 
-        return back()->with('success', "User {$userName} berhasil dihapus.");
+        return back()->with('success_delete', "User {$userName} berhasil dihapus.");
     }
 }
