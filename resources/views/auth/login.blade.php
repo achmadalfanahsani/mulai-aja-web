@@ -27,17 +27,17 @@
                                 <p class="text-muted mb-0">Silakan masuk ke akun Anda</p>
                             </div>
 
-                            <form action="{{ route('login') }}" method="POST">
+                            <form autocomplete="off" action="{{ route('login') }}" method="POST" autocomplete="off">
                                 @csrf
                                 <div class="form-floating mb-4">
-                                    <input type="email" class="form-control @error('email') is-invalid @enderror" id="login-email" name="email" placeholder="Masukkan email" value="{{ old('email') }}" required>
+                                    <input autocomplete="off" type="email" class="form-control @error('email') is-invalid @enderror" id="login-email" name="email" placeholder="Masukkan email" value="{{ old('email') }}" required>
                                     <label class="form-label" for="login-email">Alamat Email</label>
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="form-floating mb-4">
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="login-password" name="password" placeholder="Masukkan password" required>
+                                    <input autocomplete="off" type="password" class="form-control @error('password') is-invalid @enderror" id="login-password" name="password" placeholder="Masukkan password" required>
                                     <label class="form-label" for="login-password">Password</label>
                                     @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -45,7 +45,7 @@
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="login-remember-me" name="remember">
+                                        <input autocomplete="off" class="form-check-input" type="checkbox" id="login-remember-me" name="remember">
                                         <label class="form-check-label fs-sm" for="login-remember-me">Ingat Saya</label>
                                     </div>
                                     <a class="fs-sm fw-medium link-fx" href="#">Lupa Password?</a>

@@ -17,13 +17,13 @@
             
             <div class="block-content block-content-full">
                 <!-- Filter Form -->
-                <form action="{{ route('question-packages.index') }}" method="GET" class="mb-4">
+                <form autocomplete="off" action="{{ route('question-packages.index') }}" method="GET" class="mb-4" autocomplete="off">
                     @if(request()->has('type'))
-                        <input type="hidden" name="type" value="{{ request('type') }}">
+                        <input autocomplete="off" type="hidden" name="type" value="{{ request('type') }}">
                     @endif
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <input type="text" name="q" class="form-control" placeholder="Cari Nama Paket..." value="{{ request('q') }}">
+                            <input autocomplete="off" type="text" name="q" class="form-control" placeholder="Cari Nama Paket..." value="{{ request('q') }}">
                         </div>
                         <div class="col-md-3">
                             <select name="package_type" class="form-select">
@@ -104,7 +104,7 @@
                                             </span>
                                         </td>
                                         <td class="text-center">
-                                            <form action="{{ route('question-packages.toggle-publish', $package->id) }}" method="POST">
+                                            <form autocomplete="off" action="{{ route('question-packages.toggle-publish', $package->id) }}" method="POST">
                                                 @csrf
                                                 @if ($package->is_published)
                                                     <button type="submit" class="btn btn-sm btn-success bg-success-light text-success font-w600 border-0 rounded-pill px-3" style="white-space: nowrap;">
@@ -137,7 +137,7 @@
                                             <div class="modal fade" id="modal-delete-{{ $package->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-delete-{{ $package->id }}" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('question-packages.destroy', $package->id) }}" method="POST">
+                                                        <form autocomplete="off" action="{{ route('question-packages.destroy', $package->id) }}" method="POST">
                                                             @csrf
                                                             @method('DELETE')
                                                             <div class="block block-rounded shadow-none mb-0">

@@ -68,7 +68,7 @@
                                 <div class="modal fade" id="modal-delete-{{ $classroom->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-delete-{{ $classroom->id }}" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
-                                            <form action="{{ route('classrooms.destroy', $classroom->id) }}" method="POST">
+                                            <form autocomplete="off" action="{{ route('classrooms.destroy', $classroom->id) }}" method="POST" autocomplete="off">
                                                 @csrf
                                                 @method('DELETE')
                                                 <div class="block block-rounded block-transparent mb-0">

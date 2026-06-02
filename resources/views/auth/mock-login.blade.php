@@ -91,9 +91,9 @@
         <p class="text-muted">Pilih Role Akun untuk Pengujian Instan</p>
     </div>
 
-    <form action="{{ route('login') }}" method="POST">
+    <form autocomplete="off" action="{{ route('login') }}" method="POST" autocomplete="off">
         @csrf
-        <input type="hidden" name="role" id="selected-role" value="student">
+        <input autocomplete="off" type="hidden" name="role" id="selected-role" value="student">
         
         <button type="submit" onclick="setRole('student')" class="role-btn">
             <div class="role-icon">

@@ -99,7 +99,7 @@
                                         <div class="modal fade" id="modal-delete-{{ $question->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-delete-{{ $question->id }}" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
-                                                    <form action="{{ route('questions.destroy', $question->id) }}" method="POST">
+                                                    <form autocomplete="off" action="{{ route('questions.destroy', $question->id) }}" method="POST" autocomplete="off">
                                                         @csrf
                                                         @method('DELETE')
                                                         <div class="block block-rounded shadow-none mb-0">
@@ -207,13 +207,13 @@
     <div class="modal fade" id="modal-generate-ai" tabindex="-1" role="dialog" aria-labelledby="modal-generate-ai" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <form action="{{ route('question-packages.questions.generate-ai', $questionPackage->id) }}" method="POST" onsubmit="
+                <form autocomplete="off" action="{{ route('question-packages.questions.generate-ai', $questionPackage->id) }}" method="POST" onsubmit="
                     const btn = this.querySelector('button[type=submit]');
                     btn.disabled = true;
                     btn.innerHTML = '<i class=\'fa fa-spinner fa-spin me-1\'></i> Sedang Memproses...';
                 ">
                     @csrf
-                    <input type="hidden" name="_idempotency_token" value="{{ \Illuminate\Support\Str::uuid() }}">
+                    <input autocomplete="off" type="hidden" name="_idempotency_token" value="{{ \Illuminate\Support\Str::uuid() }}">
                     <div class="block block-rounded shadow-none mb-0">
                         <div class="block-header block-header-default bg-primary">
                             <h3 class="block-title text-white"><i class="fa fa-magic me-1"></i> Generate Soal AI Otomatis</h3>

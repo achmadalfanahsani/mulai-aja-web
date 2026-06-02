@@ -11,12 +11,12 @@
                 <h3 class="block-title">Form Edit Data Kelas</h3>
             </div>
             <div class="block-content">
-                <form action="{{ route('classrooms.update', $classroom->id) }}" method="POST">
+                <form autocomplete="off" action="{{ route('classrooms.update', $classroom->id) }}" method="POST" autocomplete="off">
                     @csrf
                     @method('PATCH')
                     <div class="mb-4">
                         <label class="form-label" for="name">Nama Kelas <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Misal: XII RPL 1" value="{{ old('name', $classroom->name) }}" required>
+                        <input autocomplete="off" type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Misal: XII RPL 1" value="{{ old('name', $classroom->name) }}" required>
                         @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

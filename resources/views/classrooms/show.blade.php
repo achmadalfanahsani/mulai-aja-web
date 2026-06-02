@@ -74,7 +74,7 @@
                                         <div class="modal fade" id="modal-remove-student-{{ $student->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-remove-student-{{ $student->id }}" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
-                                                    <form action="{{ route('classrooms.students.remove', [$classroom->id, $student->id]) }}" method="POST">
+                                                    <form autocomplete="off" action="{{ route('classrooms.students.remove', [$classroom->id, $student->id]) }}" method="POST" autocomplete="off">
                                                         @csrf
                                                         @method('DELETE')
                                                         <div class="block block-rounded block-transparent mb-0">
@@ -150,7 +150,7 @@
                                         <div class="modal fade" id="modal-remove-teacher-{{ $teacher->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-remove-teacher-{{ $teacher->id }}" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
-                                                    <form action="{{ route('classrooms.teachers.remove', [$classroom->id, $teacher->id]) }}" method="POST">
+                                                    <form autocomplete="off" action="{{ route('classrooms.teachers.remove', [$classroom->id, $teacher->id]) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
                                                         <div class="block block-rounded block-transparent mb-0">
@@ -233,7 +233,7 @@
                                         <div class="modal fade" id="modal-remove-package-{{ $package->id }}" tabindex="-1" role="dialog" aria-labelledby="modal-remove-package-{{ $package->id }}" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
-                                                    <form action="{{ route('classrooms.packages.remove', [$classroom->id, $package->id]) }}" method="POST">
+                                                    <form autocomplete="off" action="{{ route('classrooms.packages.remove', [$classroom->id, $package->id]) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
                                                         <div class="block block-rounded block-transparent mb-0">
@@ -280,7 +280,7 @@
 <div class="modal fade" id="modal-add-teacher" tabindex="-1" role="dialog" aria-labelledby="modal-add-teacher" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{{ route('classrooms.teachers.add', $classroom->id) }}" method="POST">
+            <form autocomplete="off" action="{{ route('classrooms.teachers.add', $classroom->id) }}" method="POST">
                 @csrf
                 <div class="block block-rounded block-transparent mb-0">
                     <div class="block-header block-header-default">
@@ -318,7 +318,7 @@
 <div class="modal fade" id="modal-add-student" tabindex="-1" role="dialog" aria-labelledby="modal-add-student" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{{ route('classrooms.students.add', $classroom->id) }}" method="POST">
+            <form autocomplete="off" action="{{ route('classrooms.students.add', $classroom->id) }}" method="POST">
                 @csrf
                 <div class="block block-rounded block-transparent mb-0">
                     <div class="block-header block-header-default">
@@ -355,7 +355,7 @@
 <div class="modal fade" id="modal-assign-package" tabindex="-1" role="dialog" aria-labelledby="modal-assign-package" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{{ route('classrooms.packages.assign', $classroom->id) }}" method="POST">
+            <form autocomplete="off" action="{{ route('classrooms.packages.assign', $classroom->id) }}" method="POST">
                 @csrf
                 <div class="block block-rounded block-transparent mb-0">
                     <div class="block-header block-header-default">

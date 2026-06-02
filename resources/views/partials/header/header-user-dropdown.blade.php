@@ -88,7 +88,7 @@
             </a>
 
             {{-- Form tersembunyi untuk POST logout --}}
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+            <form autocomplete="off" id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                 @csrf
             </form>
         </div>
