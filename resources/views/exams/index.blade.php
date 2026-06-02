@@ -1,49 +1,45 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Ujian CBT | MulaiAja')
+@section('title', 'Daftar Ujian CBT')
+@section('page-heading', 'Daftar Ujian CBT')
 
 @section('content')
-<div class="row">
-    <div class="col-md-12">
-        {{-- Ujian CBT yang Tersedia --}}
-        <h2 class="content-heading d-flex align-items-center">
-            <i class="fa fa-pen-nib me-2 text-primary"></i> Ujian CBT yang Tersedia
-        </h2>
-
+<div class="block block-rounded">
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Ujian CBT yang Tersedia</h3>
+    </div>
+    
+    <div class="block-content">
         {{-- Filter Form --}}
-        <div class="block block-rounded block-bordered mb-4">
-            <div class="block-content block-content-full">
-                <form autocomplete="off" action="{{ route('exams.index') }}" method="GET" autocomplete="off">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-right-0">
-                                    <i class="fa fa-search text-muted"></i>
-                                </span>
-                                <input autocomplete="off" type="text" name="q" class="form-control border-left-0" 
-                                       placeholder="Cari nama paket soal..." value="{{ request('q') }}">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <select name="type" class="form-select">
-                                <option value="">Semua Tipe Soal</option>
-                                <option value="multiple_choice" {{ request('type') == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
-                                <option value="essay" {{ request('type') == 'essay' ? 'selected' : '' }}>Isian Singkat</option>
-                                <option value="mixed" {{ request('type') == 'mixed' ? 'selected' : '' }}>Campuran</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fa fa-filter mr-1"></i> Filter
-                            </button>
-                        </div>
+        <form autocomplete="off" action="{{ route('exams.index') }}" method="GET" class="mb-4" autocomplete="off">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-right-0">
+                            <i class="fa fa-search text-muted"></i>
+                        </span>
+                        <input autocomplete="off" type="text" name="q" class="form-control border-left-0" 
+                               placeholder="Cari nama paket soal..." value="{{ request('q') }}">
                     </div>
-                </form>
+                </div>
+                <div class="col-md-4">
+                    <select name="type" class="form-select">
+                        <option value="">Semua Tipe Soal</option>
+                        <option value="multiple_choice" {{ request('type') == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
+                        <option value="essay" {{ request('type') == 'essay' ? 'selected' : '' }}>Isian Singkat</option>
+                        <option value="mixed" {{ request('type') == 'mixed' ? 'selected' : '' }}>Campuran</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa fa-filter me-1"></i> Filter
+                    </button>
+                </div>
             </div>
-        </div>
+        </form>
         
         @if ($packages->isEmpty())
-            <div class="block block-rounded block-bordered p-5 text-center">
+            <div class="text-center py-5">
                 <i class="fa fa-calendar-times fa-3x text-muted mb-3"></i>
                 <h4 class="text-muted">Tidak ada Ujian CBT yang Aktif saat ini</h4>
                 <p class="text-muted mb-0">Hubungi guru Anda jika Anda merasa ada kesalahan penjadwalan ujian.</p>
@@ -92,7 +88,7 @@
                                 
                                 @if($package->passing_score)
                                     <div class="text-center font-size-xs text-warning font-w700 mt-3">
-                                        <i class="fa fa-award mr-1"></i> Nilai Kelulusan minimum: {{ $package->passing_score }}%
+                                        <i class="fa fa-award me-1"></i> Nilai Kelulusan minimum: {{ $package->passing_score }}%
                                     </div>
                                 @endif
                             </div>
@@ -108,16 +104,20 @@
                                         data-package-type="{{ $package->type_label }}"
                                         data-package-type-class="{{ $package->type_badge_class }}"
                                         data-package-classrooms="{{ $package->classrooms->pluck('name')->join(', ') }}">
-                                    <i class="fa fa-play-circle mr-1"></i> Mulai Ujian
+                                    <i class="fa fa-play-circle me-1"></i> Mulai Ujian
                                 </button>
                             </div>
                         </div>
                     </div>
                 @endforeach
             </div>
+            
             <div class="d-flex justify-content-end mt-2 mb-4">
                 {{ $packages->links() }}
             </div>
+        @endif
+    </div>
+</div>
 
             <!-- Modal Konfirmasi Mulai Ujian -->
             <div class="modal fade" id="modal-start-exam" tabindex="-1" role="dialog" aria-labelledby="modal-start-exam" aria-hidden="true">
