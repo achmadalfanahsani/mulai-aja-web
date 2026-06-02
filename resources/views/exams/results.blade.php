@@ -6,26 +6,6 @@
 <div class="row">
     {{-- Panel Hasil Skor Utama --}}
     <div class="col-md-12 mb-4">
-        @if (session('success'))
-            <div class="alert alert-success d-flex align-items-center justify-content-between" role="alert">
-                <div class="d-flex align-items-center">
-                    <i class="fa fa-check-circle me-2"></i>
-                    <span>{{ session('success') }}</span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if (session('warning'))
-            <div class="alert alert-warning d-flex align-items-center justify-content-between" role="alert">
-                <div class="d-flex align-items-center">
-                    <i class="fa fa-exclamation-triangle me-2"></i>
-                    <span>{{ session('warning') }}</span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
         <div class="block block-rounded block-themed">
             <div class="block-header block-header-default bg-primary-dark">
                 <h3 class="block-title"><i class="fa fa-chart-bar me-2"></i> Hasil Evaluasi Ujian CBT</h3>

@@ -27,20 +27,6 @@
                                 <p class="text-muted mb-0">Silakan masuk ke akun Anda</p>
                             </div>
 
-                            @if (session('success'))
-                                <div class="alert alert-success d-flex align-items-center" role="alert">
-                                    <i class="fa fa-check-circle me-2"></i>
-                                    <p class="mb-0">{{ session('success') }}</p>
-                                </div>
-                            @endif
-
-                            @if (session('error'))
-                                <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                    <i class="fa fa-exclamation-circle me-2"></i>
-                                    <p class="mb-0">{{ session('error') }}</p>
-                                </div>
-                            @endif
-
                             <form action="{{ route('login') }}" method="POST">
                                 @csrf
                                 <div class="form-floating mb-4">

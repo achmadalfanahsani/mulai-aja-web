@@ -5,13 +5,6 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
-        @if (session('success'))
-            <div class="alert alert-success d-flex align-items-center" role="alert">
-                <i class="fa fa-check-circle me-2"></i>
-                <span>{{ session('success') }}</span>
-            </div>
-        @endif
-
         <div class="block block-rounded">
             <div class="block-header block-header-default">
                 <h3 class="block-title">Ganti Password</h3>

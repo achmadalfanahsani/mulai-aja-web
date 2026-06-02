@@ -20,6 +20,8 @@
     @stack('css')
 </head>
 <body>
+    @include('partials.notifications')
+
     <div id="page-container" class="main-content-boxed">
         <main id="main-container">
             @yield('content')
@@ -39,7 +41,7 @@
                     alert.style.transition = 'opacity 0.5s ease';
                     alert.style.opacity = '0';
                     setTimeout(() => alert.remove(), 500);
-                }, 3000);
+                }, 4000);
             });
         });
     </script>

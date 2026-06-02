@@ -91,15 +91,6 @@
         <p class="text-muted">Pilih Role Akun untuk Pengujian Instan</p>
     </div>
 
-    @if (session('success'))
-        <div class="alert alert-success bg-success border-0 text-white alert-dismissible" role="alert">
-            <div class="d-flex align-items-center">
-                <i class="fa fa-check-circle mr-2"></i>
-                <span>{{ session('success') }}</span>
-            </div>
-        </div>
-    @endif
-
     <form action="{{ route('login') }}" method="POST">
         @csrf
         <input type="hidden" name="role" id="selected-role" value="student">

@@ -81,7 +81,7 @@ class QuestionPackageController extends Controller {
         $package = QuestionPackage::create($validated);
 
         return redirect()->route('question-packages.index')
-            ->with('success', 'Paket soal berhasil dibuat! Silakan tambahkan pertanyaan.');
+            ->with('success_store', 'Paket soal berhasil dibuat! Silakan tambahkan pertanyaan.');
     }
 
     /**
@@ -117,7 +117,7 @@ class QuestionPackageController extends Controller {
         $question_package->update($validated);
 
         return redirect()->route('question-packages.index')
-            ->with('success', 'Paket soal berhasil diperbarui!');
+            ->with('success_update', 'Paket soal berhasil diperbarui!');
     }
 
     /**
@@ -130,7 +130,7 @@ class QuestionPackageController extends Controller {
         $questionPackage->delete();
 
         return redirect()->route('question-packages.index')
-            ->with('success', 'Paket soal berhasil dihapus!');
+            ->with('success_delete', 'Paket soal berhasil dihapus!');
     }
 
     /**

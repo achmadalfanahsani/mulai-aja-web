@@ -35,13 +35,6 @@
                 </li>
             </ul>
             <div class="block-content tab-content">
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
                 {{-- Tab: Siswa --}}
                 <div class="tab-pane active" id="students" role="tabpanel">
                     <div class="row mb-4">

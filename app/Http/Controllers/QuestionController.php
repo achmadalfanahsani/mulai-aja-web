@@ -108,7 +108,7 @@ class QuestionController extends Controller {
         });
 
         return redirect()->route('question-packages.questions.index', [$questionPackage->id, 'type' => $questionPackage->package_type])
-            ->with('success', 'Soal berhasil ditambahkan ke dalam paket!');
+            ->with('success_store', 'Soal berhasil ditambahkan ke dalam paket!');
     }
 
     /**
@@ -211,7 +211,7 @@ class QuestionController extends Controller {
         });
 
         return redirect()->route('question-packages.questions.index', [$questionPackage->id, 'type' => $questionPackage->package_type])
-            ->with('success', 'Soal berhasil diperbarui!');
+            ->with('success_update', 'Soal berhasil diperbarui!');
     }
 
     /**
@@ -231,6 +231,6 @@ class QuestionController extends Controller {
         });
 
         return redirect()->route('question-packages.questions.index', [$questionPackage->id, 'type' => $questionPackage->package_type])
-            ->with('success', 'Soal berhasil dihapus dari paket!');
+            ->with('success_delete', 'Soal berhasil dihapus dari paket!');
     }
 }

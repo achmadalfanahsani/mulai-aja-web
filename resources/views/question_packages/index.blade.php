@@ -5,26 +5,6 @@
 @section('content')
 <div class="row">
     <div class="col-md-12">
-        @if (session('success'))
-            <div class="alert alert-success d-flex align-items-center justify-content-between" role="alert">
-                <div class="d-flex align-items-center">
-                    <i class="fa fa-check-circle me-2"></i>
-                    <span>{{ session('success') }}</span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
-                <div class="d-flex align-items-center">
-                    <i class="fa fa-exclamation-circle me-2"></i>
-                    <span>{{ session('error') }}</span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
         <div class="block block-rounded block-themed">
             <div class="block-header block-header-default bg-primary-dark">
                 <h3 class="block-title">Kelola Paket Soal</h3>
