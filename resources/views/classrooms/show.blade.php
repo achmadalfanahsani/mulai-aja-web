@@ -7,24 +7,27 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/js/plugins/select2/css/select2.min.css') }}">
 @endpush
+@php
+    $activeTab = session('active_tab', 'students');
+@endphp
 <div class="row">
     <div class="col-md-12">
         <div class="block block-rounded">
             <ul class="nav nav-tabs nav-tabs-block" role="tablist">
                 <li class="nav-item">
-                    <button class="nav-link active" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" role="tab">
+                    <button class="nav-link {{ $activeTab === 'students' ? 'active' : '' }}" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" role="tab">
                         <i class="fa fa-users me-1"></i> Daftar Siswa
                     </button>
                 </li>
                 @if(Auth::user()->isAdministrator() || Auth::user()->isSuperuser())
                 <li class="nav-item">
-                    <button class="nav-link" id="teachers-tab" data-bs-toggle="tab" data-bs-target="#teachers" role="tab">
+                    <button class="nav-link {{ $activeTab === 'teachers' ? 'active' : '' }}" id="teachers-tab" data-bs-toggle="tab" data-bs-target="#teachers" role="tab">
                         <i class="fa fa-user-tie me-1"></i> Daftar Guru
                     </button>
                 </li>
                 @endif
                 <li class="nav-item">
-                    <button class="nav-link" id="packages-tab" data-bs-toggle="tab" data-bs-target="#packages" role="tab">
+                    <button class="nav-link {{ $activeTab === 'packages' ? 'active' : '' }}" id="packages-tab" data-bs-toggle="tab" data-bs-target="#packages" role="tab">
                         <i class="fa fa-boxes me-1"></i> Paket Soal
                     </button>
                 </li>
@@ -36,7 +39,7 @@
             </ul>
             <div class="block-content tab-content">
                 {{-- Tab: Siswa --}}
-                <div class="tab-pane active" id="students" role="tabpanel">
+                <div class="tab-pane {{ $activeTab === 'students' ? 'active' : '' }}" id="students" role="tabpanel">
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <h5>Daftar Siswa ({{ $classroom->students->count() }})</h5>
@@ -112,7 +115,7 @@
 
                 {{-- Tab: Guru (Hanya Admin) --}}
                 @if(Auth::user()->isAdministrator() || Auth::user()->isSuperuser())
-                <div class="tab-pane" id="teachers" role="tabpanel">
+                <div class="tab-pane {{ $activeTab === 'teachers' ? 'active' : '' }}" id="teachers" role="tabpanel">
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <h5>Daftar Guru Pengampu ({{ $classroom->teachers->count() }})</h5>
@@ -188,7 +191,7 @@
                 @endif
 
                 {{-- Tab: Paket Soal --}}
-                <div class="tab-pane" id="packages" role="tabpanel">
+                <div class="tab-pane {{ $activeTab === 'packages' ? 'active' : '' }}" id="packages" role="tabpanel">
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <h5>Paket Soal yang Ditugaskan ({{ $classroom->questionPackages->count() }})</h5>
