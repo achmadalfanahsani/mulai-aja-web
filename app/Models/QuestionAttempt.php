@@ -75,6 +75,9 @@ class QuestionAttempt extends Model {
      */
     public function isExpired(): bool {
         if (!$this->isFinished()) {
+            if (!$this->questionPackage) {
+                return false; // Anggap tidak expired jika paket tidak ada
+            }
             $maxDuration = $this->questionPackage->duration_minutes * 60; // to seconds
             $elapsed = now()->diffInSeconds($this->started_at);
             return $elapsed > $maxDuration;
