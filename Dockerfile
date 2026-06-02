@@ -38,16 +38,14 @@ COPY . .
 RUN composer dump-autoload --optimize --no-scripts
 
 # ============================================================
-# Stage 3: Final image — PHP-FPM + Nginx + SQLite
+# Stage 3: Final image — PHP-FPM + Nginx + MySQL
 # ============================================================
 FROM php:8.4-fpm-alpine AS final
 
 # Install system dependencies
 RUN apk add --no-cache \
     nginx \
-    sqlite \
-    sqlite-libs \
-    sqlite-dev \
+    mariadb-connector-c-dev \
     supervisor \
     curl \
     unzip \
@@ -63,7 +61,7 @@ RUN apk add --no-cache \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         pdo \
-        pdo_sqlite \
+        pdo_mysql \
         mbstring \
         zip \
         exif \
@@ -89,14 +87,13 @@ WORKDIR /var/www/html
 COPY --from=composer-builder /app /var/www/html
 COPY --from=node-builder /app/public/build /var/www/html/public/build
 
-# Setup storage & SQLite database directory
+# Setup storage directory
 RUN mkdir -p \
     storage/framework/sessions \
     storage/framework/views \
     storage/framework/cache \
     storage/logs \
     database \
-    && touch database/database.sqlite \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache database
 

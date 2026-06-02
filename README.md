@@ -10,7 +10,7 @@ Platform ujian berbasis komputer (CBT) yang dibangun menggunakan **Laravel 13** 
 |----------------|------------------------------------|
 | Framework      | Laravel 13 (PHP 8.3+)              |
 | Frontend       | Codebase Bootstrap 5 + Vite        |
-| Database       | MySQL / SQLite                     |
+| Database       | MySQL (Primary) / SQLite           |
 | Autentikasi    | Custom Auth (Session-based)        |
 | Build Tool     | Vite                               |
 
@@ -152,7 +152,7 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-> **Tips:** Proyek juga mendukung SQLite. Ganti `DB_CONNECTION=sqlite` dan pastikan file `database/database.sqlite` sudah ada.
+> **Tips:** Proyek menggunakan MySQL sebagai default. Jika ingin menggunakan SQLite, ganti `DB_CONNECTION=sqlite` di file `.env` dan pastikan file `database/database.sqlite` sudah ada.
 
 ### 3. Jalankan migrasi & seeder
 ```bash
