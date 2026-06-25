@@ -168,27 +168,24 @@
                             </div>
                         </form>
                     </div>
-                </div>
-            </div>
-        @endif
+                    </div>
+                    </div>
 
-        {{-- Riwayat Ujian --}}
-        <h2 class="content-heading d-flex align-items-center mt-4">
-            <i class="fa fa-history me-2 text-primary"></i> Riwayat Ujian Anda
-        </h2>
+                    {{-- Riwayat Ujian --}}
+                    <h2 class="content-heading d-flex align-items-center mt-4">
+                    <i class="fa fa-history me-2 text-primary"></i> Riwayat Ujian Anda
+                    </h2>
 
-        <div class="block block-rounded block-themed">
-            <div class="block-header block-header-default bg-primary-dark">
-                <h3 class="block-title">Riwayat Pengerjaan</h3>
-            </div>
-            
-            <div class="block-content block-content-full" id="history-container">
-                @include('exams._history_table')
+                    <div class="block block-rounded block-themed">
+                    <div class="block-header block-header-default bg-primary-dark">
+                    <h3 class="block-title">Riwayat Pengerjaan</h3>
+                    </div>
+
+                    <div class="block-content block-content-full" id="history-container">
+                    @include('exams._history_table')
             </div>
         </div>
-    </div>
-</div>
-@endsection
+    @endsection
 
 @push('scripts')
 <script>
