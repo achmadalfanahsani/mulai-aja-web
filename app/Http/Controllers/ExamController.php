@@ -426,7 +426,7 @@ class ExamController extends Controller {
             // Hitung Waktu spent
             $started = $attempt->started_at;
             $finished = now();
-            $timeSpent = $finished->diffInSeconds($started);
+            $timeSpent = (int) $started->diffInSeconds($finished, true);
 
             // Batasi time spent maksimal sesuai durasi paket
             $maxSeconds = $attempt->questionPackage->duration_minutes * 60;

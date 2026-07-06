@@ -78,4 +78,52 @@ class ExamViewTest extends TestCase
         $response->assertSee('Kelas X RPL 1');
         $response->assertSee('data-package-classrooms="Kelas X RPL 1"', false);
     }
+
+    public function test_exam_attempt_page_does_not_contain_sidebar_and_profile_dropdown()
+    {
+        $user = User::factory()->student()->create();
+        $this->actingAs($user);
+
+        $package = QuestionPackage::factory()->create([
+            'duration_minutes' => 60,
+            'is_published' => true,
+        ]);
+
+        $question = \App\Models\Question::create([
+            'question_package_id' => $package->id,
+            'question_text' => 'Sample Question',
+            'question_type' => 'essay',
+            'correct_answer' => 'Sample Answer',
+            'order' => 1,
+        ]);
+
+        $attempt = \App\Models\QuestionAttempt::create([
+            'user_id' => $user->id,
+            'question_package_id' => $package->id,
+            'started_at' => now(),
+            'is_completed' => false,
+        ]);
+
+        // Inisialisasi draft response kosong agar views/exams/attempt tidak error
+        \App\Models\QuestionResponse::create([
+            'question_attempt_id' => $attempt->id,
+            'question_id' => $question->id,
+            'question_snapshot' => $question->toJson(),
+            'selected_answer' => null,
+            'is_correct' => null,
+        ]);
+
+        $response = $this->withSession([
+            "attempt_{$attempt->id}_questions" => [$question->id],
+            "attempt_{$attempt->id}_options" => [$question->id => ['A', 'B', 'C', 'D']],
+        ])->get(route('exams.attempt', $attempt->id));
+
+        $response->assertStatus(200);
+        // Sidebar element is not rendered
+        $response->assertDontSee('<nav id="sidebar">', false);
+        // User profile dropdown is not rendered
+        $response->assertDontSee('id="page-header-user-dropdown"', false);
+        // Color themes selection is still rendered
+        $response->assertSee('data-toggle="theme"', false);
+    }
 }
