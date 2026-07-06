@@ -12,7 +12,9 @@
     <div id="page-container" class="{{ $pageContainerClass ?? 'sidebar-o sidebar-mini enable-page-overlay side-scroll page-header-modern page-header-fixed main-content-narrow' }}">
 
         {{-- Sidebar --}}
-        @include('partials.sidebar.sidebar')
+        @if(!isset($hideSidebar) || !$hideSidebar)
+            @include('partials.sidebar.sidebar')
+        @endif
         {{-- END Sidebar --}}
 
         {{-- Header --}}

@@ -1,3 +1,8 @@
+@php
+    $hideSidebar = true;
+    $hideUserDropdown = true;
+    $pageContainerClass = 'page-header-modern page-header-fixed main-content-narrow';
+@endphp
 @extends('layouts.app')
 
 @section('title', 'CBT Lembar Ujian | MulaiAja')

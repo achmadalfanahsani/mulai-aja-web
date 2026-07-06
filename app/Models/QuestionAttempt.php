@@ -79,7 +79,7 @@ class QuestionAttempt extends Model {
                 return false; // Anggap tidak expired jika paket tidak ada
             }
             $maxDuration = $this->questionPackage->duration_minutes * 60; // to seconds
-            $elapsed = now()->diffInSeconds($this->started_at);
+            $elapsed = (int) $this->started_at->diffInSeconds(now(), true);
             return $elapsed > $maxDuration;
         }
         return false;
@@ -90,7 +90,7 @@ class QuestionAttempt extends Model {
      */
     public function getTimeRemaining(): int {
         $maxDuration = $this->questionPackage->duration_minutes * 60;
-        $elapsed = now()->diffInSeconds($this->started_at);
+        $elapsed = (int) $this->started_at->diffInSeconds(now(), true);
         $remaining = $maxDuration - $elapsed;
         
         return max(0, $remaining);

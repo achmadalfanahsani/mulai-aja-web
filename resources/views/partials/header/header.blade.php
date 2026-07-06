@@ -12,19 +12,23 @@
         {{-- Sisi Kiri Header --}}
         <div class="space-x-1">
             {{-- Tombol buka sidebar (mobile) --}}
-            <button type="button"
-                class="btn btn-sm btn-alt-secondary d-lg-none"
-                data-toggle="layout"
-                data-action="sidebar_open">
-                <i class="fa fa-fw fa-bars"></i>
-            </button>
+            @if(!isset($hideSidebar) || !$hideSidebar)
+                <button type="button"
+                    class="btn btn-sm btn-alt-secondary d-lg-none"
+                    data-toggle="layout"
+                    data-action="sidebar_open">
+                    <i class="fa fa-fw fa-bars"></i>
+                </button>
+            @endif
         </div>
         {{-- END Sisi Kiri --}}
 
         {{-- Sisi Kanan Header --}}
         <div class="space-x-1">
             @include('partials.header.header-color-themes')
-            @include('partials.header.header-user-dropdown')
+            @if(!isset($hideUserDropdown) || !$hideUserDropdown)
+                @include('partials.header.header-user-dropdown')
+            @endif
         </div>
         {{-- END Sisi Kanan --}}
 
