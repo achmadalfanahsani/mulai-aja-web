@@ -140,7 +140,7 @@
     <div class="col-md-12 mb-3">
         <div class="block block-rounded block-themed mb-2">
             <div class="block-content block-content-full bg-primary-dark d-flex flex-column flex-sm-row justify-content-between align-items-center py-3">
-                <div class="text-center text-sm-left mb-2 mb-sm-0">
+                <div class="text-start text-sm-left mb-2 mb-sm-0">
                     <h3 class="font-w700 text-white mb-0">{{ $questionAttempt->questionPackage->name }}</h3>
                     <p class="text-white-50 font-size-sm mb-0">Ujian Berlangsung • Student: {{ Auth::user()->name }}</p>
                 </div>
