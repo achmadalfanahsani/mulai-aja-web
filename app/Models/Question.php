@@ -25,9 +25,14 @@ class Question extends Model {
 
     const TYPE_MULTIPLE_CHOICE = 'multiple_choice';
     const TYPE_ESSAY = 'essay';
+    const TYPE_VOCAB_TEST = 'vocab_test';
 
     public function isEssay(): bool {
         return $this->question_type === self::TYPE_ESSAY;
+    }
+
+    public function isVocabTest(): bool {
+        return $this->question_type === self::TYPE_VOCAB_TEST;
     }
 
     public function isMultipleChoice(): bool {

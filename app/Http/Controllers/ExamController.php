@@ -402,7 +402,7 @@ class ExamController extends Controller {
                     if (!is_null($response->selected_answer)) {
                         $isCorrect = $response->selected_answer === $question->correct_answer;
                     }
-                } elseif ($question->isEssay()) {
+                } elseif ($question->isEssay() || $question->isVocabTest()) {
                     if (!is_null($response->essay_answer)) {
                         // Mekanisme isian lebih fleksibel: normalize whitespace, trim, dan case-insensitive
                         $userAnswer = preg_replace('/\s+/', ' ', trim($response->essay_answer));

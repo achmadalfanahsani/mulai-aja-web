@@ -55,6 +55,7 @@
                                     $packageLabels = [
                                         'multiple_choice' => 'Pilihan Ganda',
                                         'essay' => 'Isian Singkat',
+                                        'vocab_test' => 'Vocab Test',
                                         'mixed' => 'Campuran',
                                     ];
                                     $displayValue = $packageLabels[$requestedType] ?? $requestedType;
@@ -72,6 +73,7 @@
                                     </option>
                                     <option value="essay" {{ old('package_type') == 'essay' ? 'selected' : '' }}>Isian
                                         Singkat (Essay)</option>
+                                    <option value="vocab_test" {{ old('package_type') == 'vocab_test' ? 'selected' : '' }}>Vocab Test</option>
                                 </select>
                             @endif
                             <small class="text-muted">Pilih tipe soal yang akan ada di dalam paket ini agar terorganisir
@@ -187,7 +189,7 @@
                 type = "{{ $requestedType }}";
             }
 
-            if (type === 'essay') {
+            if (type === 'essay' || type === 'vocab_test') {
                 container.style.display = 'none';
             } else {
                 container.style.display = 'block';

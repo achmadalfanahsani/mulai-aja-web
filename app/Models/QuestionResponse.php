@@ -94,7 +94,7 @@ class QuestionResponse extends Model {
 
         $question = $this->getQuestionData();
         
-        $isEssay = isset($question->question_type) ? $question->question_type === 'essay' : ($question instanceof \App\Models\Question && $question->isEssay());
+        $isEssay = isset($question->question_type) ? in_array($question->question_type, ['essay', 'vocab_test']) : ($question instanceof \App\Models\Question && ($question->isEssay() || $question->isVocabTest()));
 
         if ($isEssay) {
             return $this->essay_answer;
@@ -118,7 +118,7 @@ class QuestionResponse extends Model {
     public function getCorrectAnswerText(): string {
         $question = $this->getQuestionData();
 
-        $isEssay = isset($question->question_type) ? $question->question_type === 'essay' : ($question instanceof \App\Models\Question && $question->isEssay());
+        $isEssay = isset($question->question_type) ? in_array($question->question_type, ['essay', 'vocab_test']) : ($question instanceof \App\Models\Question && ($question->isEssay() || $question->isVocabTest()));
 
         if ($isEssay) {
             return $question->correct_answer ?? '';

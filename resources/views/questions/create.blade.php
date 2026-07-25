@@ -19,11 +19,7 @@
                 <form autocomplete="off" action="{{ route('question-packages.questions.store', $questionPackage->id) }}" method="POST" enctype="multipart/form-data" class="py-3" autocomplete="off">
                     @csrf
                     
-                    {{-- Detail Paket --}}
-                    <div class="alert alert-secondary bg-body-light border-0 text-dark py-2 px-3 mb-4 d-flex align-items-center">
-                        <i class="fa fa-folder-open me-2 text-primary"></i>
-                        <span class="font-size-sm">Menambahkan soal ke paket: <strong>{{ $questionPackage->name }}</strong></span>
-                    </div>
+
 
                     {{-- Auto-Fill dari Teks --}}
                     <div id="auto-fill-wrapper" class="mb-4">
@@ -66,8 +62,13 @@
                                 </select>
                             @else
                                 @php
-                                    $fixedType = $questionPackage->package_type === 'essay' ? 'essay' : 'multiple_choice';
-                                    $label = $fixedType === 'essay' ? 'Uraian (Essay)' : 'Pilihan Ganda';
+                                    if ($questionPackage->package_type === 'vocab_test') {
+                                        $fixedType = 'vocab_test';
+                                        $label = 'Vocab Test';
+                                    } else {
+                                        $fixedType = $questionPackage->package_type === 'essay' ? 'essay' : 'multiple_choice';
+                                        $label = $fixedType === 'essay' ? 'Uraian (Essay)' : 'Pilihan Ganda';
+                                    }
                                 @endphp
                                 <input autocomplete="off" type="text" class="form-control" value="{{ $label }}" readonly>
                                 <input autocomplete="off" type="hidden" id="question_type" name="question_type" value="{{ $fixedType }}">
@@ -91,6 +92,7 @@
                         </div>
                     </div>
 
+                    @if($questionPackage->package_type !== 'vocab_test')
                     <div class="row">
                         {{-- Gambar Pendukung --}}
                         <div class="col-md-12 form-group mb-4">
@@ -102,6 +104,7 @@
                             @enderror
                         </div>
                     </div>
+                    @endif
 
                     <div id="options-container">
                         <hr class="my-4">
@@ -256,7 +259,7 @@
         const mcInputs = document.querySelectorAll('.multiple-choice-input');
         const essayInputs = document.querySelectorAll('.essay-input');
         
-        if (type === 'essay') {
+        if (type === 'essay' || type === 'vocab_test') {
             optionsContainer.style.display = 'none';
             essayContainer.style.display = 'block';
             if (autoFillWrapper) autoFillWrapper.style.display = 'none';

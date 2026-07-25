@@ -85,6 +85,12 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::post('question-packages/{questionPackage}/questions/generate-ai', [\App\Http\Controllers\AIQuestionController::class, 'generate'])
             ->name('question-packages.questions.generate-ai');
 
+        Route::post('question-packages/{questionPackage}/questions/swap-vocab', [QuestionController::class, 'swapVocab'])
+            ->name('question-packages.questions.swap-vocab');
+
+        Route::post('question-packages/{questionPackage}/questions/bulk-vocab', [QuestionController::class, 'bulkStoreVocab'])
+            ->name('question-packages.questions.bulk-vocab');
+
         Route::resource('question-packages.questions', QuestionController::class)->shallow();
 
         // Classroom Management
