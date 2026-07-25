@@ -44,6 +44,14 @@
                         <span class="badge bg-primary ms-2">{{ $questions->count() }} Soal</span>
                     </h3>
                     <div class="block-options">
+                        @if ($questionPackage->package_type === 'vocab_test')
+                            <button type="button" class="btn btn-sm btn-alt-success me-1" data-bs-toggle="modal" data-bs-target="#modal-bulk-vocab">
+                                <i class="fa fa-file-import me-1"></i> Import Massal Vocab
+                            </button>
+                            <button type="button" class="btn btn-sm btn-alt-info me-1" data-bs-toggle="modal" data-bs-target="#modal-swap-vocab">
+                                <i class="fa fa-exchange-alt me-1"></i> Tukar Soal & Jawaban
+                            </button>
+                        @endif
                         <button type="button" class="btn btn-sm btn-alt-primary" data-bs-toggle="modal" data-bs-target="#modal-generate-ai">
                             <i class="fa fa-magic me-1"></i> Generate Soal AI
                         </button>
@@ -77,7 +85,7 @@
                                     <h4 class="block-title font-size-sm font-w700 text-uppercase mb-0 text-muted">
                                         Soal Nomor #{{ $index + 1 }}
                                         <span class="badge bg-info-light text-info font-w600 ms-2">
-                                            {{ $question->isEssay() ? 'Isian Singkat' : 'Pilihan Ganda' }}
+                                            {{ $question->isVocabTest() ? 'Vocab Test' : ($question->isEssay() ? 'Isian Singkat' : 'Pilihan Ganda') }}
                                         </span>
                                         @if ($question->difficulty_level)
                                             <span
@@ -251,6 +259,91 @@
             </div>
         </div>
     </div>
+
+    @if ($questionPackage->package_type === 'vocab_test')
+        <!-- Modal Swap Vocab -->
+        <div class="modal fade" id="modal-swap-vocab" tabindex="-1" role="dialog" aria-labelledby="modal-swap-vocab" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form autocomplete="off" action="{{ route('question-packages.questions.swap-vocab', $questionPackage->id) }}" method="POST">
+                        @csrf
+                        <div class="block block-rounded shadow-none mb-0">
+                            <div class="block-header block-header-default bg-info">
+                                <h3 class="block-title text-white"><i class="fa fa-exchange-alt me-1"></i> Tukar Soal & Jawaban</h3>
+                                <div class="block-options">
+                                    <button type="button" class="btn-block-option text-white" data-bs-dismiss="modal" aria-label="Close">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="block-content fs-sm py-4">
+                                <div class="text-center mb-3">
+                                    <i class="fa fa-exchange-alt fa-3x text-info mb-3"></i>
+                                    <h5 class="fw-bold mb-2">Tukar Posisi Pertanyaan dan Jawaban?</h5>
+                                </div>
+                                <p class="mb-0 text-muted text-center">
+                                    Seluruh soal dalam paket ini akan ditukar posisinya: <strong>Kata Pertanyaan</strong> akan berubah menjadi <strong>Kunci Jawaban</strong>, dan sebaliknya.
+                                </p>
+                            </div>
+                            <div class="block-content block-content-full block-content-sm text-end border-top">
+                                <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-info">
+                                    <i class="fa fa-exchange-alt me-1"></i> Ya, Tukar Sekarang
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Bulk Import Vocab -->
+        <div class="modal fade" id="modal-bulk-vocab" tabindex="-1" role="dialog" aria-labelledby="modal-bulk-vocab" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <form autocomplete="off" action="{{ route('question-packages.questions.bulk-vocab', $questionPackage->id) }}" method="POST">
+                        @csrf
+                        <div class="block block-rounded shadow-none mb-0">
+                            <div class="block-header block-header-default bg-success">
+                                <h3 class="block-title text-white"><i class="fa fa-file-import me-1"></i> Import Massal Soal Vocab</h3>
+                                <div class="block-options">
+                                    <button type="button" class="btn-block-option text-white" data-bs-dismiss="modal" aria-label="Close">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="block-content fs-sm py-4">
+                                <div class="alert alert-info alert-permanent d-flex mb-4">
+                                    <i class="fa fa-info-circle me-2 mt-1"></i>
+                                    <div>
+                                        <p class="mb-1"><strong>Format Input Massal Vocab:</strong></p>
+                                        <p class="mb-0">Masukkan daftar kata dan artinya per baris dengan format <code>Pertanyaan = Jawaban</code> atau <code>Pertanyaan : Jawaban</code>.</p>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold" for="raw_vocab">Daftar Vocab (Satu per baris):</label>
+                                    <textarea class="form-control font-monospace" id="raw_vocab" name="raw_vocab" rows="8" placeholder="Contoh:
+All = Semua
+Some = Beberapa
+Enough = Cukup
+Many = Banyak (bisa dihitung)
+Much = Banyak (tidak bisa dihitung)
+Few = Sedikit
+A few = Beberapa"></textarea>
+                                </div>
+                            </div>
+                            <div class="block-content block-content-full block-content-sm text-end border-top">
+                                <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fa fa-save me-1"></i> Simpan Semua Soal
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
 
 @push('scripts')

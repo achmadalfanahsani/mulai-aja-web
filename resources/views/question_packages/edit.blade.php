@@ -141,7 +141,7 @@
 
             if (packageTypeHidden && container) {
                 const type = packageTypeHidden.value;
-                if (type === 'essay') {
+                if (type === 'essay' || type === 'vocab_test') {
                     container.style.display = 'none';
                 } else {
                     container.style.display = 'block';

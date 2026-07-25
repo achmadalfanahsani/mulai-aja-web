@@ -20,11 +20,7 @@
                     @csrf
                     @method('PUT')
                     
-                    {{-- Detail Paket --}}
-                    <div class="alert alert-secondary bg-body-light border-0 text-dark py-2 px-3 mb-4 d-flex align-items-center">
-                        <i class="fa fa-folder-open me-2 text-primary"></i>
-                        <span class="font-size-sm">Mengedit soal pada paket: <strong>{{ $questionPackage->name }}</strong></span>
-                    </div>
+
 
                     {{-- Isi Soal --}}
                     <div class="form-group mb-4">
@@ -48,7 +44,11 @@
                                 </select>
                             @else
                                 @php
-                                    $label = $question->question_type === 'essay' ? 'Uraian (Essay)' : 'Pilihan Ganda';
+                                    if ($question->question_type === 'vocab_test') {
+                                        $label = 'Vocab Test';
+                                    } else {
+                                        $label = $question->question_type === 'essay' ? 'Uraian (Essay)' : 'Pilihan Ganda';
+                                    }
                                 @endphp
                                 <input autocomplete="off" type="text" class="form-control" value="{{ $label }}" readonly>
                                 <input autocomplete="off" type="hidden" id="question_type" name="question_type" value="{{ $question->question_type }}">
@@ -72,6 +72,7 @@
                         </div>
                     </div>
 
+                    @if($questionPackage->package_type !== 'vocab_test')
                     <div class="row">
                         {{-- Gambar Pendukung --}}
                         <div class="col-md-12 form-group mb-4">
@@ -81,9 +82,11 @@
                             
                             {{-- Preview Gambar Sekarang jika ada --}}
                             @if ($question->hasImage())
-                                <div class="mt-2">
-                                    <div class="text-muted font-size-xs mb-1">Gambar saat ini:</div>
-                                    <img src="{{ $question->getImageUrl() }}" alt="Gambar Soal" class="img-fluid rounded border p-1" style="max-height: 100px; object-fit: contain;">
+                                <div class="mt-3">
+                                    <p class="mb-2 font-size-sm text-muted">Gambar Saat Ini:</p>
+                                    <div class="img-zoom-wrapper border p-2" onclick="toggleZoom(this)">
+                                        <img src="{{ $question->getImageUrl() }}" alt="Gambar Soal Sekarang" style="max-height: 150px; object-fit: contain;">
+                                    </div>
                                 </div>
                             @endif
                             
@@ -92,6 +95,7 @@
                             @enderror
                         </div>
                     </div>
+                    @endif
 
                     <div id="options-container">
                         <hr class="my-4">
@@ -245,7 +249,7 @@
         const mcInputs = document.querySelectorAll('.multiple-choice-input');
         const essayInputs = document.querySelectorAll('.essay-input');
         
-        if (type === 'essay') {
+        if (type === 'essay' || type === 'vocab_test') {
             optionsContainer.style.display = 'none';
             essayContainer.style.display = 'block';
             mcInputs.forEach(input => input.required = false);

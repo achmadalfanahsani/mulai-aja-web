@@ -34,7 +34,7 @@ class QuestionController extends Controller {
     public function store(Request $request, QuestionPackage $questionPackage) {
         Gate::authorize('create', [Question::class, $questionPackage]);
         $rules = [
-            'question_type' => 'required|in:multiple_choice,essay',
+            'question_type' => 'required|in:multiple_choice,essay,vocab_test',
             'question_text' => 'required|string',
             'explanation' => 'nullable|string',
             'question_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -135,7 +135,7 @@ class QuestionController extends Controller {
         Gate::authorize('update', $question);
         $questionPackage = $question->questionPackage;
         $rules = [
-            'question_type' => 'required|in:multiple_choice,essay',
+            'question_type' => 'required|in:multiple_choice,essay,vocab_test',
             'question_text' => 'required|string',
             'explanation' => 'nullable|string',
             'question_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -238,5 +238,85 @@ class QuestionController extends Controller {
 
         return redirect()->route('question-packages.questions.index', [$questionPackage->id, 'type' => $questionPackage->package_type])
             ->with('success_delete', 'Soal berhasil dihapus dari paket!');
+    }
+
+    /**
+     * Tukar soal dan jawaban untuk tipe Vocab Test
+     */
+    public function swapVocab(QuestionPackage $questionPackage) {
+        Gate::authorize('update', $questionPackage);
+
+        if ($questionPackage->package_type !== 'vocab_test') {
+            return redirect()->back()->with('error', 'Fitur ini hanya untuk tipe Vocab Test.');
+        }
+
+        DB::transaction(function () use ($questionPackage) {
+            $questions = $questionPackage->questions()->get();
+            foreach ($questions as $question) {
+                $tempText = $question->question_text;
+                $question->question_text = $question->correct_answer;
+                $question->correct_answer = $tempText;
+                $question->save();
+            }
+        });
+
+        return redirect()->back()->with('success_update', 'Berhasil menukar soal dan jawaban!');
+    }
+
+    /**
+     * Import massal soal untuk Vocab Test (format: Soal = Jawaban / Soal : Jawaban)
+     */
+    public function bulkStoreVocab(Request $request, QuestionPackage $questionPackage) {
+        Gate::authorize('create', [Question::class, $questionPackage]);
+
+        if ($questionPackage->package_type !== 'vocab_test') {
+            return redirect()->back()->with('error', 'Fitur ini hanya untuk tipe Vocab Test.');
+        }
+
+        $request->validate([
+            'raw_vocab' => 'required|string',
+        ]);
+
+        $lines = explode("\n", str_replace("\r", "", $request->raw_vocab));
+        $insertedCount = 0;
+
+        DB::transaction(function () use ($lines, $questionPackage, &$insertedCount) {
+            $nextOrder = $questionPackage->questions()->max('order') + 1;
+
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if (empty($line)) continue;
+
+                // Split by '=', ':', '->', or '-'
+                $parts = preg_split('/\s*(=|:|->|-)\s*/', $line, 2);
+                if (count($parts) === 2) {
+                    $qText = trim($parts[0]);
+                    $aText = trim($parts[1]);
+
+                    if (!empty($qText) && !empty($aText)) {
+                        Question::create([
+                            'question_package_id' => $questionPackage->id,
+                            'question_type' => 'vocab_test',
+                            'question_text' => $qText,
+                            'correct_answer' => $aText,
+                            'difficulty_level' => 'easy',
+                            'order' => $nextOrder++,
+                            'is_active' => true,
+                        ]);
+                        $insertedCount++;
+                    }
+                }
+            }
+
+            if ($insertedCount > 0) {
+                $questionPackage->increment('total_questions_count', $insertedCount);
+            }
+        });
+
+        if ($insertedCount === 0) {
+            return redirect()->back()->with('error', 'Tidak ada format soal = jawaban yang valid ditemukan. Gunakan pemisah =, :, atau ->');
+        }
+
+        return redirect()->back()->with('success_store', "Berhasil mengimpor {$insertedCount} soal vocab baru!");
     }
 }

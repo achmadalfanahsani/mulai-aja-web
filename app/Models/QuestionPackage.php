@@ -93,6 +93,7 @@ class QuestionPackage extends Model {
         $labels = [
             'multiple_choice' => 'Pilihan Ganda',
             'essay' => 'Isian Singkat',
+            'vocab_test' => 'Vocab Test',
             'mixed' => 'Campuran',
         ];
 
@@ -106,6 +107,7 @@ class QuestionPackage extends Model {
         $classes = [
             'multiple_choice' => 'bg-success',
             'essay' => 'bg-info',
+            'vocab_test' => 'bg-primary',
             'mixed' => 'bg-warning',
         ];
 

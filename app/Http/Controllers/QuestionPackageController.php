@@ -65,7 +65,7 @@ class QuestionPackageController extends Controller {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'package_type' => 'required|in:multiple_choice,essay',
+            'package_type' => 'required|in:multiple_choice,essay,vocab_test',
             'duration_minutes' => 'required|integer|min:1|max:480',
             'passing_score' => 'nullable|integer|min:0|max:100',
             'attempt_limit' => 'nullable|integer|min:1',
@@ -103,7 +103,7 @@ class QuestionPackageController extends Controller {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'package_type' => 'required|in:multiple_choice,essay',
+            'package_type' => 'required|in:multiple_choice,essay,vocab_test',
             'duration_minutes' => 'required|integer|min:1|max:480',
             'passing_score' => 'nullable|integer|min:0|max:100',
             'attempt_limit' => 'nullable|integer|min:1',

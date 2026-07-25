@@ -169,65 +169,91 @@
             </div>
 
             <div class="block-content block-content-full p-4">
-                {{-- Pertanyaan --}}
-                <div class="font-size-md font-w600 text-dark mb-4" style="line-height: 1.6;">
-                    {!! nl2br(e($question->question_text)) !!}
-                </div>
-
-                {{-- Gambar jika ada --}}
-                @if ($question->hasImage())
-                    <div class="mb-4 text-center text-sm-left">
-                        <div class="img-zoom-wrapper border p-2" onclick="toggleZoom(this)">
-                            <img src="{{ $question->getImageUrl() }}" alt="Gambar Soal #{{ $currentNumber }}" style="max-height: 300px; object-fit: contain;">
-                        </div>
-                        <div class="mt-2 text-muted font-size-xs">
-                            <i class="fa fa-search-plus me-1"></i> Klik gambar untuk memperbesar & geser
-                        </div>
-                    </div>
-                @endif
-
-                {{-- Pilihan Jawaban (Multiple Choice or Essay) --}}
-                <div class="mb-4">
-                    <form autocomplete="off" id="draft-form" action="{{ route('exams.save-response', $questionAttempt->id) }}" method="POST" autocomplete="off">
-                        @csrf
-                        <input autocomplete="off" type="hidden" name="question_id" value="{{ $question->id }}">
-                        
-                        @if($question->isMultipleChoice())
-                            <div class="cbt-options-list">
-                                @foreach ($options as $option)
-                                    @php
-                                        $isSelected = $currentResponse && $currentResponse->selected_answer === $option->option_label;
-                                    @endphp
-                                    <label class="cbt-option-wrapper d-block mb-3 {{ $isSelected ? 'selected' : '' }}" style="cursor:pointer;">
-                                        <input autocomplete="off" type="radio" name="selected_answer" value="{{ $option->option_label }}" 
-                                               class="cbt-option-input d-none" 
-                                               {{ $isSelected ? 'checked' : '' }}
-                                               onchange="autoSaveAnswer('{{ $option->option_label }}', 'multiple_choice')">
-                                        
-                                        <div class="cbt-option border rounded p-3 d-flex align-items-center">
-                                            <div class="font-size-sm flex-grow-1 cbt-option-text">
-                                                {{ $option->option_text }}
-                                            </div>
-                                        </div>
-                                    </label>
-                                @endforeach
-                            </div>
-                        @else
-                            {{-- Essay Input --}}
-                            <div class="essay-container">
-                                <label class="form-label" for="essay_answer">Ketikkan Jawaban Anda:</label>
-                                <input autocomplete="off" type="text" class="form-control form-control-lg" id="essay_answer" name="essay_answer" 
-                                       placeholder="Ketikkan jawaban Anda di sini..."
-                                       value="{{ $currentResponse->essay_answer ?? '' }}"
-                                       onblur="autoSaveAnswer(this.value, 'essay')"
-                                       autocomplete="off">
-                                <div class="mt-2 text-muted font-size-xs">
-                                    <i class="fa fa-info-circle me-1"></i> Jawaban otomatis tersimpan saat Anda berpindah ke kolom lain atau soal lain.
+                @if($question->isVocabTest())
+                    {{-- Vocab Test Layout --}}
+                    <div class="mb-4">
+                        <form autocomplete="off" id="draft-form" action="{{ route('exams.save-response', $questionAttempt->id) }}" method="POST" autocomplete="off">
+                            @csrf
+                            <input autocomplete="off" type="hidden" name="question_id" value="{{ $question->id }}">
+                            
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="font-size-md font-w600 text-dark me-3 text-nowrap" style="line-height: 1.6;">
+                                    {!! nl2br(e($question->question_text)) !!} :
+                                </div>
+                                <div class="flex-grow-1">
+                                    <input autocomplete="off" type="text" class="form-control form-control-lg" id="essay_answer" name="essay_answer" 
+                                           placeholder="Ketikkan jawaban Anda di sini..."
+                                           value="{{ $currentResponse->essay_answer ?? '' }}"
+                                           onblur="autoSaveAnswer(this.value, 'essay')"
+                                           autocomplete="off">
                                 </div>
                             </div>
-                        @endif
-                    </form>
-                </div>
+                            <div class="text-muted font-size-xs text-end">
+                                <i class="fa fa-info-circle me-1"></i> Jawaban otomatis tersimpan saat Anda berpindah ke kolom lain atau soal lain.
+                            </div>
+                        </form>
+                    </div>
+                @else
+                    {{-- Pertanyaan normal --}}
+                    <div class="font-size-md font-w600 text-dark mb-4" style="line-height: 1.6;">
+                        {!! nl2br(e($question->question_text)) !!}
+                    </div>
+
+                    {{-- Gambar jika ada --}}
+                    @if ($question->hasImage())
+                        <div class="mb-4 text-center text-sm-left">
+                            <div class="img-zoom-wrapper border p-2" onclick="toggleZoom(this)">
+                                <img src="{{ $question->getImageUrl() }}" alt="Gambar Soal #{{ $currentNumber }}" style="max-height: 300px; object-fit: contain;">
+                            </div>
+                            <div class="mt-2 text-muted font-size-xs">
+                                <i class="fa fa-search-plus me-1"></i> Klik gambar untuk memperbesar & geser
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Pilihan Jawaban (Multiple Choice or Essay) --}}
+                    <div class="mb-4">
+                        <form autocomplete="off" id="draft-form" action="{{ route('exams.save-response', $questionAttempt->id) }}" method="POST" autocomplete="off">
+                            @csrf
+                            <input autocomplete="off" type="hidden" name="question_id" value="{{ $question->id }}">
+                            
+                            @if($question->isMultipleChoice())
+                                <div class="cbt-options-list">
+                                    @foreach ($options as $option)
+                                        @php
+                                            $isSelected = $currentResponse && $currentResponse->selected_answer === $option->option_label;
+                                        @endphp
+                                        <label class="cbt-option-wrapper d-block mb-3 {{ $isSelected ? 'selected' : '' }}" style="cursor:pointer;">
+                                            <input autocomplete="off" type="radio" name="selected_answer" value="{{ $option->option_label }}" 
+                                                   class="cbt-option-input d-none" 
+                                                   {{ $isSelected ? 'checked' : '' }}
+                                                   onchange="autoSaveAnswer('{{ $option->option_label }}', 'multiple_choice')">
+                                            
+                                            <div class="cbt-option border rounded p-3 d-flex align-items-center">
+                                                <div class="font-size-sm flex-grow-1 cbt-option-text">
+                                                    {{ $option->option_text }}
+                                                </div>
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            @else
+                                {{-- Essay Input --}}
+                                <div class="essay-container">
+                                    <label class="form-label" for="essay_answer">Ketikkan Jawaban Anda:</label>
+                                    <input autocomplete="off" type="text" class="form-control form-control-lg" id="essay_answer" name="essay_answer" 
+                                           placeholder="Ketikkan jawaban Anda di sini..."
+                                           value="{{ $currentResponse->essay_answer ?? '' }}"
+                                           onblur="autoSaveAnswer(this.value, 'essay')"
+                                           autocomplete="off">
+                                    <div class="mt-2 text-muted font-size-xs">
+                                        <i class="fa fa-info-circle me-1"></i> Jawaban otomatis tersimpan saat Anda berpindah ke kolom lain atau soal lain.
+                                    </div>
+                                </div>
+                            @endif
+                        </form>
+                    </div>
+                @endif
             </div>
 
             {{-- Footer Navigasi Soal Sebelumnya/Selanjutnya --}}
@@ -564,6 +590,38 @@
             confirmSubmitModal.addEventListener('show.bs.modal', function () {
                 updateModalCounts();
             });
+        }
+
+        // Auto-focus & Enter Key Handling for Vocab Test
+        const essayInput = document.getElementById('essay_answer');
+        if (essayInput) {
+            @if($question->isVocabTest())
+                essayInput.focus();
+                const valLength = essayInput.value.length;
+                essayInput.setSelectionRange(valLength, valLength);
+
+                essayInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const val = this.value;
+                        autoSaveAnswer(val, 'essay');
+
+                        const navigateNext = () => {
+                            @if ($currentNumber < count($questionIds))
+                                window.location.href = "{{ route('exams.attempt', [$questionAttempt->id, 'page' => $currentNumber + 1]) }}";
+                            @else
+                                prepareSubmit();
+                            @endif
+                        };
+
+                        if (pendingSave) {
+                            pendingSave.then(navigateNext).catch(navigateNext);
+                        } else {
+                            navigateNext();
+                        }
+                    }
+                });
+            @endif
         }
     });
 </script>

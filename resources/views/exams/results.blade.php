@@ -16,7 +16,7 @@
                         </a>
                     @else
                         <a href="{{ route('exams.index') }}" class="btn btn-sm btn-alt-secondary">
-                            <i class="fa fa-arrow-left"></i> Kembali ke Dashboard
+                            <i class="fa fa-arrow-left"></i> Kembali
                         </a>
                     @endif
                 </div>
